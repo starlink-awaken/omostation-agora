@@ -665,6 +665,49 @@ raise SystemExit(7)
         assert "stdout-secret" not in serialized
         assert "stderr-secret" not in serialized
 
+    def test_stdio_nonzero_redacts_nested_path_and_identity_keys(self):
+        """path/identity 组合键在任意嵌套层都必须失败闭合脱敏。"""
+        from agora.mcp.resolver.adapter import StdioAdapter
+
+        script = """
+import json
+print(json.dumps({
+    "error": {
+        "code": "gateway_failed",
+        "details": {
+            "workspacePath": "/Users/private/workspace",
+            "ssh-identity-file": "/Users/private/.ssh/id_ed25519",
+            "nested": [{"caller_identity": "private-user", "safe": "public-code"}],
+        },
+    },
+    "path_identity_bundle": "private-bundle",
+}))
+raise SystemExit(8)
+"""
+        svc = BosService(
+            uri="bos://compute/aetherforge/infer",
+            domain="compute",
+            package="aetherforge",
+            action="infer",
+            transport="stdio",
+            command=[sys.executable, "-c", script],
+        )
+
+        result = StdioAdapter(timeout=2.0).call(svc)
+
+        assert result["status"] == "error"
+        assert result["exit_code"] == 8
+        assert result["error"]["details"]["workspacePath"] == "[REDACTED]"
+        assert result["error"]["details"]["ssh-identity-file"] == "[REDACTED]"
+        assert result["error"]["details"]["nested"] == [
+            {"caller_identity": "[REDACTED]", "safe": "public-code"}
+        ]
+        assert result["result"]["path_identity_bundle"] == "[REDACTED]"
+        serialized = json.dumps(result)
+        assert "/Users/private" not in serialized
+        assert "private-user" not in serialized
+        assert "private-bundle" not in serialized
+
     def test_stdio_nonzero_drops_oversized_structured_stdout(self):
         """过大的失败 stdout 不能进入 BOS envelope。"""
         from agora.mcp.resolver.adapter import StdioAdapter

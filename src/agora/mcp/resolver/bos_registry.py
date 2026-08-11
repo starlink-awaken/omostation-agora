@@ -102,6 +102,8 @@ def _load_from_yaml_with_diagnostics(
 ) -> tuple[list, list[str]]:
     """加载可路由声明，并逐条隔离无效行。"""
 
+    from agora.mcp.resolver.services import BOS_URI_PATTERN
+
     if path is None:
         env_path = os.environ.get("AGORA_BOS_REGISTRY", "")
         path = pathlib.Path(env_path) if env_path else DEFAULT_REGISTRY_PATH
@@ -148,6 +150,10 @@ def _load_from_yaml_with_diagnostics(
             diagnostics.append(
                 f"[{index}] registry row {index}: 缺少必填字段: {', '.join(missing)}"
             )
+            continue
+        uri = entry["uri"]
+        if not isinstance(uri, str) or BOS_URI_PATTERN.fullmatch(uri) is None:
+            diagnostics.append(f"[{index}] registry row {index}: URI 格式错误")
             continue
 
         try:

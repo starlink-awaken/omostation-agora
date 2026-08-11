@@ -145,6 +145,41 @@ class TestBosRegistryLoader:
         assert "row 0" in caplog.text
         assert "uri" in caplog.text
 
+    def test_load_skips_malformed_uri_without_logging_row_content(
+        self, tmp_path, caplog
+    ):
+        """非空但非法的 URI 必须逐条失败闭合，且诊断不能泄漏声明内容。"""
+        malformed_uri = "https://private.invalid/identity-path"
+        registry = tmp_path / "bos-services.yaml"
+        registry.write_text(
+            f"""services:
+  - uri: "{malformed_uri}"
+    domain: compute
+    package: broken
+    action: infer
+    transport: stdio
+    command: ["false"]
+  - uri: "bos://compute/aetherforge/infer"
+    domain: compute
+    package: aetherforge
+    action: infer
+    transport: stdio
+    command: ["python", "-m", "aetherforge.cli", "infer"]
+""",
+            encoding="utf-8",
+        )
+
+        from agora.mcp.resolver.bos_registry import load_from_yaml
+
+        with caplog.at_level("WARNING"):
+            services = load_from_yaml(registry)
+
+        assert [service.uri for service in services] == [
+            "bos://compute/aetherforge/infer"
+        ]
+        assert "row 0" in caplog.text
+        assert malformed_uri not in caplog.text
+
 
 class TestBosRegistryInfo:
     """注册表统计信息测试。"""

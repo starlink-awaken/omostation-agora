@@ -25,7 +25,9 @@ _SENSITIVE_KEY_PARTS = (
     "authorization",
     "bearer",
     "credential",
+    "identity",
     "password",
+    "path",
     "secret",
     "token",
 )
