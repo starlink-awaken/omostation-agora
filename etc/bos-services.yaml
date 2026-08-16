@@ -219,10 +219,10 @@ services:
   - uv
   - run
   - --directory
-  - projects/c2g
+  - projects/omo
   - python
   - -m
-  - c2g.mcp_server
+  - omo._vendored.c2g.mcp_server
   action: mcp-server
   command: *id013
   description: C2G MCP Server (HTTP proxy mode)
