@@ -1677,7 +1677,7 @@ services:
   command:
   - bun
   - run
-  - projects/gbrain/src/cli.ts
+  - projects/knowledge/gbrain/src/cli.ts
   - serve
   description: gbrain 知识库全文搜索 (高性能 Postgres)
   domain: memory
@@ -1689,7 +1689,7 @@ services:
   command:
   - bun
   - run
-  - projects/gbrain/src/cli.ts
+  - projects/knowledge/gbrain/src/cli.ts
   - serve
   description: gbrain 知识库结构化查询
   domain: memory
@@ -1701,7 +1701,7 @@ services:
   command:
   - bun
   - run
-  - projects/gbrain/src/cli.ts
+  - projects/knowledge/gbrain/src/cli.ts
   - serve
   description: gbrain 知识库增量同步
   domain: memory
