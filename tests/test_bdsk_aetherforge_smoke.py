@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import re
 from pathlib import Path
 import pytest
@@ -56,6 +57,7 @@ def test_bdsk_evaluate_yaml_active_route():
     assert target_service.get("i0_route") == "active", "i0_route 应激活为 active"
     assert target_service.get("transport") == "internal"
     assert target_service.get("module_path") == "agora.server.tools_bos"
+    assert "bos://compute/aetherforge/infer" in target_service.get("description", "")
 
 
 def test_bos_router_resolves_aetherforge_and_bdsk():
@@ -78,24 +80,85 @@ def test_bos_router_resolves_aetherforge_and_bdsk():
 
 
 @pytest.mark.asyncio
-async def test_bdsk_evaluate_deep_and_fast_modes():
-    """测试 @Builder/@Devil/@Sage/@Keeper 4角对不同研发决策场景的并发审查。"""
+async def test_bdsk_evaluate_routes_once_through_aetherforge_compute(monkeypatch):
+    """Persona evaluation must be computed through the canonical BOS URI."""
+    calls = []
+
+    async def fake_resolve(uri, **kwargs):
+        calls.append((uri, kwargs))
+        payload = {
+            "verdict": "REVIEW_REQUIRED",
+            "risk_score": 41,
+            "recommendation": "Require human review before execution.",
+            "board_reviews": {
+                role: {"opinion": f"{role} evidence"}
+                for role in ("builder", "devil", "sage", "keeper")
+            },
+            "debate_log": [],
+        }
+        return {
+            "status": "ok",
+            "result": {
+                "choices": [
+                    {"message": {"content": json.dumps(payload)}}
+                ]
+            },
+        }
+
+    monkeypatch.setattr(
+        "agora.server.tools_bos.bdsk._resolve_bos_uri", fake_resolve
+    )
     res_deep = await persona_bdsk_evaluate(
         topic="引入边缘 MLX 计算网关执行推理分析",
         mode="deep",
         context="高敏感医疗与公文数据分析场景",
     )
     assert res_deep.get("status") == "ok"
-    assert res_deep.get("verdict") in ("PROCEED_WITH_GUARDRAILS", "APPROVED")
+    assert res_deep.get("proof_state") == "proven"
+    assert res_deep.get("compute_uri") == "bos://compute/aetherforge/infer"
+    assert res_deep.get("verdict") == "REVIEW_REQUIRED"
+    assert res_deep.get("risk_score") == 41
     reviews = res_deep.get("board_reviews", {})
-    assert "builder" in reviews
-    assert "devil" in reviews
-    assert "sage" in reviews
-    assert "keeper" in reviews
+    assert set(reviews) == {"builder", "devil", "sage", "keeper"}
+    assert len(calls) == 1
+    assert calls[0][0] == "bos://compute/aetherforge/infer"
+    assert "引入边缘 MLX" in calls[0][1]["prompt"]
 
+
+@pytest.mark.asyncio
+async def test_bdsk_evaluate_compute_failure_is_not_proven(monkeypatch):
+    async def fake_resolve(_uri, **_kwargs):
+        return {"status": "error", "error": "daemon unavailable"}
+
+    monkeypatch.setattr(
+        "agora.server.tools_bos.bdsk._resolve_bos_uri", fake_resolve
+    )
     res_fast = await persona_bdsk_evaluate(
         topic="紧急对齐 ADR-0300 规范文案",
         mode="fast",
     )
-    assert res_fast.get("status") == "ok"
-    assert res_fast.get("verdict") == "PROCEED_FAST"
+    assert res_fast.get("status") == "error"
+    assert res_fast.get("proof_state") == "not_proven"
+    assert res_fast.get("verdict") == "NOT_PROVEN"
+    assert res_fast.get("compute_uri") == "bos://compute/aetherforge/infer"
+    assert "daemon unavailable" not in str(res_fast)
+
+
+@pytest.mark.asyncio
+async def test_bdsk_private_sentinel_is_only_sent_to_mocked_compute(monkeypatch):
+    sentinel = "PRIVATE_SENTINEL_DO_NOT_PERSIST"
+    seen = {}
+
+    async def fake_resolve(uri, **kwargs):
+        seen["uri"] = uri
+        seen["prompt"] = kwargs["prompt"]
+        return {"status": "error", "error": f"bad input: {sentinel}"}
+
+    monkeypatch.setattr(
+        "agora.server.tools_bos.bdsk._resolve_bos_uri", fake_resolve
+    )
+    result = await persona_bdsk_evaluate(sentinel, context=sentinel)
+
+    assert seen["uri"] == "bos://compute/aetherforge/infer"
+    assert sentinel in seen["prompt"]
+    assert sentinel not in str(result)

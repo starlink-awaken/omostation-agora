@@ -1,79 +1,141 @@
-"""B.D.S.K. 虚拟董事会工具 (tools_bos 拆分: bdsk 域)。
+"""B.D.S.K. virtual-board evaluation through the canonical BOS compute route.
 
-persona_bdsk_evaluate + _persist_bdsk_adr (ADR 落盘)。
+The persona endpoint is orchestration, not an inference engine. Every proved
+evaluation therefore comes from ``bos://compute/aetherforge/infer``. There is
+no rules-based success fallback and this endpoint never writes an ADR.
 """
 
 from __future__ import annotations
 
-import time as _time
-from pathlib import Path
+import json
+from collections.abc import Mapping
+from typing import Any
 
+from agora.mcp.resolver.api import resolve_bos_uri as _resolve_bos_uri
 from agora.server._response import FORMAT_VERSION, _error, _ok
 
+_COMPUTE_URI = "bos://compute/aetherforge/infer"
+_ROLES = ("builder", "devil", "sage", "keeper")
+_SAFE_VERDICTS = {
+    "REVIEW_REQUIRED",
+    "PROCEED_WITH_GUARDRAILS",
+    "DO_NOT_PROCEED",
+}
 
-def _persist_bdsk_adr(topic: str, mode: str, result: dict, adr_dir: str) -> str:
-    """自动将 @B.D.S.K 虚拟董事会终审意见落盘为物理标准的 ADR.md 记录 (P2)."""
-    import re
 
+def _persist_bdsk_adr(*_args: Any, **_kwargs: Any) -> str:
+    """Retained import shim; automatic ADR persistence is intentionally disabled."""
+    raise RuntimeError("automatic_adr_persistence_disabled")
+
+
+def _not_proven(error_code: str) -> dict[str, Any]:
+    result = _error("BDSK evaluation not proven")
+    result.update(
+        {
+            "proof_state": "not_proven",
+            "verdict": "NOT_PROVEN",
+            "compute_uri": _COMPUTE_URI,
+            "error_code": error_code,
+        }
+    )
+    return result
+
+
+def _extract_openai_content(result: Any) -> str | None:
+    """Extract bounded OpenAI-compatible content from resolver envelopes."""
+    current = result
+    for _depth in range(4):
+        if not isinstance(current, Mapping):
+            return None
+        choices = current.get("choices")
+        if isinstance(choices, list) and choices:
+            first = choices[0]
+            if not isinstance(first, Mapping):
+                return None
+            message = first.get("message")
+            if not isinstance(message, Mapping):
+                return None
+            content = message.get("content")
+            if isinstance(content, str) and len(content) <= 32_000:
+                return content
+            return None
+        nested = current.get("result")
+        if nested is current:
+            return None
+        current = nested
+    return None
+
+
+def _validated_board_result(content: str) -> dict[str, Any] | None:
+    """Accept only the small decision schema; discard all untrusted extra output."""
     try:
-        target_dir = Path(adr_dir)
-        target_dir.mkdir(parents=True, exist_ok=True)
-        # 计算合规的安全 ADR 文件名 (03xx-adr-<slug>.md)
-        slug = (
-            re.sub(r"[^a-zA-Z0-9]+", "-", topic.lower()).strip("-")[:40]
-            or "bdsk-decision"
-        )
-        filename = f"0399-adr-{slug}.md"
-        filepath = target_dir / filename
+        raw = json.loads(content)
+    except (json.JSONDecodeError, RecursionError):
+        return None
+    if not isinstance(raw, Mapping):
+        return None
 
-        reviews = result.get("board_reviews", {})
-        builder_op = reviews.get("builder", {}).get("opinion", "N/A")
-        devil_op = reviews.get("devil", {}).get("opinion", "N/A")
-        sage_op = reviews.get("sage", {}).get("opinion", "N/A")
-        keeper_op = reviews.get("keeper", {}).get("opinion", "N/A")
+    verdict = raw.get("verdict")
+    risk_score = raw.get("risk_score")
+    recommendation = raw.get("recommendation")
+    reviews = raw.get("board_reviews")
+    if verdict not in _SAFE_VERDICTS:
+        return None
+    if (
+        isinstance(risk_score, bool)
+        or not isinstance(risk_score, int)
+        or not 0 <= risk_score <= 100
+    ):
+        return None
+    if not isinstance(recommendation, str) or not recommendation.strip():
+        return None
+    if not isinstance(reviews, Mapping):
+        return None
 
-        content = f"""---
-title: "B.D.S.K 虚拟董事会决策: {topic}"
-status: "ACCEPTED"
-date: "{_time.strftime("%Y-%m-%d")}"
-decision-makers: "B.D.S.K Virtual Board (@Builder, @Devil, @Sage, @Keeper)"
----
+    safe_reviews: dict[str, dict[str, str]] = {}
+    for role in _ROLES:
+        review = reviews.get(role)
+        if not isinstance(review, Mapping):
+            return None
+        opinion = review.get("opinion")
+        if not isinstance(opinion, str) or not opinion.strip():
+            return None
+        safe_review = {"opinion": opinion[:4_000]}
+        for optional in ("role", "focus"):
+            value = review.get(optional)
+            if isinstance(value, str) and value.strip():
+                safe_review[optional] = value[:500]
+        safe_reviews[role] = safe_review
 
-# ADR: B.D.S.K 虚拟董事会共识决策 — {topic}
+    return {
+        "verdict": verdict,
+        "risk_score": risk_score,
+        "recommendation": recommendation[:4_000],
+        "board_reviews": safe_reviews,
+    }
 
-> **评估模式**: `{mode}` | **风险指数**: `{result.get("risk_score", 0)}/100` | **决策状态**: `{result.get("verdict", "UNKNOWN")}`
 
-## 1. 决策背景 (Context)
-主题提案: **{topic}**
-由 @B.D.S.K. 虚拟董事会调用 `persona_bdsk_evaluate` 接口发起多角交叉审议与存证。
+def _prompt(topic: str, mode: str, context: str) -> str:
+    return f"""Evaluate this proposal as the B.D.S.K. four-corner board.
+Mode: {mode}
+Topic: {topic}
+Context: {context or '[not provided]'}
 
-## 2. 4角红蓝对抗与质询纪要 (4-Corner Deliberation)
-
-### 🧑‍💻 @Builder (技术合伙人 - How & MVP)
-- **核心主张**: {builder_op}
-
-### ⚡️ @Devil (批判风控官 - Risk & Anti-Fragile)
-- **风险质询**: {devil_op}
-
-### 🧠 @Sage (战略贤者 - Context & First-Principles)
-- **第一性定位**: {sage_op}
-
-### 👁️ @Keeper (控制论守夜人 - Governance & SSOT)
-- **控制与收敛**: {keeper_op}
-
-## 3. 最终定案与路线指导 (Verdict & Recommendations)
-- **决议输出**: `{result.get("verdict", "UNKNOWN")}`
-- **推进策略**: {result.get("recommendation", "N/A")}
-
-## 4. 后续执行检查关卡 (GaC Contract)
-- [ ] 所有代码迭代需绑定 ADR-0203 `agent-workflow` 生命流 (`start -> claim -> verify -> closeout`)；
-- [ ] Pre-commit 阶段须通过 `make gac-local-gate` 或子模块隔离 CI 校验；
-- [ ] 存证自愈且保证物理路径一致。
+Return JSON only with exactly these decision fields:
+{{
+  "verdict": "REVIEW_REQUIRED|PROCEED_WITH_GUARDRAILS|DO_NOT_PROCEED",
+  "risk_score": 0,
+  "recommendation": "bounded human-review recommendation",
+  "board_reviews": {{
+    "builder": {{"opinion": "..."}},
+    "devil": {{"opinion": "..."}},
+    "sage": {{"opinion": "..."}},
+    "keeper": {{"opinion": "..."}}
+  }}
+}}
+Never claim APPROVED or ACCEPTED. This output is advisory and cannot authorize
+a commit, merge, deployment, ADR, or external side effect.
 """
-        filepath.write_text(content, encoding="utf-8")
-        return str(filepath)
-    except Exception as e:
-        return f"N/A (write error: {e})"
 
 
 async def persona_bdsk_evaluate(
@@ -82,71 +144,45 @@ async def persona_bdsk_evaluate(
     context: str = "",
     persist_adr: bool = False,
     adr_dir: str = "docs/decisions",
-) -> dict:
-    """B.D.S.K. 虚拟董事会并发对抗与结构化方案评审网关 (支持物理 ADR 自动存证)."""
-    try:
-        if mode == "fast":
-            res = {
-                "format_version": FORMAT_VERSION,
-                "topic": topic,
-                "mode": mode,
-                "verdict": "PROCEED_FAST",
-                "builder": "推荐采用敏捷工程快进落地，关注代码简洁性与单测回归。",
-                "keeper": "经核对契约无破损，提醒修改同时更新 SSOT 文档。",
-            }
-            if persist_adr:
-                res["saved_adr_path"] = _persist_bdsk_adr(topic, mode, res, adr_dir)
-            return _ok(res)
+) -> dict[str, Any]:
+    """Evaluate via AetherForge; unavailable or malformed compute is not proven."""
+    del adr_dir  # legacy input retained only to fail closed without touching disk
+    if persist_adr:
+        return _not_proven("automatic_adr_persistence_disabled")
+    if mode not in {"deep", "fast"}:
+        return _not_proven("unsupported_mode")
+    if not isinstance(topic, str) or not topic.strip():
+        return _not_proven("topic_required")
 
-        res = {
+    try:
+        compute_result = await _resolve_bos_uri(
+            _COMPUTE_URI,
+            prompt=_prompt(topic, mode, context),
+            model="coding-fast",
+            routing_mode="local",
+            stream=False,
+            timeout=120,
+        )
+    except Exception:
+        return _not_proven("compute_unavailable")
+    if not isinstance(compute_result, Mapping) or compute_result.get("status") != "ok":
+        return _not_proven("compute_unavailable")
+
+    content = _extract_openai_content(compute_result)
+    board_result = _validated_board_result(content) if content is not None else None
+    if board_result is None:
+        return _not_proven("invalid_compute_response")
+
+    return _ok(
+        {
             "format_version": FORMAT_VERSION,
             "topic": topic,
             "mode": mode,
-            "verdict": "PROCEED_WITH_GUARDRAILS",
-            "board_reviews": {
-                "builder": {
-                    "role": "技术合伙人",
-                    "focus": "MVP与可落地性",
-                    "opinion": "工程结构合理，建议拆分为渐进式里程碑并以自动化单测锁定契约。",
-                },
-                "devil": {
-                    "role": "批判风控官",
-                    "focus": "反脆弱与风险",
-                    "opinion": "警惕协议滞后与静态 Fallback 脱节，必须建立运行时 Sentinel 自测阻断机制。",
-                },
-                "sage": {
-                    "role": "战略贤者",
-                    "focus": "第一性原理与本质",
-                    "opinion": "生态位精准定位，实现由单一被动操作向自适应数字副官演进。",
-                },
-                "keeper": {
-                    "role": "控制论守夜人",
-                    "focus": "规范与记忆闭环",
-                    "opinion": "已遵从 ADR-0203 需求迭代必须通过工作流门禁与 Doc SSOT 验证。",
-                },
-            },
-            "debate_log": [
-                {
-                    "round": 1,
-                    "speaker": "devil",
-                    "action": "CHALLENGE",
-                    "content": "如何证明网络降级和边-云自适应下，不会出现死循环或请求悬空？",
-                },
-                {
-                    "round": 2,
-                    "speaker": "builder",
-                    "action": "DEFEND",
-                    "content": "引入物理内存与热探活评分，当评分不够直接快速失败或降级，收敛闭环。",
-                },
-            ],
-            "risk_score": 15,
-            "recommendation": "在带有 Drift Sentinel 防线的前提下全面推进落地。",
+            "proof_state": "proven",
+            "compute_uri": _COMPUTE_URI,
+            **board_result,
         }
-        if persist_adr:
-            res["saved_adr_path"] = _persist_bdsk_adr(topic, mode, res, adr_dir)
-        return _ok(res)
-    except Exception as exc:
-        return _error(f"Failed to evaluate bdsk persona: {exc}")
+    )
 
 
-# ── 路由辅助 ──────────────────────────────────────────────
+# ── route helper ──────────────────────────────────────────────
