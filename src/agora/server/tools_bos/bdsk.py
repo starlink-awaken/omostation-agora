@@ -7,25 +7,29 @@ no rules-based success fallback and this endpoint never writes an ADR.
 
 from __future__ import annotations
 
+import asyncio
 import json
 import re
 from collections.abc import Mapping
 from hashlib import sha256
 from typing import Any
 
-from agora.mcp.resolver.api import resolve_bos_uri as _resolve_bos_uri
+from agora.mcp.resolver.adapter import get_stdio_adapter as _get_stdio_adapter
+from agora.mcp.resolver.api import get_service as _get_service
 from agora.server._response import FORMAT_VERSION, _error, _ok
 
 _COMPUTE_URI = "bos://compute/aetherforge/infer"
+_COMPUTE_TIMEOUT_SECONDS = 120.0
+_COMPUTE_TIMEOUT_MAX_SECONDS = 120.0
 _ROLES = ("builder", "devil", "sage", "keeper")
 _SAFE_VERDICTS = {
     "REVIEW_REQUIRED",
     "PROCEED_WITH_GUARDRAILS",
     "DO_NOT_PROCEED",
 }
-_ABSOLUTE_PATH = re.compile(
-    r"(?i)(?:^|[\s\"'])(?:/(?:Users|home|private|tmp|var|etc|Volumes)(?:/|$)|[a-z]:[\\/])"
-)
+_POSIX_ABSOLUTE_PATH = re.compile(r"(?:^|[^A-Za-z0-9_/])/(?!/)")
+_WINDOWS_DRIVE_PATH = re.compile(r"(?i)(?:^|[^a-z0-9])[a-z]:[\\/]")
+_UNC_PATH = re.compile(r"(?:\\\\|//)[^\\/\s]+[\\/]")
 _CREDENTIAL = re.compile(
     r"(?i)(?:\bsk-(?:test-)?[a-z0-9_-]{4,}|"
     r"\b(?:token|credential|password|api[_-]?key|secret)\s*[:=]\s*\S+)"
@@ -58,7 +62,24 @@ def _privacy_safe(topic: Any, context: Any) -> bool:
     combined = topic + context
     if any(ord(character) < 32 or ord(character) == 127 for character in combined):
         return False
-    return not _ABSOLUTE_PATH.search(combined) and not _CREDENTIAL.search(combined)
+    return not any(_contains_private_syntax(value) for value in (topic, context))
+
+
+def _contains_private_syntax(value: str) -> bool:
+    return bool(
+        _POSIX_ABSOLUTE_PATH.search(value)
+        or _WINDOWS_DRIVE_PATH.search(value)
+        or _UNC_PATH.search(value)
+        or _CREDENTIAL.search(value)
+    )
+
+
+def _privacy_safe_output(value: str, topic: str, context: str) -> bool:
+    if any(ord(character) < 32 or ord(character) == 127 for character in value):
+        return False
+    if _contains_private_syntax(value):
+        return False
+    return topic not in value and (not context or context not in value)
 
 
 def _extract_openai_content(result: Any) -> str | None:
@@ -86,53 +107,78 @@ def _extract_openai_content(result: Any) -> str | None:
     return None
 
 
-def _validated_board_result(content: str) -> dict[str, Any] | None:
+def _validated_board_result(
+    content: str, topic: str, context: str
+) -> tuple[dict[str, Any] | None, str | None]:
     """Accept only the small decision schema; discard all untrusted extra output."""
     try:
         raw = json.loads(content)
     except (json.JSONDecodeError, RecursionError):
-        return None
+        return None, "invalid_compute_response"
     if not isinstance(raw, Mapping):
-        return None
+        return None, "invalid_compute_response"
 
     verdict = raw.get("verdict")
     risk_score = raw.get("risk_score")
     recommendation = raw.get("recommendation")
     reviews = raw.get("board_reviews")
     if verdict not in _SAFE_VERDICTS:
-        return None
+        return None, "invalid_compute_response"
     if (
         isinstance(risk_score, bool)
         or not isinstance(risk_score, int)
         or not 0 <= risk_score <= 100
     ):
-        return None
+        return None, "invalid_compute_response"
     if not isinstance(recommendation, str) or not recommendation.strip():
-        return None
+        return None, "invalid_compute_response"
     if not isinstance(reviews, Mapping):
-        return None
+        return None, "invalid_compute_response"
+
+    bounded_recommendation = recommendation[:4_000]
+    if not _privacy_safe_output(bounded_recommendation, topic, context):
+        return None, "unsafe_compute_response"
 
     safe_reviews: dict[str, dict[str, str]] = {}
     for role in _ROLES:
         review = reviews.get(role)
         if not isinstance(review, Mapping):
-            return None
+            return None, "invalid_compute_response"
         opinion = review.get("opinion")
         if not isinstance(opinion, str) or not opinion.strip():
-            return None
-        safe_review = {"opinion": opinion[:4_000]}
+            return None, "invalid_compute_response"
+        bounded_opinion = opinion[:4_000]
+        if not _privacy_safe_output(bounded_opinion, topic, context):
+            return None, "unsafe_compute_response"
+        safe_review = {"opinion": bounded_opinion}
         for optional in ("role", "focus"):
             value = review.get(optional)
             if isinstance(value, str) and value.strip():
-                safe_review[optional] = value[:500]
+                bounded_value = value[:500]
+                if not _privacy_safe_output(bounded_value, topic, context):
+                    return None, "unsafe_compute_response"
+                safe_review[optional] = bounded_value
         safe_reviews[role] = safe_review
 
     return {
         "verdict": verdict,
         "risk_score": risk_score,
-        "recommendation": recommendation[:4_000],
+        "recommendation": bounded_recommendation,
         "board_reviews": safe_reviews,
-    }
+    }, None
+
+
+async def _invoke_compute(uri: str, **payload: Any) -> dict[str, Any]:
+    """Resolve the canonical service and enforce the timeout in its real adapter."""
+    service = _get_service(uri)
+    if service is None or service.transport != "stdio":
+        return {"status": "error"}
+    timeout_seconds = min(
+        max(float(_COMPUTE_TIMEOUT_SECONDS), 0.01), _COMPUTE_TIMEOUT_MAX_SECONDS
+    )
+    adapter = _get_stdio_adapter(timeout=timeout_seconds)
+    payload["timeout"] = timeout_seconds
+    return await asyncio.to_thread(adapter.call, service, **payload)
 
 
 def _prompt(topic: str, mode: str, context: str) -> str:
@@ -175,13 +221,12 @@ async def persona_bdsk_evaluate(
         return _not_proven("privacy_rejected")
 
     try:
-        compute_result = await _resolve_bos_uri(
+        compute_result = await _invoke_compute(
             _COMPUTE_URI,
             prompt=_prompt(topic, mode, context),
             model="coding-fast",
             routing_mode="local",
             stream=False,
-            timeout=120,
         )
     except Exception:
         return _not_proven("compute_unavailable")
@@ -189,14 +234,19 @@ async def persona_bdsk_evaluate(
         return _not_proven("compute_unavailable")
 
     content = _extract_openai_content(compute_result)
-    board_result = _validated_board_result(content) if content is not None else None
+    board_result, validation_error = (
+        _validated_board_result(content, topic, context)
+        if content is not None
+        else (None, "invalid_compute_response")
+    )
     if board_result is None:
-        return _not_proven("invalid_compute_response")
+        return _not_proven(validation_error or "invalid_compute_response")
 
     return _ok(
         {
             "format_version": FORMAT_VERSION,
             "topic_digest": f"sha256:{sha256(topic.encode()).hexdigest()}",
+            "context_digest": f"sha256:{sha256(context.encode()).hexdigest()}",
             "mode": mode,
             "proof_state": "proven",
             "compute_uri": _COMPUTE_URI,

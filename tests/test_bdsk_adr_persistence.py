@@ -13,7 +13,7 @@ async def test_bdsk_evaluate_rejects_automatic_adr_persistence(tmp_path, monkeyp
         raise AssertionError("compute must not run for a forbidden persistence request")
 
     monkeypatch.setattr(
-        "agora.server.tools_bos.bdsk._resolve_bos_uri", must_not_call
+        "agora.server.tools_bos.bdsk._invoke_compute", must_not_call
     )
     res = await persona_bdsk_evaluate(
         topic="Adaptive Edge Routing and Memory Probing",
@@ -38,7 +38,7 @@ async def test_bdsk_evaluate_legacy_adr_dir_never_writes_without_flag(
         return {"status": "error", "error": "offline"}
 
     monkeypatch.setattr(
-        "agora.server.tools_bos.bdsk._resolve_bos_uri", fake_resolve
+        "agora.server.tools_bos.bdsk._invoke_compute", fake_resolve
     )
     res = await persona_bdsk_evaluate(
         topic="Apple Silicon Hardware Pressure Probe",

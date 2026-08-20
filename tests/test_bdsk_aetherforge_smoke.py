@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import json
 import re
+import sys
+import time
 from hashlib import sha256
 from pathlib import Path
 import pytest
@@ -12,8 +14,13 @@ import yaml
 from agora.mcp.bos_resolver import list_services
 from agora.mcp.bos_router import bos_router
 from agora.mcp.resolver.services import _fallback_services
-from agora.mcp.resolver.services_types import BOS_URI_DOMAIN_PATTERN, BOS_URI_DOMAINS
+from agora.mcp.resolver.services_types import (
+    BOS_URI_DOMAIN_PATTERN,
+    BOS_URI_DOMAINS,
+    BosService,
+)
 from agora.server.tools_bos import persona_bdsk_evaluate
+from agora.server.tools_bos import bdsk
 
 
 def test_aetherforge_compute_domain_and_fallback_services():
@@ -107,7 +114,7 @@ async def test_bdsk_evaluate_routes_once_through_aetherforge_compute(monkeypatch
         }
 
     monkeypatch.setattr(
-        "agora.server.tools_bos.bdsk._resolve_bos_uri", fake_resolve
+        "agora.server.tools_bos.bdsk._invoke_compute", fake_resolve
     )
     res_deep = await persona_bdsk_evaluate(
         topic="引入边缘 MLX 计算网关执行推理分析",
@@ -122,6 +129,10 @@ async def test_bdsk_evaluate_routes_once_through_aetherforge_compute(monkeypatch
     assert res_deep.get("topic_digest") == (
         "sha256:"
         + sha256("引入边缘 MLX 计算网关执行推理分析".encode()).hexdigest()
+    )
+    assert res_deep.get("context_digest") == (
+        "sha256:"
+        + sha256("高敏感医疗与公文数据分析场景".encode()).hexdigest()
     )
     assert "topic" not in res_deep
     assert "context" not in res_deep
@@ -141,7 +152,7 @@ async def test_bdsk_evaluate_compute_failure_is_not_proven(monkeypatch):
         return {"status": "error", "error": "daemon unavailable"}
 
     monkeypatch.setattr(
-        "agora.server.tools_bos.bdsk._resolve_bos_uri", fake_resolve
+        "agora.server.tools_bos.bdsk._invoke_compute", fake_resolve
     )
     res_fast = await persona_bdsk_evaluate(
         topic="紧急对齐 ADR-0300 规范文案",
@@ -165,11 +176,18 @@ async def test_bdsk_private_inputs_are_rejected_before_compute(
         raise AssertionError("privacy rejection must happen before compute")
 
     monkeypatch.setattr(
-        "agora.server.tools_bos.bdsk._resolve_bos_uri", fake_resolve
+        "agora.server.tools_bos.bdsk._invoke_compute", fake_resolve
     )
     private_inputs = [
         "/Users/example/private/board-proposal.md",
+        "/opt/team/board-proposal.md",
+        "/srv/board-proposal.md",
+        "/a",
+        "/",
         r"C:\\Users\\example\\private.txt",
+        r"D:\\board\\proposal.txt",
+        r"\\server\share\proposal.txt",
+        "//server/share/proposal.txt",
         "sk-test-PRIVATE_SENTINEL_123456",
         "credential=PRIVATE_SENTINEL_DO_NOT_PERSIST",
         "topic-with-control\x00byte",
@@ -181,10 +199,118 @@ async def test_bdsk_private_inputs_are_rejected_before_compute(
         assert result["status"] == "error"
         assert result["proof_state"] == "not_proven"
         assert result["error_code"] == "privacy_rejected"
-        assert private_input not in serialized
+        # Tiny paths such as "/" and "/a" are substrings of the canonical
+        # compute URI, so resolver_calls=0 is their non-disclosure observable.
+        if len(private_input) > 3:
+            assert private_input not in serialized
 
     assert calls == []
     assert not list(tmp_path.iterdir())
     captured = caplog.text
     for private_input in private_inputs:
         assert private_input not in captured
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("echo_field", ["recommendation", "opinion", "token"])
+async def test_bdsk_compute_output_cannot_echo_private_inputs(
+    monkeypatch, caplog, tmp_path, echo_field
+):
+    topic = "board proposal PRIVATE_TOPIC_NONCE"
+    context = "private context PRIVATE_CONTEXT_NONCE"
+
+    async def fake_resolve(_uri, **_kwargs):
+        recommendation = "Require bounded human review."
+        opinions = {
+            role: {"opinion": f"{role} evidence"}
+            for role in ("builder", "devil", "sage", "keeper")
+        }
+        if echo_field == "recommendation":
+            recommendation = f"Repeat: {topic}"
+        elif echo_field == "opinion":
+            opinions["devil"]["opinion"] = f"Leak: {context}"
+        else:
+            opinions["keeper"]["opinion"] = "sk-test-OUTPUT_SENTINEL_123456"
+        payload = {
+            "verdict": "REVIEW_REQUIRED",
+            "risk_score": 50,
+            "recommendation": recommendation,
+            "board_reviews": opinions,
+        }
+        return {
+            "status": "ok",
+            "result": {"choices": [{"message": {"content": json.dumps(payload)}}]},
+        }
+
+    monkeypatch.setattr(bdsk, "_invoke_compute", fake_resolve)
+    result = await persona_bdsk_evaluate(topic=topic, context=context)
+    serialized = json.dumps(result, ensure_ascii=False)
+
+    assert result["status"] == "error"
+    assert result["proof_state"] == "not_proven"
+    assert result["error_code"] == "unsafe_compute_response"
+    assert topic not in serialized
+    assert context not in serialized
+    assert "OUTPUT_SENTINEL_123456" not in serialized
+    assert not list(tmp_path.iterdir())
+    assert topic not in caplog.text
+    assert context not in caplog.text
+
+
+@pytest.mark.asyncio
+async def test_bdsk_real_stdio_timeout_is_bounded_and_enforced(monkeypatch):
+    """The persona's timeout must reach the real subprocess adapter."""
+    service = BosService(
+        uri="bos://compute/aetherforge/infer",
+        domain="compute",
+        package="aetherforge",
+        action="infer",
+        transport="stdio",
+        command=[sys.executable, "-c", "import time; time.sleep(1)"],
+    )
+    monkeypatch.setattr(bdsk, "_COMPUTE_TIMEOUT_SECONDS", 0.05)
+    monkeypatch.setattr(bdsk, "_get_service", lambda _uri: service)
+
+    started = time.monotonic()
+    result = await persona_bdsk_evaluate(topic="random low sensitivity timeout nonce")
+    elapsed = time.monotonic() - started
+
+    assert elapsed < 0.8
+    assert result["status"] == "error"
+    assert result["proof_state"] == "not_proven"
+    assert result["error_code"] == "compute_unavailable"
+
+
+@pytest.mark.asyncio
+async def test_bdsk_timeout_is_propagated_to_adapter_and_payload(monkeypatch):
+    service = BosService(
+        uri="bos://compute/aetherforge/infer",
+        domain="compute",
+        package="aetherforge",
+        action="infer",
+        transport="stdio",
+        command=["aetherforge.cli"],
+    )
+    captured = {}
+
+    class CapturingAdapter:
+        def call(self, actual_service, **payload):
+            captured["service"] = actual_service
+            captured["payload"] = payload
+            return {"status": "error"}
+
+    def fake_adapter_factory(*, timeout):
+        captured["adapter_timeout"] = timeout
+        return CapturingAdapter()
+
+    monkeypatch.setattr(bdsk, "_get_service", lambda _uri: service)
+    monkeypatch.setattr(bdsk, "_get_stdio_adapter", fake_adapter_factory)
+
+    result = await bdsk._invoke_compute(
+        "bos://compute/aetherforge/infer", prompt="low sensitivity nonce"
+    )
+
+    assert result["status"] == "error"
+    assert captured["service"] is service
+    assert captured["adapter_timeout"] == 120.0
+    assert captured["payload"]["timeout"] == 120.0

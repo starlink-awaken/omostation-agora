@@ -163,7 +163,7 @@ async def test_bos_persona_bdsk_endpoint(monkeypatch):
         }
 
     monkeypatch.setattr(
-        "agora.server.tools_bos.bdsk._resolve_bos_uri", fake_resolve
+        "agora.server.tools_bos.bdsk._invoke_compute", fake_resolve
     )
     res_deep = await persona_bdsk_evaluate("系统升级到 V3", mode="deep")
     assert res_deep.get("status") == "ok"
