@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import os
 import subprocess
 import sys
 import types
@@ -461,20 +462,35 @@ class TestP34W1StdioProtocol:
         assert r.get("status") == "error"
         assert "unknown_bos_uri" in r["error"]
 
-    def test_invoke_stdio_minerva(self, monkeypatch):
-        """Minerva 可用时保留正例；缺失时 mock spawn 边界并验证失败闭合。"""
+    def test_invoke_stdio_minerva(self, monkeypatch, tmp_path):
+        """Minerva 可用时保留正例；缺失时验证真实 spawn 失败边界。"""
         processes_before = dict(get_pool().processes)
-        spawn_attempts = 0
 
         if not KAIRON_ROOT.is_dir():
-            from agora.mcp.resolver import adapter as adapter_module
+            empty_workspace = tmp_path / "empty-workspace"
+            (empty_workspace / "projects").mkdir(parents=True)
+            missing_kairon = empty_workspace / "projects/knowledge/kairon"
+            missing_executable = missing_kairon / "bin/minerva-python"
+            assert not missing_kairon.exists()
+            assert not missing_executable.exists()
+            monkeypatch.setenv("WORKSPACE_ROOT", str(empty_workspace))
 
-            def _blocked_spawn(*args, **kwargs):
-                nonlocal spawn_attempts
-                spawn_attempts += 1
-                raise FileNotFoundError("kairon_root_unavailable")
+            minerva_service = next(
+                service
+                for service in POC_SERVICES
+                if service.uri == "bos://analysis/minerva/research"
+            )
+            monkeypatch.setattr(
+                minerva_service,
+                "command",
+                [str(missing_executable), "-m", "minerva.cli", "research"],
+            )
 
-            monkeypatch.setattr(adapter_module.subprocess, "Popen", _blocked_spawn)
+            try:
+                child_before, _ = os.waitpid(-1, os.WNOHANG)
+            except ChildProcessError:
+                child_before = None
+            assert child_before is None
 
         r = invoke_stdio(
             "bos://analysis/minerva/research", "research", {"topic": "test"}
@@ -485,12 +501,22 @@ class TestP34W1StdioProtocol:
             assert r.get("status") in ("ok", "error")
             assert "result" in r or "error" in r
         else:
-            assert spawn_attempts == 1
+            try:
+                child_after, _ = os.waitpid(-1, os.WNOHANG)
+            except ChildProcessError:
+                child_after = None
+
             assert r.get("status") == "error"
-            assert r.get("error") == "kairon_root_unavailable"
-            assert r.get("pid") is None
+            assert "[Errno 2]" in r.get("error", "")
             assert "result" not in r
             assert get_pool().processes == processes_before
+            assert {
+                "process_started": r.get("pid") is not None,
+                "child_waitable_or_running": child_after is not None,
+            } == {
+                "process_started": False,
+                "child_waitable_or_running": False,
+            }
 
     def test_list_services_includes_fields(self):
         """W1 验证: list_services 含 transport/pid/alive 字段."""
