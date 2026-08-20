@@ -8,7 +8,9 @@ no rules-based success fallback and this endpoint never writes an ADR.
 from __future__ import annotations
 
 import json
+import re
 from collections.abc import Mapping
+from hashlib import sha256
 from typing import Any
 
 from agora.mcp.resolver.api import resolve_bos_uri as _resolve_bos_uri
@@ -21,6 +23,13 @@ _SAFE_VERDICTS = {
     "PROCEED_WITH_GUARDRAILS",
     "DO_NOT_PROCEED",
 }
+_ABSOLUTE_PATH = re.compile(
+    r"(?i)(?:^|[\s\"'])(?:/(?:Users|home|private|tmp|var|etc|Volumes)(?:/|$)|[a-z]:[\\/])"
+)
+_CREDENTIAL = re.compile(
+    r"(?i)(?:\bsk-(?:test-)?[a-z0-9_-]{4,}|"
+    r"\b(?:token|credential|password|api[_-]?key|secret)\s*[:=]\s*\S+)"
+)
 
 
 def _persist_bdsk_adr(*_args: Any, **_kwargs: Any) -> str:
@@ -39,6 +48,17 @@ def _not_proven(error_code: str) -> dict[str, Any]:
         }
     )
     return result
+
+
+def _privacy_safe(topic: Any, context: Any) -> bool:
+    if not isinstance(topic, str) or not isinstance(context, str):
+        return False
+    if not topic.strip() or len(topic) > 4_000 or len(context) > 8_000:
+        return False
+    combined = topic + context
+    if any(ord(character) < 32 or ord(character) == 127 for character in combined):
+        return False
+    return not _ABSOLUTE_PATH.search(combined) and not _CREDENTIAL.search(combined)
 
 
 def _extract_openai_content(result: Any) -> str | None:
@@ -151,8 +171,8 @@ async def persona_bdsk_evaluate(
         return _not_proven("automatic_adr_persistence_disabled")
     if mode not in {"deep", "fast"}:
         return _not_proven("unsupported_mode")
-    if not isinstance(topic, str) or not topic.strip():
-        return _not_proven("topic_required")
+    if not _privacy_safe(topic, context):
+        return _not_proven("privacy_rejected")
 
     try:
         compute_result = await _resolve_bos_uri(
@@ -176,7 +196,7 @@ async def persona_bdsk_evaluate(
     return _ok(
         {
             "format_version": FORMAT_VERSION,
-            "topic": topic,
+            "topic_digest": f"sha256:{sha256(topic.encode()).hexdigest()}",
             "mode": mode,
             "proof_state": "proven",
             "compute_uri": _COMPUTE_URI,

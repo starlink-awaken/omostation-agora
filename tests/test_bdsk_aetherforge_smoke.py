@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import re
+from hashlib import sha256
 from pathlib import Path
 import pytest
 import yaml
@@ -118,6 +119,15 @@ async def test_bdsk_evaluate_routes_once_through_aetherforge_compute(monkeypatch
     assert res_deep.get("compute_uri") == "bos://compute/aetherforge/infer"
     assert res_deep.get("verdict") == "REVIEW_REQUIRED"
     assert res_deep.get("risk_score") == 41
+    assert res_deep.get("topic_digest") == (
+        "sha256:"
+        + sha256("引入边缘 MLX 计算网关执行推理分析".encode()).hexdigest()
+    )
+    assert "topic" not in res_deep
+    assert "context" not in res_deep
+    assert "高敏感医疗与公文数据分析场景" not in json.dumps(
+        res_deep, ensure_ascii=False
+    )
     reviews = res_deep.get("board_reviews", {})
     assert set(reviews) == {"builder", "devil", "sage", "keeper"}
     assert len(calls) == 1
@@ -145,20 +155,36 @@ async def test_bdsk_evaluate_compute_failure_is_not_proven(monkeypatch):
 
 
 @pytest.mark.asyncio
-async def test_bdsk_private_sentinel_is_only_sent_to_mocked_compute(monkeypatch):
-    sentinel = "PRIVATE_SENTINEL_DO_NOT_PERSIST"
-    seen = {}
+async def test_bdsk_private_inputs_are_rejected_before_compute(
+    monkeypatch, caplog, tmp_path
+):
+    calls = []
 
-    async def fake_resolve(uri, **kwargs):
-        seen["uri"] = uri
-        seen["prompt"] = kwargs["prompt"]
-        return {"status": "error", "error": f"bad input: {sentinel}"}
+    async def fake_resolve(*args, **kwargs):
+        calls.append((args, kwargs))
+        raise AssertionError("privacy rejection must happen before compute")
 
     monkeypatch.setattr(
         "agora.server.tools_bos.bdsk._resolve_bos_uri", fake_resolve
     )
-    result = await persona_bdsk_evaluate(sentinel, context=sentinel)
+    private_inputs = [
+        "/Users/example/private/board-proposal.md",
+        r"C:\\Users\\example\\private.txt",
+        "sk-test-PRIVATE_SENTINEL_123456",
+        "credential=PRIVATE_SENTINEL_DO_NOT_PERSIST",
+        "topic-with-control\x00byte",
+        "x" * 4_001,
+    ]
+    for private_input in private_inputs:
+        result = await persona_bdsk_evaluate(private_input, context=private_input)
+        serialized = json.dumps(result, ensure_ascii=False)
+        assert result["status"] == "error"
+        assert result["proof_state"] == "not_proven"
+        assert result["error_code"] == "privacy_rejected"
+        assert private_input not in serialized
 
-    assert seen["uri"] == "bos://compute/aetherforge/infer"
-    assert sentinel in seen["prompt"]
-    assert sentinel not in str(result)
+    assert calls == []
+    assert not list(tmp_path.iterdir())
+    captured = caplog.text
+    for private_input in private_inputs:
+        assert private_input not in captured
