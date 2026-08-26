@@ -3317,6 +3317,30 @@ services:
   - --json
   description: Cell Pool 扩缩容 — 调整 Cell 数量
 - domain: agent-cell
+  package: cell-pool
+  action: auto-scale
+  uri: bos://agent-cell/pool/auto-scale
+  transport: stdio
+  status: active
+  command:
+  - python3
+  - projects/omo/src/omo/resident/cell_pool.py
+  - --auto-scale
+  - --json
+  description: Cell Pool 自动扩缩容 — 基于负载自动调整
+- domain: agent-cell
+  package: cell-pool
+  action: metrics
+  uri: bos://agent-cell/pool/metrics
+  transport: stdio
+  status: active
+  command:
+  - python3
+  - projects/omo/src/omo/resident/cell_pool.py
+  - --metrics
+  - --json
+  description: Cell Pool 指标 — 详细监控指标
+- domain: agent-cell
   package: cell-config
   action: list
   uri: bos://agent-cell/config/list

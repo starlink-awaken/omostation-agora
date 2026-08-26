@@ -246,3 +246,63 @@ def register_agent_cell_tools(mcp: FastMCP) -> None:
             return _ok(result)
         except Exception as e:
             return _error(f"Cell config create failed: {e}")
+
+    @mcp.tool()
+    async def cell_pool_auto_scale() -> dict:
+        """Cell Pool 自动扩缩容 — 基于负载自动调整 Cell 数量."""
+        try:
+            result = _run_cell_tool(
+                "projects/omo/src/omo/resident/cell_pool.py",
+                ["--auto-scale", "--json"],
+            )
+            return _ok(result)
+        except Exception as e:
+            return _error(f"Cell pool auto-scale failed: {e}")
+
+    @mcp.tool()
+    async def cell_pool_metrics() -> dict:
+        """Cell Pool 指标 — 详细监控指标 (利用率/吞吐量/扩缩容历史)."""
+        try:
+            result = _run_cell_tool(
+                "projects/omo/src/omo/resident/cell_pool.py",
+                ["--metrics", "--json"],
+            )
+            return _ok(result)
+        except Exception as e:
+            return _error(f"Cell pool metrics failed: {e}")
+
+    @mcp.tool()
+    async def cell_health() -> dict:
+        """Cell Health — 全链路健康检查 (plan/execute/verify/govern/memory)."""
+        scripts = [
+            ("planner.py", ["--action", "plan", "--intent", "health-check", "--json"]),
+            (
+                "executor.py",
+                [
+                    "--action",
+                    "task",
+                    "--task",
+                    '{"action":"scan","target":"."}',
+                    "--json",
+                ],
+            ),
+            (
+                "verifier.py",
+                [
+                    "--action",
+                    "check",
+                    "--result",
+                    '{"results":[{"ok":true}]}',
+                    "--json",
+                ],
+            ),
+            ("governor.py", ["--action", "decide", "--risk", "R0", "--json"]),
+        ]
+        results = {}
+        for script, args in scripts:
+            try:
+                result = _run_cell_tool(f"projects/omo/src/omo/resident/{script}", args)
+                results[script.replace(".py", "")] = result
+            except Exception as e:
+                results[script.replace(".py", "")] = {"ok": False, "error": str(e)}
+        return _ok(results)
