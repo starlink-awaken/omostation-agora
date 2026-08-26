@@ -611,6 +611,12 @@ from agora.server.tools_bcos import register_bcos_tools
 
 register_bcos_tools(mcp)  # 2026-08-23: BCOS 业务域系统 (W1~W4)
 
+from agora.server.tools_agent_cell import register_agent_cell_tools
+
+register_agent_cell_tools(
+    mcp
+)  # 2026-08-26: AGE-v2 Agent Cell (plan/execute/verify/govern/memory/replay/pool)
+
 from agora.server.tools_registry_mcp import register_registry_mcp_tools
 
 register_registry_mcp_tools(mcp)  # Phase 46: Agent Registry 暴露为 MCP 工具
