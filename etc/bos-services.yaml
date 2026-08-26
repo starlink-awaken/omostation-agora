@@ -3340,6 +3340,151 @@ services:
   - --create
   - --json
   description: Cell Config 创建 — 从预设创建 Cell
+- domain: agent-cell
+  package: cell-core
+  action: plan
+  uri: bos://agent-cell/plan
+  transport: stdio
+  status: active
+  command:
+  - python3
+  - projects/omo/src/omo/resident/planner.py
+  - --intent
+  - '{"intent":""}'
+  - --json
+  description: Cell Plan — 意图解析 + 任务分解 + 风险评估
+- domain: agent-cell
+  package: cell-core
+  action: execute
+  uri: bos://agent-cell/execute
+  transport: stdio
+  status: active
+  command:
+  - python3
+  - projects/omo/src/omo/resident/executor.py
+  - --plan
+  - '{"tasks":[]}'
+  - --json
+  description: Cell Execute — 按计划执行 + 工具调用 + 产出收集
+- domain: agent-cell
+  package: cell-core
+  action: verify
+  uri: bos://agent-cell/verify
+  transport: stdio
+  status: active
+  command:
+  - python3
+  - projects/omo/src/omo/resident/verifier.py
+  - --result
+  - '{"results":[]}'
+  - --json
+  description: Cell Verify — 完整性 + 正确性 + 质量三维评分
+- domain: agent-cell
+  package: cell-core
+  action: govern
+  uri: bos://agent-cell/govern
+  transport: stdio
+  status: active
+  command:
+  - python3
+  - projects/omo/src/omo/resident/governor.py
+  - --assess
+  - '{"action":""}'
+  - --json
+  description: Cell Govern — R0-R3 风险分级 + 审批决策
+- domain: agent-cell
+  package: cell-policy
+  action: pdp-evaluate
+  uri: bos://agent-cell/pdp/evaluate
+  transport: stdio
+  status: active
+  command:
+  - python3
+  - projects/omo/src/omo/resident/pdp_pep.py
+  - --action
+  - '{"action":""}'
+  - --json
+  description: PDP Evaluate — 策略决策点上下文感知评估
+- domain: agent-cell
+  package: cell-policy
+  action: pep-enforce
+  uri: bos://agent-cell/pep/enforce
+  transport: stdio
+  status: active
+  command:
+  - python3
+  - projects/omo/src/omo/resident/pdp_pep.py
+  - --enforce
+  - --action
+  - '{"action":""}'
+  - --json
+  description: PEP Enforce — 策略执行点强制执行 + 审计
+- domain: agent-cell
+  package: cell-memory
+  action: memory-process
+  uri: bos://agent-cell/memory/process
+  transport: stdio
+  status: active
+  command:
+  - python3
+  - projects/omo/src/omo/resident/memory_pipeline.py
+  - --process
+  - '{"episode_id":""}'
+  - --json
+  description: Memory Process — Episode → 记忆候选生成
+- domain: agent-cell
+  package: cell-memory
+  action: memory-consolidate
+  uri: bos://agent-cell/memory/consolidate
+  transport: stdio
+  status: active
+  command:
+  - python3
+  - projects/omo/src/omo/resident/memory_pipeline.py
+  - --consolidate
+  - --json
+  description: Memory Consolidate — 记忆冲突检测 + 整合
+- domain: agent-cell
+  package: cell-replay
+  action: replay
+  uri: bos://agent-cell/replay/run
+  transport: stdio
+  status: active
+  command:
+  - python3
+  - projects/omo/src/omo/resident/replay.py
+  - --replay
+  - '{"episode_id":""}'
+  - --json
+  description: Replay — Episode 回放验证
+- domain: agent-cell
+  package: cell-replay
+  action: shadow
+  uri: bos://agent-cell/replay/shadow
+  transport: stdio
+  status: active
+  command:
+  - python3
+  - projects/omo/src/omo/resident/replay.py
+  - --shadow
+  - --intent
+  - '{"intent":""}'
+  - --json
+  description: Shadow — 影子运行 (无副作用验证)
+- domain: agent-cell
+  package: cell-replay
+  action: eval
+  uri: bos://agent-cell/replay/eval
+  transport: stdio
+  status: active
+  command:
+  - python3
+  - projects/omo/src/omo/resident/replay.py
+  - --eval
+  - --episodes
+  - '5'
+  - --json
+  description: Eval — 批量 Episode 性能评估
 - domain: bcos
   package: bcos-evolution
   action: evolve
