@@ -95,6 +95,67 @@ migrate_legacy_data()
 # Static dict retained as fallback; new services should register in L0.
 
 
+def _resolve_l4_kernel_root(source_file: Path | None = None) -> tuple[Path | None, str]:
+    """Resolve L4 without inferring a nested path in a Workspace checkout."""
+
+    configured_root = os.environ.get("L4_KERNEL_ROOT", "").strip()
+    if configured_root:
+        candidate = Path(configured_root).expanduser()
+        if not candidate.is_absolute() or not candidate.is_dir():
+            raise ValueError("L4_KERNEL_ROOT must be an existing absolute directory")
+        return candidate.resolve(), "explicit"
+
+    configured_workspace = os.environ.get("OMOSTATION_WORKSPACE_ROOT", "").strip()
+    if configured_workspace:
+        workspace = Path(configured_workspace).expanduser()
+        if not workspace.is_absolute():
+            raise ValueError("OMOSTATION_WORKSPACE_ROOT must be an absolute directory")
+        candidate = workspace / "projects" / "l4-kernel"
+        if not candidate.is_dir():
+            raise ValueError("OMOSTATION_WORKSPACE_ROOT does not contain projects/l4-kernel")
+        return candidate.resolve(), "canonical-workspace"
+
+    source = (source_file or Path(__file__)).expanduser().resolve()
+    ancestors = (source.parent, *source.parents)
+    for parent in ancestors:
+        marker = parent / ".omo" / "_truth" / "registry" / "documents-domain-projects.yaml"
+        candidate = parent / "projects" / "l4-kernel"
+        if marker.is_file() and candidate.is_dir():
+            return candidate.resolve(), "canonical-workspace"
+
+    for parent in ancestors:
+        candidate = parent / "projects" / "l4-kernel"
+        if candidate.is_dir():
+            return candidate.resolve(), "legacy-nested"
+    return None, "unavailable"
+
+
+def _build_l4_kernel_service(source_file: Path | None = None) -> dict[str, Any]:
+    """Build the L4 service entry with route provenance."""
+
+    root, mode = _resolve_l4_kernel_root(source_file)
+    if root is None:
+        return {
+            "command": "uv",
+            "args": [],
+            "description": "L4 Kernel unavailable: configure L4_KERNEL_ROOT or Workspace root",
+            "source": "l4-kernel",
+            "enabled": False,
+            "l4_route_mode": mode,
+            "l4_kernel_root": None,
+            "init_timeout": 15,
+        }
+    return {
+        "command": "uv",
+        "args": ["run", "--directory", str(root), "python", "-m", "l4_kernel.mcp_server"],
+        "description": f"L4 Kernel route ({mode})",
+        "source": "l4-kernel",
+        "l4_route_mode": mode,
+        "l4_kernel_root": str(root),
+        "init_timeout": 15,
+    }
+
+
 def _get_known_services() -> dict[str, dict[str, Any]]:
     """Merge L0 registry entries with static KNOWN_SERVICES (L0 wins)."""
     if _HAVE_L0_LOADER:
@@ -148,20 +209,7 @@ _KNOWN_FALLBACK: dict[str, dict[str, Any]] = {
         "description": "MetaOS — 编排/治理层，决策门控与系统协同",
         "source": "metaos",  # independent project at projects/metaos/
     },
-    "l4-kernel": {
-        "command": "uv",
-        "args": [
-            "run",
-            "--directory",
-            str(Path(__file__).resolve().parents[4] / "projects" / "l4-kernel"),
-            "python",
-            "-m",
-            "l4_kernel.mcp_server",
-        ],
-        "description": "L4 Domain Kernel — 24域统一注册表、KEMS六面操作、健康聚合、域生命周期管理",
-        "source": "l4-kernel",
-        "init_timeout": 15,
-    },
+    "l4-kernel": _build_l4_kernel_service(),
     # ── Runtime MCP — 入口收敛 Phase 2 ─────────────────────
     "runtime": {
         "command": "uv",
@@ -389,6 +437,10 @@ def _check_tool_available(name: str, info: dict[str, Any]) -> bool:
     - ``npm`` / other: checks if the command exists on PATH
     - ``docker``: checks if ``docker`` is available and ``docker mcp gateway`` subcommand works
     """
+    if name == "l4-kernel":
+        root = info.get("l4_kernel_root")
+        return isinstance(root, str) and Path(root).is_dir()
+
     source = info.get("source", "kairon")
     if source == "kairon":
         workspace = _find_workspace_root()
@@ -480,6 +532,9 @@ def _default_config(workspace: Path | None) -> dict[str, Any]:
         }
         if "init_timeout" in info:
             entry["init_timeout"] = info["init_timeout"]
+        for metadata in ("l4_route_mode", "l4_kernel_root"):
+            if metadata in info:
+                entry[metadata] = info[metadata]
         services.append(entry)
 
     return {
