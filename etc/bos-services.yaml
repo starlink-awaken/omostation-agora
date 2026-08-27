@@ -3341,6 +3341,74 @@ services:
   - --json
   description: Cell Pool 指标 — 详细监控指标
 - domain: agent-cell
+  package: cell-dag
+  action: execute
+  uri: bos://agent-cell/dag/execute
+  transport: stdio
+  status: active
+  command:
+  - python3
+  - projects/omo/src/omo/resident/cell_dag.py
+  - --demo
+  - --json
+  description: Cell DAG 执行 — 跨 Cell 编排
+- domain: agent-cell
+  package: cell-memory
+  action: publish
+  uri: bos://agent-cell/memory/publish
+  transport: stdio
+  status: active
+  command:
+  - python3
+  - projects/omo/src/omo/resident/cell_memory_network.py
+  - --action
+  - publish
+  - --cell
+  - default
+  - --content
+  - '{"content":""}'
+  description: Memory Publish — 发布记忆到网络
+- domain: agent-cell
+  package: cell-memory
+  action: search
+  uri: bos://agent-cell/memory/search
+  transport: stdio
+  status: active
+  command:
+  - python3
+  - projects/omo/src/omo/resident/cell_memory_network.py
+  - --action
+  - search
+  - --query
+  - '{"query":""}'
+  description: Memory Search — 跨 Cell 搜索
+- domain: agent-cell
+  package: cell-governance
+  action: audit
+  uri: bos://agent-cell/governance/audit
+  transport: stdio
+  status: active
+  command:
+  - python3
+  - projects/omo/src/omo/resident/cell_governance.py
+  - --action
+  - audit-config
+  - --config
+  - '{"max_cells":4}'
+  description: Governance Audit — 配置合规审计
+- domain: agent-cell
+  package: cell-governance
+  action: report
+  uri: bos://agent-cell/governance/report
+  transport: stdio
+  status: active
+  command:
+  - python3
+  - projects/omo/src/omo/resident/cell_governance.py
+  - --action
+  - report
+  description: Governance Report — 治理报告
+- domain: agent-cell
   package: cell-config
   action: list
   uri: bos://agent-cell/config/list

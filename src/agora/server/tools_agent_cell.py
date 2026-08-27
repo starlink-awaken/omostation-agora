@@ -306,3 +306,64 @@ def register_agent_cell_tools(mcp: FastMCP) -> None:
             except Exception as e:
                 results[script.replace(".py", "")] = {"ok": False, "error": str(e)}
         return _ok(results)
+
+    @mcp.tool()
+    async def cell_dag_execute(dag_definition: str = "") -> dict:
+        """Cell DAG Execute — 执行跨 Cell DAG 编排."""
+        try:
+            args = ["--demo", "--json"] if not dag_definition else ["--json"]
+            result = _run_cell_tool(
+                "projects/omo/src/omo/resident/cell_dag.py",
+                args,
+            )
+            return _ok(result)
+        except Exception as e:
+            return _error(f"Cell DAG execute failed: {e}")
+
+    @mcp.tool()
+    async def cell_memory_publish(cell_id: str, content: str, tags: str = "general") -> dict:
+        """Cell Memory Publish — 发布记忆到跨 Cell 网络."""
+        try:
+            result = _run_cell_tool(
+                "projects/omo/src/omo/resident/cell_memory_network.py",
+                ["--action", "publish", "--cell", cell_id, "--content", content, "--tags", tags],
+            )
+            return _ok(result)
+        except Exception as e:
+            return _error(f"Cell memory publish failed: {e}")
+
+    @mcp.tool()
+    async def cell_memory_search(query: str, tags: str = "") -> dict:
+        """Cell Memory Search — 跨 Cell 记忆搜索."""
+        try:
+            result = _run_cell_tool(
+                "projects/omo/src/omo/resident/cell_memory_network.py",
+                ["--action", "search", "--query", query, "--tags", tags or ""],
+            )
+            return _ok(result)
+        except Exception as e:
+            return _error(f"Cell memory search failed: {e}")
+
+    @mcp.tool()
+    async def cell_governance_audit(config: str = "{}") -> dict:
+        """Cell Governance Audit — 配置合规审计."""
+        try:
+            result = _run_cell_tool(
+                "projects/omo/src/omo/resident/cell_governance.py",
+                ["--action", "audit-config", "--config", config],
+            )
+            return _ok(result)
+        except Exception as e:
+            return _error(f"Cell governance audit failed: {e}")
+
+    @mcp.tool()
+    async def cell_governance_report() -> dict:
+        """Cell Governance Report — 生成治理报告."""
+        try:
+            result = _run_cell_tool(
+                "projects/omo/src/omo/resident/cell_governance.py",
+                ["--action", "report"],
+            )
+            return _ok(result)
+        except Exception as e:
+            return _error(f"Cell governance report failed: {e}")
