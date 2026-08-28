@@ -609,7 +609,11 @@ register_resident_tools(mcp)  # 2026-08-23: Resident 常驻 Agent 体系 (WP-A~I
 
 from agora.server.tools_bcos import register_bcos_tools
 
+from agora.server.tools_anticorrosion import register_anticorrosion_tools
+
 register_bcos_tools(mcp)  # 2026-08-23: BCOS 业务域系统 (W1~W4)
+
+register_anticorrosion_tools(mcp)  # 2026-08-28: 防腐治理 (ADR-0431)
 
 from agora.server.tools_agent_cell import register_agent_cell_tools
 

@@ -3610,3 +3610,25 @@ services:
   - bin/bc-os/north_star_meter_v2.py
   - --json
   description: BCOS 北极星价值度量 v2 (排除 self-data, W3)
+- domain: governance
+  package: anti-corrosion
+  action: rules-lifecycle
+  uri: bos://governance/anti-corrosion/rules-lifecycle
+  transport: stdio
+  status: active
+  command:
+  - python3
+  - bin/gac/rules-lifecycle.py
+  - --json
+  description: L4 约束层规则生命周期 (ADR-0431 D2) — expired/due-soon/healthy 三层, 过期进减法候选
+- domain: governance
+  package: anti-corrosion
+  action: proposal-triage
+  uri: bos://governance/anti-corrosion/proposal-triage
+  transport: stdio
+  status: active
+  command:
+  - python3
+  - bin/bc-os/proposal-triage.py
+  - --analyze
+  description: 提案池质量分层 (第0段清淤) — keep/archive/invalid 三层, --dry-run 预演
