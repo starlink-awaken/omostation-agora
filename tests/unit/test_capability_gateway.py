@@ -176,6 +176,36 @@ def test_explicit_invoke_selects_native_adapter_once() -> None:
     assert receipt["operation"] == "invoke"
 
 
+def test_bound_invocation_projects_canonical_admission_context() -> None:
+    requests: list[dict[str, Any]] = []
+
+    def admit(request: dict[str, Any]) -> dict[str, str]:
+        requests.append(request)
+        return {"status": "admitted"}
+
+    gateway, adapter = _gateway(admission=admit)
+    binding = {"workflow_run_id": "run-1", "dispatch_id": "dispatch-1"}
+
+    receipt = gateway.invoke(_record(), {"query": "bound"}, binding=binding)
+
+    assert receipt["status"] == "succeeded"
+    assert adapter.invoke_calls
+    assert requests == [
+        {
+            "domain": "capability",
+            "capability": URI,
+            "operation": "invoke",
+            "role": "evaluator",
+            "source": "agora.bos",
+            "adapter": "bos_native",
+            "declared_values": ["human-centric", "objective", "transparent"],
+            "supports_otlp": True,
+            "omo_audit_trail_id": "dispatch-1",
+            "capabilities": ["read_only"],
+        }
+    ]
+
+
 def test_default_adapter_executes_declared_internal_handler(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
