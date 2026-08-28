@@ -615,11 +615,10 @@ register_bcos_tools(mcp)  # 2026-08-23: BCOS 业务域系统 (W1~W4)
 
 register_anticorrosion_tools(mcp)  # 2026-08-28: 防腐治理 (ADR-0431)
 
-from agora.server.tools_agent_cell import register_agent_cell_tools
-
-register_agent_cell_tools(
-    mcp
-)  # 2026-08-26: AGE-v2 Agent Cell (plan/execute/verify/govern/memory/replay/pool)
+# AGE-v2 Agent Cell remains a backend implementation.  It is intentionally not
+# registered on Agora's composite production entrypoint: effectful Cell
+# execution/governance must first acquire the same WorkPacket, OMO admission,
+# and native capability receipt used by the canonical Mesh path.
 
 from agora.server.tools_registry_mcp import register_registry_mcp_tools
 
