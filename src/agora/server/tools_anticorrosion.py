@@ -35,7 +35,10 @@ def _run_cli(args: list[str]) -> dict[str, Any]:
             check=False,
         )
         if result.returncode not in (0, 1):  # 1 = 有过期规则, 仍是有效输出
-            return {"error": f"exit {result.returncode}", "stderr": (result.stderr or "")[:200]}
+            return {
+                "error": f"exit {result.returncode}",
+                "stderr": (result.stderr or "")[:200],
+            }
         payload = json.loads(result.stdout or "{}")
         return payload
     except (OSError, subprocess.TimeoutExpired, json.JSONDecodeError) as exc:

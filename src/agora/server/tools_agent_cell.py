@@ -321,12 +321,23 @@ def register_agent_cell_tools(mcp: FastMCP) -> None:
             return _error(f"Cell DAG execute failed: {e}")
 
     @mcp.tool()
-    async def cell_memory_publish(cell_id: str, content: str, tags: str = "general") -> dict:
+    async def cell_memory_publish(
+        cell_id: str, content: str, tags: str = "general"
+    ) -> dict:
         """Cell Memory Publish — 发布记忆到跨 Cell 网络."""
         try:
             result = _run_cell_tool(
                 "projects/omo/src/omo/resident/cell_memory_network.py",
-                ["--action", "publish", "--cell", cell_id, "--content", content, "--tags", tags],
+                [
+                    "--action",
+                    "publish",
+                    "--cell",
+                    cell_id,
+                    "--content",
+                    content,
+                    "--tags",
+                    tags,
+                ],
             )
             return _ok(result)
         except Exception as e:

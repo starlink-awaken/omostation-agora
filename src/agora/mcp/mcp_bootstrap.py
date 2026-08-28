@@ -112,13 +112,17 @@ def _resolve_l4_kernel_root(source_file: Path | None = None) -> tuple[Path | Non
             raise ValueError("OMOSTATION_WORKSPACE_ROOT must be an absolute directory")
         candidate = workspace / "projects" / "l4-kernel"
         if not candidate.is_dir():
-            raise ValueError("OMOSTATION_WORKSPACE_ROOT does not contain projects/l4-kernel")
+            raise ValueError(
+                "OMOSTATION_WORKSPACE_ROOT does not contain projects/l4-kernel"
+            )
         return candidate.resolve(), "canonical-workspace"
 
     source = (source_file or Path(__file__)).expanduser().resolve()
     ancestors = (source.parent, *source.parents)
     for parent in ancestors:
-        marker = parent / ".omo" / "_truth" / "registry" / "documents-domain-projects.yaml"
+        marker = (
+            parent / ".omo" / "_truth" / "registry" / "documents-domain-projects.yaml"
+        )
         candidate = parent / "projects" / "l4-kernel"
         if marker.is_file() and candidate.is_dir():
             return candidate.resolve(), "canonical-workspace"
@@ -147,7 +151,14 @@ def _build_l4_kernel_service(source_file: Path | None = None) -> dict[str, Any]:
         }
     return {
         "command": "uv",
-        "args": ["run", "--directory", str(root), "python", "-m", "l4_kernel.mcp_server"],
+        "args": [
+            "run",
+            "--directory",
+            str(root),
+            "python",
+            "-m",
+            "l4_kernel.mcp_server",
+        ],
         "description": f"L4 Kernel route ({mode})",
         "source": "l4-kernel",
         "l4_route_mode": mode,
