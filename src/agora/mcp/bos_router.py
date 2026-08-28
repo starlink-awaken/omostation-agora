@@ -16,7 +16,7 @@
 from __future__ import annotations
 
 import logging
-from collections.abc import Callable
+from collections.abc import Callable, Mapping
 from typing import Any
 
 from agora.admission import evaluate_admission
@@ -33,6 +33,10 @@ _ADMISSION_FIELDS = frozenset(
         "permission_ref",
         "resource_id",
         "role",
+        "declared_values",
+        "supports_otlp",
+        "omo_audit_trail_id",
+        "capabilities",
         "trace_id",
     }
 )
@@ -247,7 +251,12 @@ class BOSRouter:
     # ── 公共 API ───────────────────────────────────────
 
     def register(
-        self, prefix: str, adapter: str, config: dict[str, Any] | None = None
+        self,
+        prefix: str,
+        adapter: str,
+        config: dict[str, Any] | None = None,
+        *,
+        admission_context: Mapping[str, Any] | None = None,
     ) -> bool:
         """注册一条路由。
 
@@ -265,7 +274,9 @@ class BOSRouter:
                 if r["adapter"] == adapter and r.get("config") == route_config:
                     return True
 
-        decision = self._evaluate_route_admission(prefix, adapter, route_config)
+        decision = self._evaluate_route_admission(
+            prefix, adapter, route_config, admission_context=admission_context
+        )
         if decision.get("status") != "admitted":
             rejection = {
                 "prefix": prefix,
@@ -295,7 +306,12 @@ class BOSRouter:
         return True
 
     def _evaluate_route_admission(
-        self, prefix: str, adapter: str, config: dict[str, Any]
+        self,
+        prefix: str,
+        adapter: str,
+        config: dict[str, Any],
+        *,
+        admission_context: Mapping[str, Any] | None = None,
     ) -> dict[str, Any]:
         """Build a credential-free admission request for every route write."""
         admission_meta = config.get("admission", {})
@@ -306,6 +322,13 @@ class BOSRouter:
                 "status": "rejected",
                 "reasons": ["invalid_admission_metadata"],
             }
+        if admission_context is not None:
+            if not isinstance(admission_context, Mapping):
+                return {
+                    "status": "rejected",
+                    "reasons": ["invalid_admission_context"],
+                }
+            admission_meta = {**admission_meta, **dict(admission_context)}
         unknown_fields = sorted(set(admission_meta) - _ADMISSION_FIELDS)
         if unknown_fields:
             return {
@@ -326,6 +349,10 @@ class BOSRouter:
             "trace_id",
             "owner",
             "data_classification",
+            "declared_values",
+            "supports_otlp",
+            "omo_audit_trail_id",
+            "capabilities",
         ):
             if key in admission_meta:
                 request[key] = admission_meta[key]
@@ -473,7 +500,12 @@ class BOSRouter:
         c = Counter(r["adapter"] for routes in self._routes.values() for r in routes)
         return dict(c)
 
-    def seed_from_poc(self, poc_services: list) -> int:
+    def seed_from_poc(
+        self,
+        poc_services: list,
+        *,
+        admission_context: Mapping[str, Any] | None = None,
+    ) -> int:
         """从 POC_SERVICES 列表批量注册路由。
 
         Args:
@@ -509,6 +541,7 @@ class BOSRouter:
                     if isinstance(svc, dict)
                     else getattr(svc, "description", ""),
                 },
+                admission_context=admission_context,
             )
             count += int(registered)
         _log.info("BOSRouter seeded from POC: %d routes", count)

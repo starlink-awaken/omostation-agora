@@ -57,6 +57,34 @@ _CALLER_CONTROLLED_FIELDS = frozenset(
 _FORBIDDEN_RECORD_FIELDS = _CALLER_CONTROLLED_FIELDS - {"adapter"}
 _OPERATION_PATTERN = re.compile(r"^[a-z][a-z0-9_/-]*$")
 _UNSET = object()
+_NATIVE_ADMISSION_VALUES = ["human-centric", "objective", "transparent"]
+
+
+def build_native_admission_context(
+    capability_uri: str,
+    *,
+    binding: Mapping[str, Any] | None = None,
+) -> dict[str, Any]:
+    """Build the one admission context shared by route and call admission.
+
+    The audit identifier is only carried when supplied by the caller's
+    validated binding; this helper never mints a substitute identity.
+    """
+    context: dict[str, Any] = {
+        "domain": str(capability_uri).removeprefix("bos://").split("/", 1)[0],
+        "capability": capability_uri,
+        "role": "evaluator",
+        "source": CANONICAL_SOURCE,
+        "adapter": NATIVE_TRANSPORT,
+        "declared_values": list(_NATIVE_ADMISSION_VALUES),
+        "supports_otlp": True,
+        "capabilities": ["read_only"],
+    }
+    if isinstance(binding, Mapping):
+        audit_id = binding.get("dispatch_id")
+        if isinstance(audit_id, str) and audit_id.strip():
+            context["omo_audit_trail_id"] = audit_id
+    return context
 
 
 class NativeTransportAdapter(Protocol):
@@ -151,7 +179,9 @@ class CapabilityInvocationGateway:
     ) -> dict[str, Any]:
         """Check admission, route, and bounded readiness without invoking."""
         payload = _UNSET
-        prepared = self._prepare(record, selector, caller_options, payload)
+        prepared = self._prepare(
+            record, selector, caller_options, payload, binding=binding
+        )
         if "record" not in prepared:
             return prepared
         return self._receipt(
@@ -178,7 +208,9 @@ class CapabilityInvocationGateway:
         **caller_options: Any,
     ) -> dict[str, Any]:
         """Invoke exactly one declared native operation after readiness."""
-        prepared = self._prepare(record, selector, caller_options, payload)
+        prepared = self._prepare(
+            record, selector, caller_options, payload, binding=binding
+        )
         if "record" not in prepared:
             prepared["input_digest"] = _digest(payload)
             return prepared
@@ -246,6 +278,8 @@ class CapabilityInvocationGateway:
         selector: Mapping[str, Any] | None,
         caller_options: Mapping[str, Any],
         payload: Any,
+        *,
+        binding: Mapping[str, Any] | None,
     ) -> dict[str, Any]:
         if caller_options or (
             isinstance(payload, Mapping)
@@ -279,7 +313,7 @@ class CapabilityInvocationGateway:
                 registry_result,
             )
 
-        admission = self._admit(valid)
+        admission = self._admit(valid, binding=binding)
         if admission["status"] != "admitted":
             reason = str(admission.get("reason", "")).lower()
             code = (
@@ -397,14 +431,16 @@ class CapabilityInvocationGateway:
             return "canonical_record_mismatch"
         return None
 
-    def _admit(self, record: Mapping[str, Any]) -> dict[str, Any]:
-        request = {
-            "capability": record["native_bos_uri"],
-            "operation": record["operation"],
-            "role": "capability_invocation",
-            "source": CANONICAL_SOURCE,
-            "adapter": NATIVE_TRANSPORT,
-        }
+    def _admit(
+        self,
+        record: Mapping[str, Any],
+        *,
+        binding: Mapping[str, Any] | None,
+    ) -> dict[str, Any]:
+        request = build_native_admission_context(
+            str(record["native_bos_uri"]), binding=binding
+        )
+        request["operation"] = record["operation"]
         try:
             result = self._admission_evaluator(request)
         except Exception:
@@ -701,5 +737,6 @@ __all__ = [
     "CapabilityInvocationGateway",
     "NativeAdapter",
     "NativeTransportAdapter",
+    "build_native_admission_context",
     "serialize_receipt",
 ]

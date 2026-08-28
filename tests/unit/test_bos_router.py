@@ -171,6 +171,43 @@ class TestBOSRouterRegister:
         assert count == 0
         assert router.count() == 0
 
+    def test_seed_from_poc_uses_explicit_admission_context(self):
+        requests = []
+
+        def evaluate(request):
+            requests.append(request)
+            return {"status": "admitted", "provider": "stub"}
+
+        router = BOSRouter(admission_evaluator=evaluate)
+        context = {
+            "role": "evaluator",
+            "declared_values": ["human-centric", "objective", "transparent"],
+            "supports_otlp": True,
+            "omo_audit_trail_id": "dispatch-1",
+            "capabilities": ["read_only"],
+        }
+
+        assert (
+            router.seed_from_poc(
+                [{"uri": "bos://capability/provider/search", "domain": "capability"}],
+                admission_context=context,
+            )
+            == 1
+        )
+        assert requests == [
+            {
+                "domain": "capability",
+                "role": "evaluator",
+                "capability": "bos://capability/provider/search/",
+                "adapter": "poc",
+                "source": "agora.bos_router",
+                "declared_values": ["human-centric", "objective", "transparent"],
+                "supports_otlp": True,
+                "omo_audit_trail_id": "dispatch-1",
+                "capabilities": ["read_only"],
+            }
+        ]
+
 
 class TestBOSRouterUnregister:
     """路由注销。"""
