@@ -210,23 +210,22 @@ class CapabilityInvocationGateway:
     ) -> dict[str, Any]:
         """Invoke exactly one declared native operation after readiness."""
         # BET-Y1Q3-T4-04: principal authority 只转发不裁定 — 结构校验 + digest 原样转发。
-        authority_digest = ""
-        if principal_authority is not None:
-            if (
-                not isinstance(principal_authority, Mapping)
-                or set(principal_authority) != {"authority_ref", "receipt_digest"}
-                or not all(
-                    isinstance(v, str) and v for v in principal_authority.values()
-                )
-            ):
-                return self._error(
-                    "invoke",
-                    record,
-                    selector,
-                    "INVALID_RECORD",
-                    "principal_authority_shape_invalid",
-                )
-            authority_digest = _digest(principal_authority)
+        if (
+            not isinstance(principal_authority, Mapping)
+            or set(principal_authority) != {"authority_ref", "receipt_digest"}
+            or not all(
+                isinstance(v, str) and v.strip()
+                for v in principal_authority.values()
+            )
+        ):
+            return self._error(
+                "invoke",
+                record,
+                selector,
+                "INVALID_RECORD",
+                "principal_authority_shape_invalid",
+            )
+        authority_digest = principal_authority["receipt_digest"]
         prepared = self._prepare(
             record, selector, caller_options, payload, binding=binding
         )
