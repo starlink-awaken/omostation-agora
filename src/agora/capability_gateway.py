@@ -205,9 +205,28 @@ class CapabilityInvocationGateway:
         *,
         selector: Mapping[str, Any] | None = None,
         binding: Mapping[str, Any] | None = None,
+        principal_authority: Mapping[str, Any] | None = None,
         **caller_options: Any,
     ) -> dict[str, Any]:
         """Invoke exactly one declared native operation after readiness."""
+        # BET-Y1Q3-T4-04: principal authority 只转发不裁定 — 结构校验 + digest 原样转发。
+        authority_digest = ""
+        if principal_authority is not None:
+            if (
+                not isinstance(principal_authority, Mapping)
+                or set(principal_authority) != {"authority_ref", "receipt_digest"}
+                or not all(
+                    isinstance(v, str) and v for v in principal_authority.values()
+                )
+            ):
+                return self._error(
+                    "invoke",
+                    record,
+                    selector,
+                    "INVALID_RECORD",
+                    "principal_authority_shape_invalid",
+                )
+            authority_digest = _digest(principal_authority)
         prepared = self._prepare(
             record, selector, caller_options, payload, binding=binding
         )
@@ -233,6 +252,7 @@ class CapabilityInvocationGateway:
                     health=prepared["health"],
                     adapter=prepared["adapter"],
                     invocation_attempted=True,
+                    principal_authority_digest=authority_digest,
                     input_value=payload,
                     result_value=result,
                     status="failed",
@@ -249,6 +269,7 @@ class CapabilityInvocationGateway:
                 health=prepared["health"],
                 adapter=prepared["adapter"],
                 invocation_attempted=True,
+                principal_authority_digest=authority_digest,
                 input_value=payload,
                 result_value=result,
                 status="succeeded",
@@ -264,6 +285,7 @@ class CapabilityInvocationGateway:
                 health=prepared["health"],
                 adapter=prepared["adapter"],
                 invocation_attempted=True,
+                principal_authority_digest=authority_digest,
                 input_value=payload,
                 result_value=None,
                 status="failed",
@@ -516,6 +538,7 @@ class CapabilityInvocationGateway:
         error_detail: Any = "",
         exit_code: int | None = None,
         binding_digest: str = "",
+        principal_authority_digest: str = "",
     ) -> dict[str, Any]:
         receipt = {
             "schema": RECEIPT_SCHEMA,
@@ -538,6 +561,7 @@ class CapabilityInvocationGateway:
             "error_code": error_code,
             "error_detail_digest": _digest(error_detail),
             "binding_digest": binding_digest,
+            "principal_authority_digest": principal_authority_digest,
         }
         return serialize_receipt(receipt)
 
@@ -577,6 +601,7 @@ _RECEIPT_FIELDS = (
     "error_code",
     "error_detail_digest",
     "binding_digest",
+    "principal_authority_digest",
 )
 
 
