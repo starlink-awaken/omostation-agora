@@ -2877,11 +2877,11 @@ services:
   - projects/omlxc
   - python
   - bin/demo/live_context_and_cache_benchmark.py
-  description: omlxc Radix 动态前缀树与三级分层缓存指标与压测
+  description: '[UNIMPLEMENTED] omlxc Radix 动态前缀树与三级分层缓存指标与压测（旧 demo 已不存在，待 canonical CLI parity）'
   domain: compute
   package: omlxc
   security_level: internal
-  status: active
+  status: unimplemented
   transport: stdio
   uri: bos://compute/omlxc/cache
 - action: dflash
@@ -2892,11 +2892,11 @@ services:
   - projects/omlxc
   - python
   - bin/demo/live_cluster_wide_benchmark.py
-  description: omlxc DFlash 2 块扩散投机解码加速与集群分工
+  description: '[UNIMPLEMENTED] omlxc DFlash 2 块扩散投机解码加速与集群分工（旧 demo 已不存在，待 canonical CLI parity）'
   domain: compute
   package: omlxc
   security_level: internal
-  status: active
+  status: unimplemented
   transport: stdio
   uri: bos://compute/omlxc/dflash
 - action: cluster
@@ -2907,11 +2907,11 @@ services:
   - projects/omlxc
   - python
   - bin/demo/live_cluster_wide_benchmark.py
-  description: omlxc 异构三节点智能调度、心跳与故障自愈拓扑
+  description: '[UNIMPLEMENTED] omlxc 异构三节点智能调度、心跳与故障自愈拓扑（旧 demo 已不存在，待 canonical CLI parity）'
   domain: compute
   package: omlxc
   security_level: internal
-  status: active
+  status: unimplemented
   transport: stdio
   uri: bos://compute/omlxc/cluster
 - action: tree
@@ -2922,7 +2922,7 @@ services:
   - --directory
   - projects/omlxc
   - python
-  - bin/demo/live_nextgen_compute_engine_benchmark.py
+  - examples/live_nextgen_compute_engine_benchmark.py
   description: omlxc 自适应熵感知树状投机解码与多候选验证服务 (ADR-0434)
   domain: compute
   package: omlxc
@@ -2938,7 +2938,7 @@ services:
   - --directory
   - projects/omlxc
   - python
-  - bin/demo/live_nextgen_compute_engine_benchmark.py
+  - examples/live_nextgen_compute_engine_benchmark.py
   description: omlxc 跨节点 Chunk-level 流式协同流水线服务 (ADR-0434)
   domain: compute
   package: omlxc
@@ -2954,7 +2954,7 @@ services:
   - --directory
   - projects/omlxc
   - python
-  - bin/demo/live_nextgen_compute_engine_benchmark.py
+  - examples/live_nextgen_compute_engine_benchmark.py
   description: omlxc 分布式跨节点 KV 共享池与超长上下文置换服务 (ADR-0434)
   domain: compute
   package: omlxc
