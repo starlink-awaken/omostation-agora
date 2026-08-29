@@ -120,7 +120,9 @@ def test_missing_duplicate_or_legacy_record_fails_closed(
         adapter=adapter,
     )
 
-    receipt = gateway.invoke(candidate, {"query": "x"}, principal_authority=_authority())
+    receipt = gateway.invoke(
+        candidate, {"query": "x"}, principal_authority=_authority()
+    )
 
     assert receipt["status"] == "rejected"
     assert receipt["error_code"] == "INVALID_RECORD"
@@ -143,7 +145,9 @@ def test_admission_failure_is_before_adapter_call(
 ) -> None:
     gateway, adapter = _gateway(admission=lambda _request: admission_result)
 
-    receipt = gateway.invoke(_record(), {"query": "x"}, principal_authority=_authority())
+    receipt = gateway.invoke(
+        _record(), {"query": "x"}, principal_authority=_authority()
+    )
 
     assert receipt["status"] == "rejected"
     assert receipt["error_code"] == error_code
@@ -155,7 +159,9 @@ def test_admission_failure_is_before_adapter_call(
 def test_unknown_or_unhealthy_health_rejects_invoke(health: str) -> None:
     gateway, adapter = _gateway(adapter=FakeAdapter(health))
 
-    receipt = gateway.invoke(_record(), {"query": "x"}, principal_authority=_authority())
+    receipt = gateway.invoke(
+        _record(), {"query": "x"}, principal_authority=_authority()
+    )
 
     assert receipt["status"] == "rejected"
     assert receipt["error_code"] in {"HEALTH_UNKNOWN", "HEALTH_UNHEALTHY"}
@@ -338,7 +344,9 @@ def test_injected_probe_is_bounded_by_gateway_timeout() -> None:
     )
 
     started = time.monotonic()
-    receipt = gateway.invoke(_record(), {"query": "x"}, principal_authority=_authority())
+    receipt = gateway.invoke(
+        _record(), {"query": "x"}, principal_authority=_authority()
+    )
 
     assert time.monotonic() - started < 0.15
     assert receipt["status"] == "rejected"

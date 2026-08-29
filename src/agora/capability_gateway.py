@@ -214,8 +214,7 @@ class CapabilityInvocationGateway:
             not isinstance(principal_authority, Mapping)
             or set(principal_authority) != {"authority_ref", "receipt_digest"}
             or not all(
-                isinstance(v, str) and v.strip()
-                for v in principal_authority.values()
+                isinstance(v, str) and v.strip() for v in principal_authority.values()
             )
         ):
             return self._error(
