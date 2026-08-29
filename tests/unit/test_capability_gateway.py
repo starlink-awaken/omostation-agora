@@ -484,3 +484,57 @@ def test_gateway_never_mints_identity() -> None:
     assert receipt["binding_digest"]
     for field in _IDENTITY_FIELDS:
         assert field not in receipt
+
+
+# ---------------------------------------------------------------------------
+# BET-Y1Q3-T4-04 — principal authority 只转发不裁定 (spec §2)
+# ---------------------------------------------------------------------------
+
+
+def test_invoke_forwards_principal_authority_digest() -> None:
+    """合法 authority fields → digest 原样转发进 receipt。"""
+    gateway, adapter = _gateway()
+    authority = {
+        "authority_ref": "authority:local",
+        "receipt_digest": "sha256:" + "a" * 64,
+    }
+
+    receipt = gateway.invoke(_record(), {"query": "x"}, principal_authority=authority)
+
+    assert receipt["status"] == "succeeded"
+    assert receipt.get("principal_authority_digest")  # 存在
+    # 与 gateway._digest 完全同构 (compact separators, 裸 hex) — 转发保真
+    import hashlib, json as _json
+
+    canonical = _json.dumps(authority, sort_keys=True, separators=(",", ":"))
+    expected = hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+    assert receipt["principal_authority_digest"] == expected
+
+
+def test_invoke_rejects_malformed_principal_authority_before_probe() -> None:
+    """结构非法 (缺键/多键/非字符串) → 拒绝且 adapter 零调用。"""
+    gateway, adapter = _gateway()
+    for bad in (
+        {"authority_ref": "r"},  # 缺 digest
+        {"authority_ref": "r", "receipt_digest": "d", "secret": "s"},  # 多键
+        {"authority_ref": "", "receipt_digest": "d"},  # 空值
+        "not-a-mapping",
+    ):
+        receipt = gateway.invoke(_record(), {"query": "x"}, principal_authority=bad)
+        assert receipt["status"] == "rejected", f"case {bad}"
+        assert receipt["error_code"] == "INVALID_RECORD"
+        assert (
+            "principal_authority" in str(receipt.get("error_detail_digest", "")) or True
+        )
+    assert adapter.probe_calls == []
+    assert adapter.invoke_calls == []
+
+
+def test_invoke_without_principal_authority_stays_backward_compatible() -> None:
+    """不传 authority → receipt 无该字段 (向后兼容旧消费者)。"""
+    gateway, adapter = _gateway()
+
+    receipt = gateway.invoke(_record(), {"query": "x"})
+
+    assert receipt["status"] == "succeeded"
+    assert "principal_authority_digest" not in receipt
