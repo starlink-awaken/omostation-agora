@@ -2941,6 +2941,42 @@ services:
   status: active
   transport: stdio
   uri: bos://compute/omlxc/swarm
+- action: hud
+  cli_command: cockpit mesh hud
+  description: omlxc 主权算力织网全景 HUD 实时监控控制台 (ADR-0435)
+  domain: compute
+  package: omlxc
+  security_level: internal
+  status: active
+  transport: stdio
+  uri: bos://compute/omlxc/hud
+- action: heatmap
+  cli_command: cockpit mesh heatmap
+  description: omlxc 分布式 KV 内存池热力图与投机蒸馏指标 (ADR-0435)
+  domain: compute
+  package: omlxc
+  security_level: internal
+  status: active
+  transport: stdio
+  uri: bos://compute/omlxc/heatmap
+- action: dma
+  cli_command: cockpit mesh dma
+  description: omlxc 雷雳 5 跨物理机 P2P 零拷贝 DMA 通信总线服务 (ADR-0435)
+  domain: compute
+  package: omlxc
+  security_level: internal
+  status: active
+  transport: stdio
+  uri: bos://compute/omlxc/dma
+- action: lora
+  cli_command: cockpit mesh lora
+  description: omlxc 端侧在线 LoRA 持续微调与毫秒级热插拔服务 (ADR-0435)
+  domain: compute
+  package: omlxc
+  security_level: internal
+  status: active
+  transport: stdio
+  uri: bos://compute/omlxc/lora
 - action: status
   description: KEMS 知识管理引擎与图谱服务运行状态 (ADR-0300)
   domain: memory
