@@ -36,6 +36,15 @@ def _record(**overrides: Any) -> dict[str, Any]:
     return record
 
 
+def _authority(**overrides: Any) -> dict[str, str]:
+    authority = {
+        "authority_ref": "authority:local",
+        "receipt_digest": "sha256:" + "a" * 64,
+    }
+    authority.update(overrides)
+    return authority
+
+
 class FakeAdapter:
     kind = "native"
 
@@ -82,7 +91,9 @@ def _gateway(
 def test_exact_record_mismatch_rejects_before_adapter_call() -> None:
     gateway, adapter = _gateway()
 
-    receipt = gateway.invoke(_record(operation="wrong"), {"query": "x"})
+    receipt = gateway.invoke(
+        _record(operation="wrong"), {"query": "x"}, principal_authority=_authority()
+    )
 
     assert receipt["status"] == "rejected"
     assert receipt["error_code"] == "INVALID_RECORD"
@@ -109,7 +120,7 @@ def test_missing_duplicate_or_legacy_record_fails_closed(
         adapter=adapter,
     )
 
-    receipt = gateway.invoke(candidate, {"query": "x"})
+    receipt = gateway.invoke(candidate, {"query": "x"}, principal_authority=_authority())
 
     assert receipt["status"] == "rejected"
     assert receipt["error_code"] == "INVALID_RECORD"
@@ -132,7 +143,7 @@ def test_admission_failure_is_before_adapter_call(
 ) -> None:
     gateway, adapter = _gateway(admission=lambda _request: admission_result)
 
-    receipt = gateway.invoke(_record(), {"query": "x"})
+    receipt = gateway.invoke(_record(), {"query": "x"}, principal_authority=_authority())
 
     assert receipt["status"] == "rejected"
     assert receipt["error_code"] == error_code
@@ -144,7 +155,7 @@ def test_admission_failure_is_before_adapter_call(
 def test_unknown_or_unhealthy_health_rejects_invoke(health: str) -> None:
     gateway, adapter = _gateway(adapter=FakeAdapter(health))
 
-    receipt = gateway.invoke(_record(), {"query": "x"})
+    receipt = gateway.invoke(_record(), {"query": "x"}, principal_authority=_authority())
 
     assert receipt["status"] == "rejected"
     assert receipt["error_code"] in {"HEALTH_UNKNOWN", "HEALTH_UNHEALTHY"}
@@ -166,7 +177,9 @@ def test_load_calls_readiness_but_not_business_invocation() -> None:
 def test_explicit_invoke_selects_native_adapter_once() -> None:
     gateway, adapter = _gateway()
 
-    receipt = gateway.invoke(_record(), {"query": "private"})
+    receipt = gateway.invoke(
+        _record(), {"query": "private"}, principal_authority=_authority()
+    )
 
     assert receipt["status"] == "succeeded"
     assert receipt["adapter_kind"] == "native"
@@ -186,7 +199,12 @@ def test_bound_invocation_projects_canonical_admission_context() -> None:
     gateway, adapter = _gateway(admission=admit)
     binding = {"workflow_run_id": "run-1", "dispatch_id": "dispatch-1"}
 
-    receipt = gateway.invoke(_record(), {"query": "bound"}, binding=binding)
+    receipt = gateway.invoke(
+        _record(),
+        {"query": "bound"},
+        binding=binding,
+        principal_authority=_authority(),
+    )
 
     assert receipt["status"] == "succeeded"
     assert adapter.invoke_calls
@@ -229,7 +247,11 @@ def test_default_adapter_executes_declared_internal_handler(
         admission_evaluator=lambda _request: {"status": "admitted"},
     )
 
-    receipt = gateway.invoke(_record(), {"query": "actual-native-call"})
+    receipt = gateway.invoke(
+        _record(),
+        {"query": "actual-native-call"},
+        principal_authority=_authority(),
+    )
 
     assert receipt["status"] == "succeeded"
     assert receipt["operation"] == "invoke"
@@ -316,7 +338,7 @@ def test_injected_probe_is_bounded_by_gateway_timeout() -> None:
     )
 
     started = time.monotonic()
-    receipt = gateway.invoke(_record(), {"query": "x"})
+    receipt = gateway.invoke(_record(), {"query": "x"}, principal_authority=_authority())
 
     assert time.monotonic() - started < 0.15
     assert receipt["status"] == "rejected"
@@ -334,7 +356,7 @@ def test_injected_probe_is_bounded_by_gateway_timeout() -> None:
 def test_unsupported_kind_or_transport_fails_closed(record: dict[str, Any]) -> None:
     gateway, adapter = _gateway()
 
-    receipt = gateway.invoke(record, {"query": "x"})
+    receipt = gateway.invoke(record, {"query": "x"}, principal_authority=_authority())
 
     assert receipt["status"] == "rejected"
     assert receipt["error_code"] == "UNSUPPORTED_ADAPTER"
@@ -346,7 +368,10 @@ def test_caller_command_override_fails_closed() -> None:
     gateway, adapter = _gateway()
 
     receipt = gateway.invoke(
-        _record(), {"query": "x"}, command=["bash", "-lc", "danger"]
+        _record(),
+        {"query": "x"},
+        command=["bash", "-lc", "danger"],
+        principal_authority=_authority(),
     )
 
     assert receipt["status"] == "rejected"
@@ -365,6 +390,7 @@ def test_receipt_serialization_is_privacy_safe() -> None:
             "secret": secret,
             "absolute_path": "/Users/xiamingxing/private.txt",
         },
+        principal_authority=_authority(),
     )
     encoded = json.dumps(serialize_receipt(receipt), sort_keys=True)
 
@@ -408,14 +434,18 @@ def test_invoke_with_binding_emits_binding_digest() -> None:
     gateway, adapter = _gateway()
     binding = _binding()
 
-    receipt = gateway.invoke(_record(), {}, binding=binding)
+    receipt = gateway.invoke(
+        _record(), {}, binding=binding, principal_authority=_authority()
+    )
 
     assert receipt["status"] == "succeeded"
     assert receipt["binding_digest"]
     assert len(receipt["binding_digest"]) == 64
     assert (
         receipt["binding_digest"]
-        == gateway.invoke(_record(), {}, binding=binding)["binding_digest"]
+        == gateway.invoke(
+            _record(), {}, binding=binding, principal_authority=_authority()
+        )["binding_digest"]
     )
     assert adapter.invoke_calls  # adapter still invoked normally
 
@@ -423,11 +453,18 @@ def test_invoke_with_binding_emits_binding_digest() -> None:
 def test_binding_digest_is_deterministic_over_binding_content() -> None:
     gateway, _adapter = _gateway()
 
-    first = gateway.invoke(_record(), {}, binding=_binding())["binding_digest"]
-    second = gateway.invoke(_record(), {}, binding=_binding())["binding_digest"]
-    different = gateway.invoke(_record(), {}, binding=_binding(actor_id="actor-other"))[
-        "binding_digest"
-    ]
+    first = gateway.invoke(
+        _record(), {}, binding=_binding(), principal_authority=_authority()
+    )["binding_digest"]
+    second = gateway.invoke(
+        _record(), {}, binding=_binding(), principal_authority=_authority()
+    )["binding_digest"]
+    different = gateway.invoke(
+        _record(),
+        {},
+        binding=_binding(actor_id="actor-other"),
+        principal_authority=_authority(),
+    )["binding_digest"]
 
     assert first == second
     assert first != different
@@ -445,7 +482,7 @@ def test_load_without_binding_has_no_binding_digest() -> None:
 def test_invoke_without_binding_has_no_binding_digest() -> None:
     gateway, _adapter = _gateway()
 
-    receipt = gateway.invoke(_record(), {})
+    receipt = gateway.invoke(_record(), {}, principal_authority=_authority())
 
     assert receipt["status"] == "succeeded"
     assert "binding_digest" not in receipt
@@ -455,7 +492,11 @@ def test_caller_options_identity_fields_rejected() -> None:
     gateway, adapter = _gateway()
 
     receipt = gateway.invoke(
-        _record(), {}, actor_id="spoofed-actor", packet_id="spoofed-packet"
+        _record(),
+        {},
+        actor_id="spoofed-actor",
+        packet_id="spoofed-packet",
+        principal_authority=_authority(),
     )
 
     assert receipt["status"] == "rejected"
@@ -468,7 +509,9 @@ def test_caller_options_identity_fields_rejected() -> None:
 def test_each_identity_field_as_caller_option_is_rejected(field: str) -> None:
     gateway, adapter = _gateway()
 
-    receipt = gateway.invoke(_record(), {}, **{field: "spoofed"})
+    receipt = gateway.invoke(
+        _record(), {}, principal_authority=_authority(), **{field: "spoofed"}
+    )
 
     assert receipt["status"] == "rejected"
     assert receipt["error_code"] == "INVALID_RECORD"
@@ -478,7 +521,9 @@ def test_each_identity_field_as_caller_option_is_rejected(field: str) -> None:
 def test_gateway_never_mints_identity() -> None:
     gateway, _adapter = _gateway()
 
-    receipt = gateway.invoke(_record(), {}, binding=_binding())
+    receipt = gateway.invoke(
+        _record(), {}, binding=_binding(), principal_authority=_authority()
+    )
 
     assert receipt["status"] == "succeeded"
     assert receipt["binding_digest"]
@@ -502,39 +547,81 @@ def test_invoke_forwards_principal_authority_digest() -> None:
     receipt = gateway.invoke(_record(), {"query": "x"}, principal_authority=authority)
 
     assert receipt["status"] == "succeeded"
-    assert receipt.get("principal_authority_digest")  # 存在
-    # 与 gateway._digest 完全同构 (compact separators, 裸 hex) — 转发保真
-    import hashlib, json as _json
-
-    canonical = _json.dumps(authority, sort_keys=True, separators=(",", ":"))
-    expected = hashlib.sha256(canonical.encode("utf-8")).hexdigest()
-    assert receipt["principal_authority_digest"] == expected
+    assert receipt["principal_authority_digest"] == authority["receipt_digest"]
 
 
-def test_invoke_rejects_malformed_principal_authority_before_probe() -> None:
+def test_invoke_rejects_malformed_principal_authority_before_router_or_probe(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     """结构非法 (缺键/多键/非字符串) → 拒绝且 adapter 零调用。"""
-    gateway, adapter = _gateway()
+    router = _router()
+    adapter = FakeAdapter()
+    gateway = CapabilityInvocationGateway(
+        registry=[_record()],
+        router=router,
+        admission_evaluator=lambda _request: {"status": "admitted"},
+        adapter=adapter,
+    )
+    route_calls: list[tuple[Any, ...]] = []
+    original_resolve = router.resolve
+
+    def count_resolve(*args: Any, **kwargs: Any) -> Any:
+        route_calls.append(args)
+        return original_resolve(*args, **kwargs)
+
+    monkeypatch.setattr(router, "resolve", count_resolve)
     for bad in (
+        {},  # empty authority
         {"authority_ref": "r"},  # 缺 digest
         {"authority_ref": "r", "receipt_digest": "d", "secret": "s"},  # 多键
         {"authority_ref": "", "receipt_digest": "d"},  # 空值
+        {"authority_ref": "r", "receipt_digest": ""},  # 空值
+        {"authority_ref": " ", "receipt_digest": "d"},  # 空白值
+        {"authority_ref": "r", "receipt_digest": " "},  # 空白值
         "not-a-mapping",
     ):
         receipt = gateway.invoke(_record(), {"query": "x"}, principal_authority=bad)
         assert receipt["status"] == "rejected", f"case {bad}"
         assert receipt["error_code"] == "INVALID_RECORD"
-        assert (
-            "principal_authority" in str(receipt.get("error_detail_digest", "")) or True
-        )
+    assert route_calls == []
     assert adapter.probe_calls == []
     assert adapter.invoke_calls == []
 
 
-def test_invoke_without_principal_authority_stays_backward_compatible() -> None:
-    """不传 authority → receipt 无该字段 (向后兼容旧消费者)。"""
-    gateway, adapter = _gateway()
+def test_invoke_without_principal_authority_rejects_before_prepare_or_effects(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """缺少 authority → 在 prepare、router、probe、adapter 前拒绝。"""
+    router = _router()
+    adapter = FakeAdapter()
+    gateway = CapabilityInvocationGateway(
+        registry=[_record()],
+        router=router,
+        admission_evaluator=lambda _request: {"status": "admitted"},
+        adapter=adapter,
+    )
+    prepare_calls: list[tuple[Any, ...]] = []
+    original_prepare = gateway._prepare
+
+    def count_prepare(*args: Any, **kwargs: Any) -> dict[str, Any]:
+        prepare_calls.append(args)
+        return original_prepare(*args, **kwargs)
+
+    monkeypatch.setattr(gateway, "_prepare", count_prepare)
+    route_calls: list[tuple[Any, ...]] = []
+    original_resolve = router.resolve
+
+    def count_resolve(*args: Any, **kwargs: Any) -> Any:
+        route_calls.append(args)
+        return original_resolve(*args, **kwargs)
+
+    monkeypatch.setattr(router, "resolve", count_resolve)
 
     receipt = gateway.invoke(_record(), {"query": "x"})
 
-    assert receipt["status"] == "succeeded"
-    assert "principal_authority_digest" not in receipt
+    assert receipt["status"] == "rejected"
+    assert receipt["error_code"] == "INVALID_RECORD"
+    assert prepare_calls == []
+    assert route_calls == []
+    assert adapter.probe_calls == []
+    assert adapter.invoke_calls == []
