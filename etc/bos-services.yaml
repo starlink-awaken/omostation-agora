@@ -2815,6 +2815,105 @@ services:
   status: active
   transport: stdio
   uri: bos://compute/aetherforge/swarm
+- action: fabric
+  command:
+  - uv
+  - run
+  - --directory
+  - projects/omlxc
+  - python
+  - -m
+  - omlxc.cli
+  - fabric
+  - inspect
+  description: omlxc 异构算力织网、温控、显存预算与分层缓存状态
+  domain: compute
+  package: omlxc
+  security_level: internal
+  status: active
+  transport: stdio
+  uri: bos://compute/omlxc/fabric
+- action: triage
+  command:
+  - uv
+  - run
+  - --directory
+  - projects/omlxc
+  - python
+  - -m
+  - omlxc.cli
+  - fabric
+  - triage
+  description: omlxc 意图复杂度分诊 (FAST / STANDARD / REASONING)
+  domain: compute
+  package: omlxc
+  security_level: internal
+  status: active
+  transport: stdio
+  uri: bos://compute/omlxc/triage
+- action: vram
+  command:
+  - uv
+  - run
+  - --directory
+  - projects/omlxc
+  - python
+  - -m
+  - omlxc.cli
+  - fabric
+  - vram
+  description: omlxc 动态 KV Cache 显存预算评估与 75% 阶梯准入
+  domain: compute
+  package: omlxc
+  security_level: internal
+  status: active
+  transport: stdio
+  uri: bos://compute/omlxc/vram
+- action: cache
+  command:
+  - uv
+  - run
+  - --directory
+  - projects/omlxc
+  - python
+  - bin/demo/live_context_and_cache_benchmark.py
+  description: omlxc Radix 动态前缀树与三级分层缓存指标与压测
+  domain: compute
+  package: omlxc
+  security_level: internal
+  status: active
+  transport: stdio
+  uri: bos://compute/omlxc/cache
+- action: dflash
+  command:
+  - uv
+  - run
+  - --directory
+  - projects/omlxc
+  - python
+  - bin/demo/live_cluster_wide_benchmark.py
+  description: omlxc DFlash 2 块扩散投机解码加速与集群分工
+  domain: compute
+  package: omlxc
+  security_level: internal
+  status: active
+  transport: stdio
+  uri: bos://compute/omlxc/dflash
+- action: cluster
+  command:
+  - uv
+  - run
+  - --directory
+  - projects/omlxc
+  - python
+  - bin/demo/live_cluster_wide_benchmark.py
+  description: omlxc 异构三节点智能调度、心跳与故障自愈拓扑
+  domain: compute
+  package: omlxc
+  security_level: internal
+  status: active
+  transport: stdio
+  uri: bos://compute/omlxc/cluster
 - action: status
   description: KEMS 知识管理引擎与图谱服务运行状态 (ADR-0300)
   domain: memory
