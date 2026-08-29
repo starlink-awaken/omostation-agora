@@ -2914,6 +2914,33 @@ services:
   status: active
   transport: stdio
   uri: bos://compute/omlxc/cluster
+- action: tree
+  cli_command: cockpit mesh tree
+  description: omlxc 自适应熵感知树状投机解码与多候选验证服务 (ADR-0434)
+  domain: compute
+  package: omlxc
+  security_level: internal
+  status: active
+  transport: stdio
+  uri: bos://compute/omlxc/tree
+- action: stream
+  cli_command: cockpit mesh stream
+  description: omlxc 跨节点 Chunk-level 流式协同流水线服务 (ADR-0434)
+  domain: compute
+  package: omlxc
+  security_level: internal
+  status: active
+  transport: stdio
+  uri: bos://compute/omlxc/stream
+- action: swarm
+  cli_command: cockpit mesh swarm
+  description: omlxc 分布式跨节点 KV 共享池与超长上下文置换服务 (ADR-0434)
+  domain: compute
+  package: omlxc
+  security_level: internal
+  status: active
+  transport: stdio
+  uri: bos://compute/omlxc/swarm
 - action: status
   description: KEMS 知识管理引擎与图谱服务运行状态 (ADR-0300)
   domain: memory
