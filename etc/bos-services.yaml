@@ -3910,7 +3910,7 @@ services:
 - action: monthly-healthcheck
   command:
   - python3
-  - bin/gac/monthly-healthcheck.py
+  - lib/monthly_healthcheck.py
   description: 每月架构健康检查
   domain: governance
   package: healthcheck
