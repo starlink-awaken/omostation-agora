@@ -1088,6 +1088,54 @@ def register_bos_tools(mcp: FastMCP, bus: Any) -> None:
             adr_dir=adr_dir,
         )
 
+    @mcp.tool()
+    async def bos_spine_draft(
+        prompt: str,
+        domain: str = "general",
+        max_tokens: int = 1024,
+    ) -> dict:
+        """Cockpit Spine 本地主权草稿生成与 AetherForge/omlxc 推理代理。"""
+        import agora.server.tools_bos as _self_mod
+
+        return await _self_mod.bos_spine_draft(
+            prompt=prompt, domain=domain, max_tokens=max_tokens
+        )
+
+    @mcp.tool()
+    async def bos_spine_sign(
+        original: str,
+        signed: str,
+        domain: str = "general",
+        author: str = "xiamingxing",
+    ) -> dict:
+        """Cockpit Spine 夏明星署名 Diff 经纪人录入与经验回放自适应进化。"""
+        import agora.server.tools_bos as _self_mod
+
+        return await _self_mod.bos_spine_sign(
+            original=original, signed=signed, domain=domain, author=author
+        )
+
+    @mcp.tool()
+    async def bos_spine_diff(domain: str = "all") -> dict:
+        """Cockpit Spine 署名 Diff 对比分析与经验样本池浏览。"""
+        import agora.server.tools_bos as _self_mod
+
+        return await _self_mod.bos_spine_diff(domain=domain)
+
+    @mcp.tool()
+    async def bos_spine_status() -> dict:
+        """Cockpit Spine 物理算力织网与主干真值流状态监控。"""
+        import agora.server.tools_bos as _self_mod
+
+        return await _self_mod.bos_spine_status()
+
+    @mcp.tool()
+    async def bos_mesh_dma_status() -> dict:
+        """omlxc 雷雳 5 DMA (120Gbps / 0.21ms) 跨机物理链路探活与状态遥测。"""
+        import agora.server.tools_bos as _self_mod
+
+        return await _self_mod.bos_mesh_dma_status()
+
     # ── list_bos_tools ──────────────────────────────────
 
     @mcp.tool()
@@ -1185,6 +1233,39 @@ def register_bos_tools(mcp: FastMCP, bus: Any) -> None:
                     "topic": "待评估需求/策略说明",
                     "mode": "评估模式 deep|fast",
                 },
+            },
+            {
+                "name": "bos_spine_draft",
+                "description": "Cockpit Spine 本地主权草稿生成与 AetherForge/omlxc 推理代理",
+                "arguments": {
+                    "prompt": "草稿生成意图与提示词",
+                    "domain": "业务域",
+                    "max_tokens": "最大生成token数",
+                },
+            },
+            {
+                "name": "bos_spine_sign",
+                "description": "Cockpit Spine 夏明星署名 Diff 经纪人录入与经验回放自适应进化",
+                "arguments": {
+                    "original": "机器初始草稿",
+                    "signed": "夏明星最终署名修改版",
+                    "domain": "业务域",
+                },
+            },
+            {
+                "name": "bos_spine_diff",
+                "description": "Cockpit Spine 署名 Diff 对比分析与经验样本池浏览",
+                "arguments": {"domain": "业务域过滤"},
+            },
+            {
+                "name": "bos_spine_status",
+                "description": "Cockpit Spine 物理算力织网与主干真值流状态监控",
+                "arguments": {},
+            },
+            {
+                "name": "bos_mesh_dma_status",
+                "description": "omlxc 雷雳 5 DMA (120Gbps / 0.21ms) 跨机物理链路探活与状态遥测",
+                "arguments": {},
             },
         ]
         return _ok(

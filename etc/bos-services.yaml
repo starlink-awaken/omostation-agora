@@ -2869,6 +2869,24 @@ services:
   status: active
   transport: stdio
   uri: bos://compute/omlxc/vram
+- action: replay
+  command:
+  - uv
+  - run
+  - --directory
+  - projects/omlxc
+  - python
+  - -m
+  - omlxc.cli
+  - fabric
+  - replay
+  description: omlxc 经验回放池状态、水塘抽样与防遗忘混合 batch 统计
+  domain: compute
+  package: omlxc
+  security_level: internal
+  status: active
+  transport: stdio
+  uri: bos://compute/omlxc/replay
 - action: cache
   command:
   - uv
@@ -3928,3 +3946,98 @@ services:
   status: active
   transport: stdio
   uri: bos://governance/probe-heartbeat
+
+- action: draft
+  command:
+  - uv
+  - run
+  - --directory
+  - projects/cockpit
+  - python
+  - -m
+  - cockpit.cli
+  - spine
+  - draft
+  description: Cockpit/Spine 本地主权草稿生成与 AetherForge/omlxc 推理代理
+  domain: spine
+  package: cockpit
+  security_level: internal
+  status: active
+  transport: stdio
+  uri: bos://spine/draft
+
+- action: sign
+  command:
+  - uv
+  - run
+  - --directory
+  - projects/cockpit
+  - python
+  - -m
+  - cockpit.cli
+  - spine
+  - sign
+  description: Cockpit/Spine 夏明星署名 Diff 经纪人录入与经验回放自适应进化
+  domain: spine
+  package: cockpit
+  security_level: internal
+  status: active
+  transport: stdio
+  uri: bos://spine/sign
+
+- action: diff
+  command:
+  - uv
+  - run
+  - --directory
+  - projects/cockpit
+  - python
+  - -m
+  - cockpit.cli
+  - spine
+  - diff
+  description: Cockpit/Spine 署名 Diff 对比分析与经验样本池浏览
+  domain: spine
+  package: cockpit
+  security_level: internal
+  status: active
+  transport: stdio
+  uri: bos://spine/diff
+
+- action: status
+  command:
+  - uv
+  - run
+  - --directory
+  - projects/cockpit
+  - python
+  - -m
+  - cockpit.cli
+  - spine
+  - status
+  description: Cockpit/Spine 物理算力织网与主干真值流状态监控
+  domain: spine
+  package: cockpit
+  security_level: internal
+  status: active
+  transport: stdio
+  uri: bos://spine/status
+
+- action: distill
+  command:
+  - uv
+  - run
+  - --directory
+  - projects/cockpit
+  - python
+  - -m
+  - cockpit.cli
+  - spine
+  - distill
+  description: Cockpit/Spine 触发 Mac mini M4 闲时在线 LoRA 蒸馏
+  domain: spine
+  package: cockpit
+  security_level: internal
+  status: active
+  transport: stdio
+  uri: bos://spine/distill

@@ -32,6 +32,14 @@ from agora.server.tools_bos.inbox import (
 )
 from agora.server.tools_bos.registration import register_bos_tools
 from agora.server.tools_bos.routing import _resolve_with_router
+from agora.server.tools_bos.spine import (
+    bos_mesh_dma_status,
+    bos_spine_diff,
+    bos_spine_distill,
+    bos_spine_draft,
+    bos_spine_sign,
+    bos_spine_status,
+)
 
 __all__ = [
     "_AGORA_API_KEY",
@@ -50,6 +58,12 @@ __all__ = [
     "bos_inbox_status",
     "bos_inbox_triage",
     "bos_inbox_watch",
+    "bos_mesh_dma_status",
+    "bos_spine_diff",
+    "bos_spine_distill",
+    "bos_spine_draft",
+    "bos_spine_sign",
+    "bos_spine_status",
     "logger",
     "persona_bdsk_evaluate",
     "register_bos_tools",

@@ -147,6 +147,8 @@ class DiscoveryEngine:
                 if (self.root / "projects" / proj_name).is_dir():
                     proj_dir = self.root / "projects" / proj_name
                     venv_bin = proj_dir / ".venv" / "bin"
+                    if not venv_bin.is_dir() and (self.root / ".subtrees" / proj_name / ".venv" / "bin").is_dir():
+                        venv_bin = self.root / ".subtrees" / proj_name / ".venv" / "bin"
                 elif (
                     self.root
                     / "projects"
@@ -185,6 +187,7 @@ class DiscoveryEngine:
             if not venv_bin.is_dir() and (
                 not (proj_dir / "node_modules").is_dir()
                 and not (proj_dir.parent.parent / "node_modules").is_dir()
+                and not (proj_dir / "pyproject.toml").is_file()
             ):
                 continue
 
