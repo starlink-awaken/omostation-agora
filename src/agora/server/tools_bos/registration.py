@@ -454,7 +454,8 @@ def register_bos_tools(mcp: FastMCP, bus: Any) -> None:
 
                 known_actions = set()
                 for f in wf_dir.glob("WORKFLOW-*.yaml"):
-                    node = yaml.safe_load(open(f))
+                    with open(f) as fh:
+                        node = yaml.safe_load(fh)
                     if node and node.get("type") == "Workflow":
                         for step in node.get("steps", []):
                             if step.get("action"):
@@ -535,7 +536,8 @@ def register_bos_tools(mcp: FastMCP, bus: Any) -> None:
             schemas: dict = {}
             for f in sorted(wf_dir.glob("WORKFLOW-*.yaml")):
                 try:
-                    node = yaml.safe_load(open(f))
+                    with open(f) as fh:
+                        node = yaml.safe_load(fh)
                     if not node or node.get("type") != "Workflow":
                         continue
                     for step in node.get("steps", []):
