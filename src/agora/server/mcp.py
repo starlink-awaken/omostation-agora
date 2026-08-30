@@ -298,32 +298,35 @@ class AuditSubscriber:
 
     def _init_db(self):
         self._db_path.parent.mkdir(parents=True, exist_ok=True)
-        conn = _sqlite3.connect(str(self._db_path))
-        conn.execute("""CREATE TABLE IF NOT EXISTS audit_log (
-            id TEXT PRIMARY KEY, timestamp TEXT NOT NULL, event_type TEXT NOT NULL,
-            source TEXT NOT NULL DEFAULT '', actor TEXT NOT NULL DEFAULT '',
-            resource TEXT NOT NULL DEFAULT '', action TEXT NOT NULL DEFAULT '',
-            trace_id TEXT NOT NULL DEFAULT '', payload TEXT NOT NULL DEFAULT '{}',
-            risk_level TEXT NOT NULL DEFAULT 'INFO', duration_ms REAL NOT NULL DEFAULT 0.0,
-            prev_hash TEXT NOT NULL DEFAULT '', hash TEXT NOT NULL DEFAULT ''
-        )""")
-        # 兼容旧库: 已存在表但缺 hash 列时 ALTER
-        cols = {r[1] for r in conn.execute("PRAGMA table_info(audit_log)")}
-        if "prev_hash" not in cols:
+        with _sqlite3.connect(str(self._db_path)) as conn:
+            conn.execute("""CREATE TABLE IF NOT EXISTS audit_log (
+                id TEXT PRIMARY KEY, timestamp TEXT NOT NULL, event_type TEXT NOT NULL,
+                source TEXT NOT NULL DEFAULT '', actor TEXT NOT NULL DEFAULT '',
+                resource TEXT NOT NULL DEFAULT '', action TEXT NOT NULL DEFAULT '',
+                trace_id TEXT NOT NULL DEFAULT '', payload TEXT NOT NULL DEFAULT '{}',
+                risk_level TEXT NOT NULL DEFAULT 'INFO', duration_ms REAL NOT NULL DEFAULT 0.0,
+                prev_hash TEXT NOT NULL DEFAULT '', hash TEXT NOT NULL DEFAULT ''
+            )""")
+            # 兼容旧库: 已存在表但缺 hash 列时 ALTER
+            cols = {r[1] for r in conn.execute("PRAGMA table_info(audit_log)")}
+            if "prev_hash" not in cols:
+                conn.execute(
+                    "ALTER TABLE audit_log ADD COLUMN prev_hash TEXT NOT NULL DEFAULT ''"
+                )
+            if "hash" not in cols:
+                conn.execute(
+                    "ALTER TABLE audit_log ADD COLUMN hash TEXT NOT NULL DEFAULT ''"
+                )
             conn.execute(
-                "ALTER TABLE audit_log ADD COLUMN prev_hash TEXT NOT NULL DEFAULT ''"
+                "CREATE INDEX IF NOT EXISTS idx_audit_ts ON audit_log(timestamp)"
             )
-        if "hash" not in cols:
             conn.execute(
-                "ALTER TABLE audit_log ADD COLUMN hash TEXT NOT NULL DEFAULT ''"
+                "CREATE INDEX IF NOT EXISTS idx_audit_type ON audit_log(event_type)"
             )
-        conn.execute("CREATE INDEX IF NOT EXISTS idx_audit_ts ON audit_log(timestamp)")
-        conn.execute(
-            "CREATE INDEX IF NOT EXISTS idx_audit_type ON audit_log(event_type)"
-        )
-        conn.execute("CREATE INDEX IF NOT EXISTS idx_audit_actor ON audit_log(actor)")
-        conn.commit()
-        conn.close()
+            conn.execute(
+                "CREATE INDEX IF NOT EXISTS idx_audit_actor ON audit_log(actor)"
+            )
+            conn.commit()
 
     def _classify(self, event_type):
         parts = event_type.split(":", 1)
@@ -362,39 +365,38 @@ class AuditSubscriber:
             classified["actor"] = _normalize_identity(identity).actor
         payload_str = json.dumps(payload, ensure_ascii=False, default=str)
         try:
-            conn = _sqlite3.connect(str(self._db_path))
-            # P2-2: 计算哈希链 — 取链尾 hash, canonical 纳入全字段
-            row = conn.execute(
-                "SELECT hash FROM audit_log ORDER BY rowid DESC LIMIT 1"
-            ).fetchone()
-            prev_hash = row[0] if row and row[0] else "GENESIS"
-            canonical = (
-                f"{prev_hash}|{event_id}|{ts}|{event_type}|{source}|"
-                f"{classified['actor']}|{classified['resource']}|{classified['action']}|"
-                f"{trace_id}|{payload_str}|{classified['risk_level']}|"
-                f"{payload.get('_duration_ms', 0.0)}"
-            )
-            cur_hash = _hashlib.sha256(canonical.encode("utf-8")).hexdigest()
-            conn.execute(
-                "INSERT OR IGNORE INTO audit_log (id, timestamp, event_type, source, actor, resource, action, trace_id, payload, risk_level, duration_ms, prev_hash, hash) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                (
-                    f"{event_id}",
-                    ts,
-                    event_type,
-                    source,
-                    classified["actor"],
-                    classified["resource"],
-                    classified["action"],
-                    trace_id,
-                    payload_str,
-                    classified["risk_level"],
-                    payload.get("_duration_ms", 0.0),
-                    prev_hash,
-                    cur_hash,
-                ),
-            )
-            conn.commit()
-            conn.close()
+            with _sqlite3.connect(str(self._db_path)) as conn:
+                # P2-2: 计算哈希链 — 取链尾 hash, canonical 纳入全字段
+                row = conn.execute(
+                    "SELECT hash FROM audit_log ORDER BY rowid DESC LIMIT 1"
+                ).fetchone()
+                prev_hash = row[0] if row and row[0] else "GENESIS"
+                canonical = (
+                    f"{prev_hash}|{event_id}|{ts}|{event_type}|{source}|"
+                    f"{classified['actor']}|{classified['resource']}|{classified['action']}|"
+                    f"{trace_id}|{payload_str}|{classified['risk_level']}|"
+                    f"{payload.get('_duration_ms', 0.0)}"
+                )
+                cur_hash = _hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+                conn.execute(
+                    "INSERT OR IGNORE INTO audit_log (id, timestamp, event_type, source, actor, resource, action, trace_id, payload, risk_level, duration_ms, prev_hash, hash) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    (
+                        f"{event_id}",
+                        ts,
+                        event_type,
+                        source,
+                        classified["actor"],
+                        classified["resource"],
+                        classified["action"],
+                        trace_id,
+                        payload_str,
+                        classified["risk_level"],
+                        payload.get("_duration_ms", 0.0),
+                        prev_hash,
+                        cur_hash,
+                    ),
+                )
+                conn.commit()
         except Exception as e:
             logger.error("audit_write_failed", event_id=event_id, error=str(e))
 
@@ -405,19 +407,18 @@ class AuditSubscriber:
         Returns {"ok": bool, "total": int, "verified": int, "broken_at": str|None, "errors": list}
         """
         try:
-            conn = _sqlite3.connect(str(self._db_path))
-            conn.row_factory = _sqlite3.Row
-            if limit > 0:
-                rows = conn.execute(
-                    "SELECT * FROM audit_log ORDER BY rowid DESC LIMIT ?",
-                    (limit,),
-                ).fetchall()
-                rows = list(reversed(rows))
-            else:
-                rows = conn.execute(
-                    "SELECT * FROM audit_log ORDER BY rowid ASC"
-                ).fetchall()
-            conn.close()
+            with _sqlite3.connect(str(self._db_path)) as conn:
+                conn.row_factory = _sqlite3.Row
+                if limit > 0:
+                    rows = conn.execute(
+                        "SELECT * FROM audit_log ORDER BY rowid DESC LIMIT ?",
+                        (limit,),
+                    ).fetchall()
+                    rows = list(reversed(rows))
+                else:
+                    rows = conn.execute(
+                        "SELECT * FROM audit_log ORDER BY rowid ASC"
+                    ).fetchall()
         except Exception as e:  # defensive fallback
             return {
                 "ok": False,
@@ -482,13 +483,12 @@ class AuditSubscriber:
             params.append(since)
         where = " AND ".join(conditions) if conditions else "1=1"
         try:
-            conn = _sqlite3.connect(str(self._db_path))
-            conn.row_factory = _sqlite3.Row
-            rows = conn.execute(
-                f"SELECT * FROM audit_log WHERE {where} ORDER BY timestamp DESC LIMIT ?",
-                [*params, limit],
-            ).fetchall()
-            conn.close()
+            with _sqlite3.connect(str(self._db_path)) as conn:
+                conn.row_factory = _sqlite3.Row
+                rows = conn.execute(
+                    f"SELECT * FROM audit_log WHERE {where} ORDER BY timestamp DESC LIMIT ?",
+                    [*params, limit],
+                ).fetchall()
             result = []
             for row in rows:
                 entry = dict(row)
@@ -503,28 +503,29 @@ class AuditSubscriber:
     def stats(self, since=""):
         stats = {"total": 0, "by_risk": {}, "by_event_type": {}}
         try:
-            conn = _sqlite3.connect(str(self._db_path))
-            if since:
-                # 解析相对时长 ("24h"/"7d") 为 ISO 时间戳, 避免 timestamp >= '24h'
-                # 字符串比较恒 false (audit_24h 恒 0 bug)
-                ts = _parse_since_to_iso(since)
-                rows = conn.execute(
-                    "SELECT risk_level, COUNT(*) as cnt FROM audit_log WHERE timestamp >= ? GROUP BY risk_level",
-                    (ts,),
+            with _sqlite3.connect(str(self._db_path)) as conn:
+                if since:
+                    # 解析相对时长 ("24h"/"7d") 为 ISO 时间戳, 避免 timestamp >= '24h'
+                    # 字符串比较恒 false (audit_24h 恒 0 bug)
+                    ts = _parse_since_to_iso(since)
+                    rows = conn.execute(
+                        "SELECT risk_level, COUNT(*) as cnt FROM audit_log WHERE timestamp >= ? GROUP BY risk_level",
+                        (ts,),
+                    ).fetchall()
+                    stats["total"] = sum(r[1] for r in rows)
+                else:
+                    rows = conn.execute(
+                        "SELECT risk_level, COUNT(*) as cnt FROM audit_log GROUP BY risk_level"
+                    ).fetchall()
+                    total_row = conn.execute(
+                        "SELECT COUNT(*) FROM audit_log"
+                    ).fetchone()
+                    stats["total"] = total_row[0] if total_row else 0
+                stats["by_risk"] = {r[0]: r[1] for r in rows}
+                type_rows = conn.execute(
+                    "SELECT event_type, COUNT(*) as cnt FROM audit_log GROUP BY event_type ORDER BY cnt DESC LIMIT 20"
                 ).fetchall()
-                stats["total"] = sum(r[1] for r in rows)
-            else:
-                rows = conn.execute(
-                    "SELECT risk_level, COUNT(*) as cnt FROM audit_log GROUP BY risk_level"
-                ).fetchall()
-                total_row = conn.execute("SELECT COUNT(*) FROM audit_log").fetchone()
-                stats["total"] = total_row[0] if total_row else 0
-            stats["by_risk"] = {r[0]: r[1] for r in rows}
-            type_rows = conn.execute(
-                "SELECT event_type, COUNT(*) as cnt FROM audit_log GROUP BY event_type ORDER BY cnt DESC LIMIT 20"
-            ).fetchall()
-            stats["by_event_type"] = {r[0]: r[1] for r in type_rows}
-            conn.close()
+                stats["by_event_type"] = {r[0]: r[1] for r in type_rows}
         except Exception as e:
             logger.error("audit_stats_failed", error=str(e))
         return stats
@@ -742,7 +743,8 @@ async def _init_proxy():
 
     rates_path = Path(__file__).parent.parent / "agora-bos-rates.yaml"
     if rates_path.exists():
-        rates = yaml.safe_load(open(rates_path))
+        with open(rates_path) as f:
+            rates = yaml.safe_load(f)
         for route in rates.get("routes", []):
             bos_rate_limiter.configure(route["prefix"], qps=route["qps"])
     else:
@@ -778,7 +780,8 @@ async def _init_proxy():
             import yaml
 
             try:
-                rates = yaml.safe_load(open(rates_path))
+                with open(rates_path) as f:
+                    rates = yaml.safe_load(f)
                 for route in rates.get("routes", []):
                     bos_rate_limiter.configure(route["prefix"], qps=route["qps"])
                 # 遗留-3: 配额配置随 rates 一并热加载
@@ -903,7 +906,8 @@ def _install_signal_handler() -> None:
         rates_path = Path(__file__).parent.parent / "agora-bos-rates.yaml"
         if rates_path.exists():
             try:
-                rates = yaml.safe_load(open(rates_path))
+                with open(rates_path) as f:
+                    rates = yaml.safe_load(f)
                 for route in rates.get("routes", []):
                     bos_rate_limiter.configure(route["prefix"], qps=route["qps"])
                 logger.info(

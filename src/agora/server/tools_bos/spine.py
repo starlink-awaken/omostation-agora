@@ -2,9 +2,11 @@
 
 Bridges Cockpit Spine and omlxc DMA/Replay capabilities to Agora MCP.
 """
+
 from __future__ import annotations
 
 import json
+import logging
 import os
 import subprocess
 import time
@@ -12,6 +14,8 @@ from pathlib import Path
 from typing import Any
 
 from agora.server._response import FORMAT_VERSION, _error, _ok
+
+logger = logging.getLogger(__name__)
 
 
 def _get_workspace_root() -> Path:
@@ -52,7 +56,9 @@ async def bos_spine_draft(
         ]
         proc = subprocess.run(cmd, capture_output=True, text=True, timeout=120)
         if proc.returncode != 0:
-            return _error(f"Draft generation failed: {proc.stderr.strip() or proc.stdout.strip()}")
+            return _error(
+                f"Draft generation failed: {proc.stderr.strip() or proc.stdout.strip()}"
+            )
 
         return _ok(
             {
@@ -97,7 +103,9 @@ async def bos_spine_sign(
         ]
         proc = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
         if proc.returncode != 0:
-            return _error(f"Sign recording failed: {proc.stderr.strip() or proc.stdout.strip()}")
+            return _error(
+                f"Sign recording failed: {proc.stderr.strip() or proc.stdout.strip()}"
+            )
 
         return _ok(
             {
@@ -220,7 +228,9 @@ async def bos_mesh_dma_status() -> dict:
                 }
             )
         except Exception:
-            pass
+            logger.debug(
+                "telemetry file read failed, falling back to CLI", exc_info=True
+            )
 
     # Fallback to direct omlxc CLI
     try:
