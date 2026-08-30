@@ -3849,3 +3849,82 @@ services:
   - bin/bc-os/proposal-triage.py
   - --analyze
   description: 提案池质量分层 (第0段清淤) — keep/archive/invalid 三层, --dry-run 预演
+
+# ── Phase 1-3 新工具 BOS URI ────────────────────────────────────────────────
+
+- action: bridge-runtime
+  command:
+  - python3
+  - bin/gac/bridge-runtime.py
+  description: 统一桥接运行时 (MetaOS↔OMO, Model-Driven↔ECOS, L4↔记忆层)
+  domain: governance
+  package: bridge-runtime
+  status: active
+  transport: cli
+  uri: bos://governance/bridge-runtime
+
+- action: corrosion-pipeline
+  command:
+  - python3
+  - bin/gac/corrosion-pipeline-connector.py
+  description: 防腐管道接线 (G1/G2)
+  domain: governance
+  package: corrosion
+  status: active
+  transport: cli
+  uri: bos://governance/corrosion-pipeline
+
+- action: value-tracker
+  command:
+  - python3
+  - bin/gac/value-tracker.py
+  description: 价值证明跟踪
+  domain: governance
+  package: value
+  status: active
+  transport: cli
+  uri: bos://governance/value-tracker
+
+- action: self-evolution
+  command:
+  - python3
+  - bin/gac/self-evolution-loop.py
+  description: 自进化反馈循环
+  domain: governance
+  package: evolution
+  status: active
+  transport: cli
+  uri: bos://governance/self-evolution
+
+- action: weekly-review
+  command:
+  - python3
+  - bin/gac/weekly-review.py
+  description: 每周价值回顾
+  domain: governance
+  package: review
+  status: active
+  transport: cli
+  uri: bos://governance/weekly-review
+
+- action: monthly-healthcheck
+  command:
+  - python3
+  - bin/gac/monthly-healthcheck.py
+  description: 每月架构健康检查
+  domain: governance
+  package: healthcheck
+  status: active
+  transport: cli
+  uri: bos://governance/monthly-healthcheck
+
+- action: probe-heartbeat
+  command:
+  - python3
+  - bin/gac/probe-heartbeat-monitor.py
+  description: 探测器心跳矩阵
+  domain: governance
+  package: probe
+  status: active
+  transport: cli
+  uri: bos://governance/probe-heartbeat
