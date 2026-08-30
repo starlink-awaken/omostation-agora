@@ -3959,12 +3959,12 @@ services:
   - spine
   - draft
   description: Cockpit/Spine 本地主权草稿生成与 AetherForge/omlxc 推理代理
-  domain: spine
-  package: cockpit
+  domain: cockpit
+  package: spine
   security_level: internal
   status: active
   transport: stdio
-  uri: bos://spine/draft
+  uri: bos://cockpit/spine/draft
 
 - action: sign
   command:
@@ -3978,12 +3978,12 @@ services:
   - spine
   - sign
   description: Cockpit/Spine 夏明星署名 Diff 经纪人录入与经验回放自适应进化
-  domain: spine
-  package: cockpit
+  domain: cockpit
+  package: spine
   security_level: internal
   status: active
   transport: stdio
-  uri: bos://spine/sign
+  uri: bos://cockpit/spine/sign
 
 - action: diff
   command:
@@ -3997,12 +3997,12 @@ services:
   - spine
   - diff
   description: Cockpit/Spine 署名 Diff 对比分析与经验样本池浏览
-  domain: spine
-  package: cockpit
+  domain: cockpit
+  package: spine
   security_level: internal
   status: active
   transport: stdio
-  uri: bos://spine/diff
+  uri: bos://cockpit/spine/diff
 
 - action: status
   command:
@@ -4016,12 +4016,12 @@ services:
   - spine
   - status
   description: Cockpit/Spine 物理算力织网与主干真值流状态监控
-  domain: spine
-  package: cockpit
+  domain: cockpit
+  package: spine
   security_level: internal
   status: active
   transport: stdio
-  uri: bos://spine/status
+  uri: bos://cockpit/spine/status
 
 - action: distill
   command:
@@ -4035,9 +4035,9 @@ services:
   - spine
   - distill
   description: Cockpit/Spine 触发 Mac mini M4 闲时在线 LoRA 蒸馏
-  domain: spine
-  package: cockpit
+  domain: cockpit
+  package: spine
   security_level: internal
   status: active
   transport: stdio
-  uri: bos://spine/distill
+  uri: bos://cockpit/spine/distill
