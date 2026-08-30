@@ -466,7 +466,7 @@ def register_bos_tools(mcp: FastMCP, bus: Any) -> None:
                         pkg_action = f"{parts[1]}.{parts[2]}"
                         r["schema_available"] = pkg_action in known_actions
         except Exception:  # defensive fallback
-            pass
+            logger.debug("schema_available annotation failed", exc_info=True)
 
         return _ok(
             {
