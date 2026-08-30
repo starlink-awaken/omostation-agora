@@ -175,7 +175,11 @@ def _register_proxy_tools(mcp_server: FastMCP, pm: ProxyManager):
             try:
                 mcp_server.remove_tool(entry.tool_name)
             except Exception:  # defensive fallback
-                logger.debug("remove_tool failed (may not exist)", tool=entry.tool_name, exc_info=True)
+                logger.debug(
+                    "remove_tool failed (may not exist)",
+                    tool=entry.tool_name,
+                    exc_info=True,
+                )
         mcp_server.add_tool(
             ProxyForwardTool(
                 name=entry.tool_name,

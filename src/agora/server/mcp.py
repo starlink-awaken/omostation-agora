@@ -317,11 +317,15 @@ class AuditSubscriber:
                 conn.execute(
                     "ALTER TABLE audit_log ADD COLUMN hash TEXT NOT NULL DEFAULT ''"
                 )
-            conn.execute("CREATE INDEX IF NOT EXISTS idx_audit_ts ON audit_log(timestamp)")
+            conn.execute(
+                "CREATE INDEX IF NOT EXISTS idx_audit_ts ON audit_log(timestamp)"
+            )
             conn.execute(
                 "CREATE INDEX IF NOT EXISTS idx_audit_type ON audit_log(event_type)"
             )
-            conn.execute("CREATE INDEX IF NOT EXISTS idx_audit_actor ON audit_log(actor)")
+            conn.execute(
+                "CREATE INDEX IF NOT EXISTS idx_audit_actor ON audit_log(actor)"
+            )
             conn.commit()
 
     def _classify(self, event_type):
@@ -513,7 +517,9 @@ class AuditSubscriber:
                     rows = conn.execute(
                         "SELECT risk_level, COUNT(*) as cnt FROM audit_log GROUP BY risk_level"
                     ).fetchall()
-                    total_row = conn.execute("SELECT COUNT(*) FROM audit_log").fetchone()
+                    total_row = conn.execute(
+                        "SELECT COUNT(*) FROM audit_log"
+                    ).fetchone()
                     stats["total"] = total_row[0] if total_row else 0
                 stats["by_risk"] = {r[0]: r[1] for r in rows}
                 type_rows = conn.execute(
