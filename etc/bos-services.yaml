@@ -3860,7 +3860,7 @@ services:
   domain: governance
   package: bridge-runtime
   status: active
-  transport: cli
+  transport: stdio
   uri: bos://governance/bridge-runtime
 
 - action: corrosion-pipeline
@@ -3871,7 +3871,7 @@ services:
   domain: governance
   package: corrosion
   status: active
-  transport: cli
+  transport: stdio
   uri: bos://governance/corrosion-pipeline
 
 - action: value-tracker
@@ -3882,7 +3882,7 @@ services:
   domain: governance
   package: value
   status: active
-  transport: cli
+  transport: stdio
   uri: bos://governance/value-tracker
 
 - action: self-evolution
@@ -3893,7 +3893,7 @@ services:
   domain: governance
   package: evolution
   status: active
-  transport: cli
+  transport: stdio
   uri: bos://governance/self-evolution
 
 - action: weekly-review
@@ -3904,7 +3904,7 @@ services:
   domain: governance
   package: review
   status: active
-  transport: cli
+  transport: stdio
   uri: bos://governance/weekly-review
 
 - action: monthly-healthcheck
@@ -3915,7 +3915,7 @@ services:
   domain: governance
   package: healthcheck
   status: active
-  transport: cli
+  transport: stdio
   uri: bos://governance/monthly-healthcheck
 
 - action: probe-heartbeat
@@ -3926,5 +3926,5 @@ services:
   domain: governance
   package: probe
   status: active
-  transport: cli
+  transport: stdio
   uri: bos://governance/probe-heartbeat
