@@ -22,6 +22,7 @@ from __future__ import annotations
 import asyncio
 import hashlib as _hashlib
 import json
+import logging
 import os
 import sys
 from contextlib import asynccontextmanager
@@ -29,6 +30,21 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 import structlog
+
+
+def _configure_inventory_probe_logging() -> None:
+    if os.environ.get("AGORA_MCP_INVENTORY_PROBE") != "1":
+        return
+    logging.basicConfig(level=logging.CRITICAL, force=True)
+    structlog.configure(
+        wrapper_class=structlog.make_filtering_bound_logger(logging.CRITICAL),
+        logger_factory=structlog.PrintLoggerFactory(file=sys.stderr),
+        cache_logger_on_first_use=True,
+    )
+
+
+_configure_inventory_probe_logging()
+
 from fastmcp import FastMCP
 from fastmcp.server.middleware import AuthMiddleware
 
