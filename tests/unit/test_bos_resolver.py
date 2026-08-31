@@ -34,6 +34,52 @@ from agora.mcp.bos_resolver import (
 )
 
 
+def test_family_dashboard_hitl_route_is_internal_and_exact():
+    from agora.mcp.resolver import api
+
+    service = api.get_service("bos://governance/hitl/execute/family_dashboard_document_write")
+    assert service is not None
+    assert service.transport == "internal"
+    assert service.package == "family-hub"
+    assert service.module_path == "family_hub.dashboard_mutation"
+    assert service.func_name == "execute_approved_mutation"
+
+
+def test_family_dashboard_mutation_route_has_zero_cache_ttl():
+    from agora.server._response import _get_cache_ttl
+
+    assert _get_cache_ttl("bos://governance/hitl/execute/family_dashboard_document_write") == 0
+
+
+def test_family_dashboard_mutation_route_never_replays_cached_result(monkeypatch):
+    from agora.mcp.bos_middleware import bos_cache
+    from agora.mcp.resolver import api
+
+    uri = "bos://governance/hitl/execute/family_dashboard_document_write"
+    calls: list[str] = []
+    module = types.ModuleType("family_hub.dashboard_mutation")
+
+    def execute_approved_mutation(args: dict) -> dict:
+        proposal_id = str(args["proposal"]["id"])
+        calls.append(proposal_id)
+        return {
+            "status": "verified",
+            "proposal_id": proposal_id,
+            "verify_receipt_ref": f"mutations/{proposal_id}/verify.json",
+            "verify_receipt_sha256": "sha256:" + "c" * 64,
+        }
+
+    module.execute_approved_mutation = execute_approved_mutation
+    monkeypatch.setitem(sys.modules, "family_hub.dashboard_mutation", module)
+    api._service_index = None
+    bos_cache.invalidate(uri)
+    first = asyncio.run(api.resolve_bos_uri(uri, proposal={"id": "p1"}))
+    second = asyncio.run(api.resolve_bos_uri(uri, proposal={"id": "p2"}))
+    assert first["result"]["proposal_id"] == "p1"
+    assert second["result"]["proposal_id"] == "p2"
+    assert calls == ["p1", "p2"]
+
+
 def _kairon_main_help(module: str) -> dict:
     """Probe a Kairon module without spawning when its checkout is unavailable."""
     if not KAIRON_ROOT.is_dir():

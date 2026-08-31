@@ -29,6 +29,9 @@ routes:
     cache_ttl: 30
 
   # Governance 域 — 审计结果短时缓存
+  - prefix: "bos://governance/hitl/execute/family_dashboard_document_write"
+    qps: 1
+    cache_ttl: 0
   - prefix: "bos://governance/omo/"
     qps: 10
     cache_ttl: 15
