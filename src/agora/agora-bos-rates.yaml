@@ -28,6 +28,10 @@ routes:
     qps: 10
     cache_ttl: 30
 
+  # Governance HITL mutation 域 — 实时执行不缓存
+  - prefix: "bos://governance/hitl/execute/"
+    qps: 5
+    cache_ttl: 0
   # Governance 域 — 审计结果短时缓存
   - prefix: "bos://governance/omo/"
     qps: 10

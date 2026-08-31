@@ -4041,3 +4041,12 @@ services:
   status: active
   transport: stdio
   uri: bos://cockpit/spine/distill
+- action: execute
+  description: CAS-bound family dashboard document write via HITL approval (T10-122)
+  domain: governance
+  func_name: execute_family_dashboard_mutation
+  module_path: family_hub.hitl.executor
+  package: hitl
+  status: active
+  transport: internal
+  uri: bos://governance/hitl/execute/family_dashboard_document_write
