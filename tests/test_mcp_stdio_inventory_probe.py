@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import json
 import logging
+import math
 import os
 from pathlib import Path
 import selectors
@@ -56,6 +57,109 @@ EXPECTED_TOOL_NAMES = frozenset(
     """.split()  # noqa: SIM905 - keep the fixed inventory readable by groups.
 )
 STDERR_CAP_BYTES = 65_536
+
+
+@pytest.mark.parametrize(
+    "raw_line",
+    (
+        b'\xff{"jsonrpc":"2.0","id":1,"result":{}}',
+        b'{"jsonrpc":"2.0","bogus":true}',
+    ),
+)
+def test_json_rpc_stdout_line_rejects_invalid_encoding_or_envelope(
+    raw_line: bytes,
+) -> None:
+    """The stdio transcript must fail closed on malformed wire messages."""
+    with pytest.raises(AssertionError):
+        _decode_and_validate_json_rpc_line(raw_line, line_number=1)
+
+
+def _valid_json_rpc_id(value: object) -> bool:
+    return value is None or (
+        isinstance(value, (str, int, float))
+        and not isinstance(value, bool)
+        and (not isinstance(value, float) or math.isfinite(value))
+    )
+
+
+def _valid_json_rpc_error(value: object) -> bool:
+    if not isinstance(value, dict) or not {"code", "message"} <= value.keys():
+        return False
+    if not set(value) <= {"code", "message", "data"}:
+        return False
+    return (
+        isinstance(value["code"], int)
+        and not isinstance(value["code"], bool)
+        and isinstance(value["message"], str)
+    )
+
+
+def _reject_non_json_constant(constant: str) -> None:
+    raise ValueError(f"non-JSON constant {constant!r}")
+
+
+def _decode_and_validate_json_rpc_line(
+    raw_line: bytes, *, line_number: int
+) -> dict[str, object]:
+    """Decode one MCP stdio line and reject every non-JSON-RPC envelope."""
+    try:
+        line = raw_line.decode("utf-8")
+    except UnicodeDecodeError as exc:
+        raise AssertionError(
+            f"stdout line {line_number} is not valid UTF-8: {raw_line!r}"
+        ) from exc
+    try:
+        message = json.loads(line, parse_constant=_reject_non_json_constant)
+    except (json.JSONDecodeError, ValueError) as exc:
+        raise AssertionError(
+            f"stdout line {line_number} is not JSON: {line!r}"
+        ) from exc
+    if not isinstance(message, dict):
+        raise AssertionError(f"stdout line {line_number} is not an object")
+    if message.get("jsonrpc") != "2.0":
+        raise AssertionError(
+            f"stdout line {line_number} lacks jsonrpc 2.0: {message!r}"
+        )
+
+    has_method = "method" in message
+    has_result = "result" in message
+    has_error = "error" in message
+    if has_method:
+        if not set(message) <= {"jsonrpc", "method", "id", "params"}:
+            raise AssertionError(
+                f"stdout line {line_number} has invalid request members: {message!r}"
+            )
+        if not isinstance(message["method"], str):
+            raise AssertionError(
+                f"stdout line {line_number} has a non-string method: {message!r}"
+            )
+        if "id" in message and not _valid_json_rpc_id(message["id"]):
+            raise AssertionError(
+                f"stdout line {line_number} has an invalid request id: {message!r}"
+            )
+        if "params" in message and not isinstance(message["params"], (dict, list)):
+            raise AssertionError(
+                f"stdout line {line_number} has invalid request params: {message!r}"
+            )
+        return message
+
+    if not set(message) <= {"jsonrpc", "id", "result", "error"}:
+        raise AssertionError(
+            f"stdout line {line_number} has invalid response members: {message!r}"
+        )
+    if "id" not in message or not _valid_json_rpc_id(message["id"]):
+        raise AssertionError(
+            f"stdout line {line_number} has an invalid response id: {message!r}"
+        )
+    if has_result == has_error:
+        raise AssertionError(
+            f"stdout line {line_number} must contain exactly one result or error: {message!r}"
+        )
+    if has_error and not _valid_json_rpc_error(message["error"]):
+        raise AssertionError(
+            f"stdout line {line_number} has an invalid error object: {message!r}"
+        )
+    return message
 
 
 class _CappedStreamDrain:
@@ -254,21 +358,16 @@ def _run_probe(
                 stdout_buffer += chunk
                 while b"\n" in stdout_buffer:
                     raw_line, stdout_buffer = stdout_buffer.split(b"\n", 1)
-                    line = raw_line.decode(errors="replace")
-                    stdout_lines.append(line)
-                    try:
-                        message = json.loads(line)
-                    except json.JSONDecodeError:
-                        continue
-                    if (
-                        not tail_sent
-                        and isinstance(message, dict)
-                        and message.get("id") == 1
-                    ):
+                    line = _decode_and_validate_json_rpc_line(
+                        raw_line, line_number=len(stdout_lines) + 1
+                    )
+                    text_line = raw_line.decode("utf-8")
+                    stdout_lines.append(text_line)
+                    if not tail_sent and line.get("id") == 1:
                         process.stdin.write((remainder + "\n").encode())
                         process.stdin.flush()
                         tail_sent = True
-                    if isinstance(message, dict) and message.get("id") == 2:
+                    if line.get("id") == 2:
                         response_two_seen = True
                         break
         exchange_elapsed = time.monotonic() - started
@@ -283,7 +382,10 @@ def _run_probe(
         group_gone = _terminate_process_group(process)
         stderr_thread.join(timeout=2.0)
     if stdout_buffer:
-        stdout_lines.append(stdout_buffer.decode(errors="replace"))
+        _decode_and_validate_json_rpc_line(
+            stdout_buffer, line_number=len(stdout_lines) + 1
+        )
+        stdout_lines.append(stdout_buffer.decode("utf-8"))
     assert not stderr_thread.is_alive(), "stderr drain did not reach EOF after teardown"
     return (
         stdout_lines,
@@ -344,16 +446,9 @@ def test_inventory_probe_stdio_transcript_is_clean_and_bounded() -> None:
         )
         responses: list[dict[str, object]] = []
         for line_number, line in enumerate(stdout_lines, 1):
-            try:
-                message = json.loads(line)
-            except json.JSONDecodeError as exc:
-                raise AssertionError(
-                    f"stdout line {line_number} is not JSON: {line!r}"
-                ) from exc
-            assert isinstance(message, dict), (
-                f"stdout line {line_number} is not an object"
+            message = _decode_and_validate_json_rpc_line(
+                line.encode("utf-8"), line_number=line_number
             )
-            assert message.get("jsonrpc") == "2.0", message
             if "id" in message:
                 responses.append(message)
         assert [message.get("id") for message in responses] == [1, 2]
