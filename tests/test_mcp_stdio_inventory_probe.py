@@ -10,6 +10,7 @@ import os
 from pathlib import Path
 import selectors
 import signal
+import sqlite3
 import subprocess
 import structlog
 import sys
@@ -57,6 +58,7 @@ EXPECTED_TOOL_NAMES = frozenset(
     """.split()  # noqa: SIM905 - keep the fixed inventory readable by groups.
 )
 STDERR_CAP_BYTES = 65_536
+_SAFE_CHILD_ENV_NAMES = ("PATH", "PYTHONPATH")
 
 
 @pytest.mark.parametrize(
@@ -198,7 +200,9 @@ def _request(
 
 
 def _probe_environment(root: Path) -> dict[str, str]:
-    env = os.environ.copy()
+    env = {
+        name: os.environ[name] for name in _SAFE_CHILD_ENV_NAMES if name in os.environ
+    }
     env.update(
         {
             "AGORA_MCP_INVENTORY_PROBE": "1",
@@ -215,6 +219,13 @@ def _probe_environment(root: Path) -> dict[str, str]:
             "AGORA_DATA_DIR": str(root / "data" / "agora"),
             "AGORA_STORAGE_PATH": str(root / "data" / "agora" / "services.json"),
             "AGORA_FORGE_REGISTRY": str(root / "config" / "forge-registry.json"),
+            "AGORA_AUDIT_DB": str(root / "data" / "agora" / "agora-audit.db"),
+            "AGORA_METRICS_DB": str(root / "data" / "agora" / "bos_metrics.db"),
+            "AGORA_CACHE_DIR": str(root / "cache" / "agora"),
+            "AGORA_CONFIG_PATH": str(root / "config" / "agora.json"),
+            "AGORA_ALERT_LOG": str(root / "state" / "agora-alerts.jsonl"),
+            "BOS_DOCUMENTS_ROOT": str(root / "documents"),
+            "OMO_CAPABILITIES_ROOT": str(root / "data" / "capabilities"),
             "PYTHONDONTWRITEBYTECODE": "1",
             "WORKSPACE": str(root),
             "WORKSPACE_ROOT": str(root),
@@ -298,6 +309,15 @@ def _worktree_status(project_root: Path) -> bytes:
             "--untracked-files=all",
         ]
     )
+
+
+def _file_fingerprint(path: Path) -> tuple[bool, str]:
+    """Fingerprint a test-owned sentinel without reading unrelated user files."""
+    if not path.exists():
+        return False, "missing"
+    stat = path.stat()
+    digest = hashlib.sha256(path.read_bytes()).hexdigest()
+    return True, f"{stat.st_mode}:{stat.st_size}:{stat.st_mtime_ns}:{digest}"
 
 
 def _run_probe(
@@ -421,6 +441,13 @@ def test_inventory_probe_stdio_transcript_is_clean_and_bounded() -> None:
             "AGORA_DATA_DIR",
             "AGORA_STORAGE_PATH",
             "AGORA_FORGE_REGISTRY",
+            "AGORA_AUDIT_DB",
+            "AGORA_METRICS_DB",
+            "AGORA_CACHE_DIR",
+            "AGORA_CONFIG_PATH",
+            "AGORA_ALERT_LOG",
+            "BOS_DOCUMENTS_ROOT",
+            "OMO_CAPABILITIES_ROOT",
             "WORKSPACE",
             "WORKSPACE_ROOT",
         )
@@ -477,6 +504,56 @@ def test_inventory_probe_stdio_transcript_is_clean_and_bounded() -> None:
 
         assert _tree_fingerprint(real_agora) == external_before
         assert _worktree_status(project_root) == worktree_before
+
+
+@pytest.mark.skipif(os.name != "posix", reason="requires POSIX process groups")
+def test_inventory_probe_ignores_hostile_database_destinations(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """The exact stdio probe never inherits externally supplied SQLite paths."""
+    project_root = Path(__file__).resolve().parents[1]
+    with (
+        tempfile.TemporaryDirectory(prefix="agora-mcp-inventory-") as temp_root,
+        tempfile.TemporaryDirectory(prefix="agora-mcp-hostile-db-") as hostile_root,
+    ):
+        root = Path(temp_root)
+        hostile = Path(hostile_root)
+        hostile_audit = hostile / "audit.db"
+        hostile_metrics = hostile / "metrics.db"
+        sqlite3.connect(hostile_audit).close()
+        sqlite3.connect(hostile_metrics).close()
+        hostile_before = {
+            hostile_audit: _file_fingerprint(hostile_audit),
+            hostile_metrics: _file_fingerprint(hostile_metrics),
+        }
+        monkeypatch.setenv("AGORA_AUDIT_DB", str(hostile_audit))
+        monkeypatch.setenv("AGORA_METRICS_DB", str(hostile_metrics))
+        monkeypatch.setenv("AGORA_SWARM_ROLE", "hostile")
+        monkeypatch.setenv("BOS_NODE_NAME", "hostile")
+        monkeypatch.setenv("FASTMCP_PORT", "9900")
+        monkeypatch.setenv("FASTMCP_LOG_LEVEL", "DEBUG")
+
+        env = _probe_environment(root)
+        resolved_root = root.resolve()
+        assert all(
+            Path(env[name]).resolve().is_relative_to(resolved_root)
+            for name in ("AGORA_AUDIT_DB", "AGORA_METRICS_DB")
+        )
+        assert "AGORA_SWARM_ROLE" not in env
+        assert "BOS_NODE_NAME" not in env
+        assert "FASTMCP_PORT" not in env
+        assert env["FASTMCP_LOG_LEVEL"] == "ERROR"
+
+        _, _, _, returncode, exchange_elapsed, group_gone = _run_probe(
+            project_root, root
+        )
+
+        assert returncode == 0
+        assert exchange_elapsed < 4.0
+        assert group_gone
+        assert {
+            path: _file_fingerprint(path) for path in hostile_before
+        } == hostile_before
 
 
 def test_flagless_inventory_probe_import_is_a_fresh_process_noop() -> None:
