@@ -13,7 +13,9 @@ import subprocess
 import structlog
 import sys
 import tempfile
+import threading
 import time
+from typing import BinaryIO
 
 import pytest
 
@@ -53,6 +55,31 @@ EXPECTED_TOOL_NAMES = frozenset(
     workspace_audit_radar workspace_audit_run workspace_audit_ssot
     """.split()  # noqa: SIM905 - keep the fixed inventory readable by groups.
 )
+STDERR_CAP_BYTES = 65_536
+
+
+class _CappedStreamDrain:
+    """Drain a pipe fully while retaining only enough output for the cap check."""
+
+    def __init__(self, cap_bytes: int) -> None:
+        self._limit = cap_bytes + 1
+        self._chunks: list[bytes] = []
+        self._captured = 0
+        self.overflowed = False
+
+    def drain(self, stream: BinaryIO) -> None:
+        while chunk := os.read(stream.fileno(), 65_536):
+            remaining = self._limit - self._captured
+            if remaining > 0:
+                captured = chunk[:remaining]
+                self._chunks.append(captured)
+                self._captured += len(captured)
+            if len(chunk) > remaining:
+                self.overflowed = True
+
+    @property
+    def captured(self) -> bytes:
+        return b"".join(self._chunks)
 
 
 def _request(
@@ -105,25 +132,73 @@ def _probe_environment(root: Path) -> dict[str, str]:
     return env
 
 
-def _terminate_process_group(process: subprocess.Popen[bytes]) -> None:
-    if process.poll() is None:
+def _process_group_is_gone(process_group: int) -> bool:
+    try:
+        os.killpg(process_group, 0)
+    except ProcessLookupError:
+        return True
+    return False
+
+
+def _terminate_process_group(process: subprocess.Popen[bytes]) -> bool:
+    """Terminate every process in the child session, even after its leader exits."""
+    process_group = process.pid
+    try:
+        os.killpg(process_group, signal.SIGTERM)
+    except ProcessLookupError:
+        pass
+    try:
+        process.wait(timeout=1.0)
+    except subprocess.TimeoutExpired:
         try:
-            os.killpg(process.pid, signal.SIGTERM)
+            os.killpg(process_group, signal.SIGKILL)
+        except ProcessLookupError:
+            pass
+        try:
             process.wait(timeout=1.0)
-        except (ProcessLookupError, subprocess.TimeoutExpired):
-            try:
-                os.killpg(process.pid, signal.SIGKILL)
-            except ProcessLookupError:
-                pass
-            try:
-                process.wait(timeout=1.0)
-            except subprocess.TimeoutExpired:
-                pass
+        except subprocess.TimeoutExpired:
+            return False
+    if not _process_group_is_gone(process_group):
+        try:
+            os.killpg(process_group, signal.SIGKILL)
+        except ProcessLookupError:
+            pass
+    deadline = time.monotonic() + 1.0
+    while time.monotonic() < deadline:
+        if _process_group_is_gone(process_group):
+            return True
+        time.sleep(0.01)
+    return _process_group_is_gone(process_group)
+
+
+def _tree_fingerprint(path: Path) -> tuple[bool, str]:
+    """Return a stable metadata fingerprint without inspecting user file contents."""
+    if not path.exists():
+        return False, "missing"
+    digest = hashlib.sha256()
+    for entry in sorted(path.rglob("*"), key=lambda candidate: str(candidate)):
+        stat = entry.lstat()
+        digest.update(str(entry.relative_to(path)).encode())
+        digest.update(f"{stat.st_mode}:{stat.st_size}:{stat.st_mtime_ns}".encode())
+    return True, digest.hexdigest()
+
+
+def _worktree_status(project_root: Path) -> bytes:
+    return subprocess.check_output(
+        [
+            "git",
+            "-C",
+            str(project_root),
+            "status",
+            "--porcelain=v1",
+            "--untracked-files=all",
+        ]
+    )
 
 
 def _run_probe(
     project_root: Path, root: Path
-) -> tuple[list[str], bytes, int | None, float]:
+) -> tuple[list[str], bytes, bool, int | None, float, bool]:
     env = _probe_environment(root)
     initialize = _request(
         "initialize",
@@ -147,16 +222,21 @@ def _run_probe(
         start_new_session=True,
     )
     stdout_lines: list[str] = []
-    stderr_chunks: list[bytes] = []
+    stderr_drain = _CappedStreamDrain(STDERR_CAP_BYTES)
+    assert process.stderr is not None
+    stderr_thread = threading.Thread(
+        target=stderr_drain.drain,
+        args=(process.stderr,),
+        name="agora-mcp-stderr-drain",
+    )
+    stderr_thread.start()
     stdout_buffer = b""
     tail_sent = False
     response_two_seen = False
     started = time.monotonic()
     selector = selectors.DefaultSelector()
     assert process.stdout is not None
-    assert process.stderr is not None
     selector.register(process.stdout, selectors.EVENT_READ, "stdout")
-    selector.register(process.stderr, selectors.EVENT_READ, "stderr")
     try:
         assert process.stdin is not None
         process.stdin.write((initialize + "\n").encode())
@@ -170,9 +250,6 @@ def _run_probe(
                 chunk = os.read(key.fileobj.fileno(), 65_536)
                 if not chunk:
                     selector.unregister(key.fileobj)
-                    continue
-                if key.data == "stderr":
-                    stderr_chunks.append(chunk)
                     continue
                 stdout_buffer += chunk
                 while b"\n" in stdout_buffer:
@@ -194,19 +271,27 @@ def _run_probe(
                     if isinstance(message, dict) and message.get("id") == 2:
                         response_two_seen = True
                         break
+        exchange_elapsed = time.monotonic() - started
         if process.stdin is not None:
             process.stdin.close()
-        process.wait(timeout=1.0)
+        try:
+            process.wait(timeout=1.0)
+        except subprocess.TimeoutExpired:
+            pass
     finally:
         selector.close()
-        _terminate_process_group(process)
+        group_gone = _terminate_process_group(process)
+        stderr_thread.join(timeout=2.0)
     if stdout_buffer:
         stdout_lines.append(stdout_buffer.decode(errors="replace"))
+    assert not stderr_thread.is_alive(), "stderr drain did not reach EOF after teardown"
     return (
         stdout_lines,
-        b"".join(stderr_chunks),
+        stderr_drain.captured,
+        stderr_drain.overflowed,
         process.returncode,
-        time.monotonic() - started,
+        exchange_elapsed,
+        group_gone,
     )
 
 
@@ -217,13 +302,43 @@ def _canonical_digest(value: object) -> str:
     return "sha256:" + hashlib.sha256(payload).hexdigest()
 
 
+@pytest.mark.skipif(os.name != "posix", reason="requires POSIX process groups")
 def test_inventory_probe_stdio_transcript_is_clean_and_bounded() -> None:
     """The private probe emits only JSON-RPC through tools/list."""
     project_root = Path(__file__).resolve().parents[1]
     with tempfile.TemporaryDirectory(prefix="agora-mcp-inventory-") as temp_root:
         root = Path(temp_root)
-        stdout_lines, stderr, returncode, elapsed = _run_probe(project_root, root)
-        assert len(stderr) <= 65_536, (
+        env = _probe_environment(root)
+        configured_destinations = (
+            "HOME",
+            "TMPDIR",
+            "XDG_CACHE_HOME",
+            "XDG_CONFIG_HOME",
+            "XDG_DATA_HOME",
+            "XDG_STATE_HOME",
+            "AGORA_DATA_DIR",
+            "AGORA_STORAGE_PATH",
+            "AGORA_FORGE_REGISTRY",
+            "WORKSPACE",
+            "WORKSPACE_ROOT",
+        )
+        resolved_root = root.resolve()
+        assert all(
+            Path(env[name]).resolve().is_relative_to(resolved_root)
+            for name in configured_destinations
+        )
+        real_agora = Path.home() / ".agora"
+        external_before = _tree_fingerprint(real_agora)
+        worktree_before = _worktree_status(project_root)
+        (
+            stdout_lines,
+            stderr,
+            stderr_overflowed,
+            returncode,
+            exchange_elapsed,
+            group_gone,
+        ) = _run_probe(project_root, root)
+        assert not stderr_overflowed and len(stderr) <= STDERR_CAP_BYTES, (
             f"stderr exceeded 64 KiB ({len(stderr)} bytes): "
             f"{stderr[:512].decode(errors='replace')!r}"
         )
@@ -242,8 +357,9 @@ def test_inventory_probe_stdio_transcript_is_clean_and_bounded() -> None:
             if "id" in message:
                 responses.append(message)
         assert [message.get("id") for message in responses] == [1, 2]
-        assert elapsed < 4.0, f"probe took {elapsed:.3f}s"
+        assert exchange_elapsed < 4.0, f"probe exchange took {exchange_elapsed:.3f}s"
         assert returncode == 0, stderr.decode(errors="replace")
+        assert group_gone, "process group still has surviving descendants"
 
         initialize = responses[0]["result"]
         listing = responses[1]["result"]
@@ -264,22 +380,43 @@ def test_inventory_probe_stdio_transcript_is_clean_and_bounded() -> None:
             == EXPECTED_TOOL_INVENTORY_DIGEST
         )
 
-        assert all(path.is_relative_to(root) for path in root.rglob("*"))
+        assert _tree_fingerprint(real_agora) == external_before
+        assert _worktree_status(project_root) == worktree_before
 
 
-def test_flagless_inventory_probe_logging_hook_is_noop(monkeypatch, tmp_path) -> None:
-    """Normal mode keeps the existing logging configuration untouched."""
-    monkeypatch.delenv("AGORA_MCP_INVENTORY_PROBE", raising=False)
-    monkeypatch.setenv("AGORA_DATA_DIR", str(tmp_path / "agora"))
-    import agora.server.mcp as server_mcp
-
-    root_logger = logging.getLogger()
-    before = (root_logger.level, tuple(root_logger.handlers))
-    monkeypatch.setattr(
-        logging, "basicConfig", lambda **kwargs: pytest.fail("configured")
-    )
-    monkeypatch.setattr(
-        structlog, "configure", lambda **kwargs: pytest.fail("configured")
-    )
-    server_mcp._configure_inventory_probe_logging()
-    assert (root_logger.level, tuple(root_logger.handlers)) == before
+def test_flagless_inventory_probe_import_is_a_fresh_process_noop() -> None:
+    """An import in normal mode preserves preconfigured stdlib and structlog state."""
+    project_root = Path(__file__).resolve().parents[1]
+    with tempfile.TemporaryDirectory(prefix="agora-mcp-normal-") as temp_root:
+        env = _probe_environment(Path(temp_root))
+        env.pop("AGORA_MCP_INVENTORY_PROBE")
+        script = """
+import json
+import logging
+import structlog
+root = logging.getLogger()
+handler = logging.StreamHandler()
+root.handlers[:] = [handler]
+root.setLevel(logging.INFO)
+structlog.configure(
+    processors=[structlog.processors.JSONRenderer()],
+    cache_logger_on_first_use=False,
+)
+before = structlog.get_config()
+import agora.server.mcp
+print(json.dumps({
+    'stdlib_unchanged': root.level == logging.INFO and root.handlers == [handler],
+    'structlog_unchanged': structlog.get_config() == before,
+}))
+"""
+        completed = subprocess.run(
+            [sys.executable, "-c", script],
+            cwd=project_root,
+            env=env,
+            capture_output=True,
+            check=False,
+            timeout=15.0,
+        )
+    assert completed.returncode == 0, completed.stderr.decode(errors="replace")
+    result = json.loads(completed.stdout.decode().splitlines()[-1])
+    assert result == {"stdlib_unchanged": True, "structlog_unchanged": True}
