@@ -1,4 +1,13 @@
 services:
+- uri: bos://governance/hitl/execute/family_dashboard_document_write
+  domain: governance
+  package: family-hub
+  action: hitl/execute/family_dashboard_document_write
+  transport: internal
+  module_path: family_hub.dashboard_mutation
+  func_name: execute_approved_mutation
+  description: Execute one Cockpit-approved family Documents CAS transaction through the family-hub owner.
+  status: active
 - action: search
   command:
   - uv
