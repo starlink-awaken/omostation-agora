@@ -41,8 +41,8 @@ def test_family_dashboard_hitl_route_is_internal_and_exact():
     assert service is not None
     assert service.transport == "internal"
     assert service.package == "family-hub"
-    assert service.module_path == "family_hub.dashboard_mutation"
-    assert service.func_name == "execute_approved_mutation"
+    assert service.module_path == "family_hub.hitl.executor"
+    assert service.func_name == "execute_family_dashboard_mutation"
 
 
 def test_family_dashboard_mutation_route_has_zero_cache_ttl():
@@ -57,10 +57,10 @@ def test_family_dashboard_mutation_route_never_replays_cached_result(monkeypatch
 
     uri = "bos://governance/hitl/execute/family_dashboard_document_write"
     calls: list[str] = []
-    module = types.ModuleType("family_hub.dashboard_mutation")
+    module = types.ModuleType("family_hub.hitl.executor")
 
-    def execute_approved_mutation(args: dict) -> dict:
-        proposal_id = str(args["proposal"]["id"])
+    def execute_family_dashboard_mutation(args: dict, proxy_manager=None) -> dict:
+        proposal_id = str(args["proposal"]["proposal_id"])
         calls.append(proposal_id)
         return {
             "status": "verified",
@@ -69,12 +69,12 @@ def test_family_dashboard_mutation_route_never_replays_cached_result(monkeypatch
             "verify_receipt_sha256": "sha256:" + "c" * 64,
         }
 
-    module.execute_approved_mutation = execute_approved_mutation
-    monkeypatch.setitem(sys.modules, "family_hub.dashboard_mutation", module)
+    module.execute_family_dashboard_mutation = execute_family_dashboard_mutation
+    monkeypatch.setitem(sys.modules, "family_hub.hitl.executor", module)
     api._service_index = None
     bos_cache.invalidate(uri)
-    first = asyncio.run(api.resolve_bos_uri(uri, proposal={"id": "p1"}))
-    second = asyncio.run(api.resolve_bos_uri(uri, proposal={"id": "p2"}))
+    first = asyncio.run(api.resolve_bos_uri(uri, proposal={"proposal_id": "p1"}))
+    second = asyncio.run(api.resolve_bos_uri(uri, proposal={"proposal_id": "p2"}))
     assert first["result"]["proposal_id"] == "p1"
     assert second["result"]["proposal_id"] == "p2"
     assert calls == ["p1", "p2"]
