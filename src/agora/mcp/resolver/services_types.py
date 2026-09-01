@@ -38,6 +38,7 @@ BOS_URI_DOMAINS = (
     "fabric",
     "resident",
     "bcos",
+    "harness",
 )
 BOS_URI_DOMAIN_PATTERN = "|".join(BOS_URI_DOMAINS)
 
