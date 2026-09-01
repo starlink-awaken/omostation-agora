@@ -9,6 +9,12 @@ Authority: nucleus/Z-Core/L0-Genome/R0-ACT-SYS-AX01-10_holographic_metadata_axio
 Layer: L3
 ---
 """
+
+# ── Harness Phase 8 tools ──
+from agora.tools.harness import (  # type: ignore[import-not-found]
+    TOOL_DEFINITIONS as HARNESS_TOOLS,
+    TOOL_HANDLERS as HARNESS_HANDLERS,
+)
 # =============================================================================
 # 0. 形式化摘要 ≝
 # =============================================================================
@@ -269,7 +275,7 @@ def handle_tools_list(params: dict, ctx: ToolContext) -> dict:
 
 def _get_builtin_mcp_tools() -> list[dict]:
     """Return built-in MCP tools when D-Execution registry is unavailable."""
-    return [
+    builtins = [
         {
             "name": "bos_ping",
             "description": "Ping the B-OS MCP server to verify connectivity",
@@ -287,6 +293,9 @@ def _get_builtin_mcp_tools() -> list[dict]:
             },
         },
     ]
+    # 注册 Harness Phase 8 工具
+    builtins.extend(HARNESS_TOOLS)
+    return builtins
 
 
 def handle_tools_call(params: dict, ctx: ToolContext) -> dict:  # type: ignore[reportReturnType]
@@ -361,5 +370,12 @@ def _handle_builtin_tool(tool_name: str, arguments: dict) -> dict | None:
                     ),
                 }
             ],
+        }
+    # ── Harness Phase 8 工具处理 ──
+    if tool_name in HARNESS_HANDLERS:
+        result = HARNESS_HANDLERS[tool_name](arguments)
+        return {
+            "content": [{"type": "text", "text": json.dumps(result, ensure_ascii=False, indent=2)}],
+            "isError": not result.get("ok", False),
         }
     return None
