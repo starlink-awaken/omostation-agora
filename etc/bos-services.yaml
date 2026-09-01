@@ -4050,3 +4050,67 @@ services:
   status: active
   transport: stdio
   uri: bos://cockpit/spine/distill
+
+# ── Harness 全生命周期合规 (Phase 8) ──
+- uri: bos://harness/compliance/check
+  domain: harness
+  package: harness-compliance
+  action: compliance
+  transport: stdio
+  command:
+  - python3
+  - bin/gac/harness-compliance-check.py
+  - "--gate"
+  description: "Harness 12 章节全生命周期合规检查 (Phase 8)"
+  status: active
+- uri: bos://harness/mof/bridge
+  domain: harness
+  package: harness-mof
+  action: mof
+  transport: stdio
+  command:
+  - python3
+  - bin/gac/harness-mof-bridge.py
+  description: "Harness MOF 约束联动检查 (8 条 Agent-MOF 规则)"
+  status: active
+- uri: bos://harness/omo/bridge
+  domain: harness
+  package: harness-omo
+  action: omo
+  transport: stdio
+  command:
+  - python3
+  - bin/gac/harness-omo-bridge.py
+  description: "Harness OMO 状态同步检查 (Harness/GaC/漂移/已知债)"
+  status: active
+- uri: bos://harness/enforce
+  domain: harness
+  package: harness-enforce
+  action: enforce
+  transport: stdio
+  command:
+  - python3
+  - bin/gac/harness-constraint-enforcer.py
+  - "--ci"
+  description: "Harness 统一约束与驱动 (整合 4 引擎 CI 模式)"
+  status: active
+- uri: bos://harness/perceive
+  domain: harness
+  package: harness-perceive
+  action: perceive
+  transport: stdio
+  command:
+  - .githooks/pre-edit-architecture.sh
+  description: "Harness 架构感知预编辑检查 (场景卡/Journey/标准/Harness)"
+  status: active
+- uri: bos://compliance/full
+  domain: harness
+  package: compliance-full
+  action: full
+  transport: stdio
+  command:
+  - python3
+  - bin/gac/harness-constraint-enforcer.py
+  - "--ci"
+  description: "全量合规检查 (arch + compliance + mof + omo)"
+  status: active
