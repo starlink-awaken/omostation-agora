@@ -254,6 +254,7 @@ def handle_tools_list(params: dict, ctx: ToolContext) -> dict:
     """MCP tools/list — enumerate all tools registered in the ToolRegistry."""
     tools: list[dict] = []
 
+    # 1. 从 Proxy Manager 获取动态注册的工具
     pm = _get_proxy_manager()
     if pm:
         proxy_schemas = pm.registry.get_tool_schemas()
@@ -268,8 +269,14 @@ def handle_tools_list(params: dict, ctx: ToolContext) -> dict:
                 }
             )
 
-    if not tools:
-        tools = _get_builtin_mcp_tools()
+    # 2. 合并内置工具 (包括 Harness Phase 8 工具)
+    builtins = _get_builtin_mcp_tools()
+    # 避免重复注册
+    existing_names = {t["name"] for t in tools}
+    for builtin in builtins:
+        if builtin["name"] not in existing_names:
+            tools.append(builtin)
+
     return {"tools": tools}
 
 
