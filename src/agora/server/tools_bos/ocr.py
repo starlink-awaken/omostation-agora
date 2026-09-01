@@ -239,7 +239,7 @@ def cluster_lines(boxes: list[TextBox]) -> list[LayoutLine]:
             lines.append(LayoutLine(boxes=[box]))
     for line in lines:
         line.boxes.sort(key=lambda b: b.x)
-    lines.sort(key=lambda l: (l.y, l.x0))
+    lines.sort(key=lambda ln: (ln.y, ln.x0))
     return lines
 
 
@@ -254,7 +254,7 @@ def _line_h(line: LayoutLine) -> float:
 
 def _glyph_width(lines: list[LayoutLine]) -> float:
     """Median glyph width estimate: median line span / ~20 glyphs."""
-    spans = sorted(l.x1 - l.x0 for l in lines)
+    spans = sorted(ln.x1 - ln.x0 for ln in lines)
     return max((spans[len(spans) // 2] or 1.0) / 20.0, 1.0)
 
 
@@ -283,12 +283,12 @@ def detect_tables(lines: list[LayoutLine]) -> tuple[list[list[list[str]]], set[i
             run.append(line)
         else:
             if len(run) >= TABLE_MIN_ROWS:
-                tables.append([[b.text for b in l.boxes] for l in run])
+                tables.append([[b.text for b in ln.boxes] for ln in run])
                 used.update(range(idx - len(run), idx))
             run = [line] if len(line.boxes) >= 2 else []
     if len(run) >= TABLE_MIN_ROWS:
         start = len(lines) - len(run)
-        tables.append([[b.text for b in l.boxes] for l in run])
+        tables.append([[b.text for b in ln.boxes] for ln in run])
         used.update(range(start, len(lines)))
     return tables, used
 
@@ -391,14 +391,14 @@ def build_layout(boxes: list[TextBox]) -> DocumentLayout:
 
     lines = cluster_lines(body_boxes)
     meta_lines = detect_meta_lines(lines)
-    layout.meta_lines = [l.text for l in meta_lines]
-    rest = [l for l in lines if l not in meta_lines]
+    layout.meta_lines = [ln.text for ln in meta_lines]
+    rest = [ln for ln in lines if ln not in meta_lines]
     if rest:
         layout.heading = rest[0].text if _looks_like_heading(rest[0]) else ""
         rest = rest[1:] if layout.heading else rest
     tables, used = detect_tables(rest)
     layout.tables = tables
-    layout.body = [l.text for i, l in enumerate(rest) if i not in used]
+    layout.body = [ln.text for i, ln in enumerate(rest) if i not in used]
     layout.columns = [
         lines
     ]  # single reading order; column split only marks the meta band
