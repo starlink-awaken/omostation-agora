@@ -4114,3 +4114,39 @@ services:
   - "--ci"
   description: "全量合规检查 (arch + compliance + mof + omo)"
   status: active
+- uri: bos://harness/run
+  domain: harness
+  package: harness-runtime
+  action: run
+  transport: stdio
+  command:
+  - python3
+  - bin/harness
+  - run
+  description: "Harness 全生命周期运行 (8 阶段 DAG: admission → spec → execute → verify → audit → accept)"
+  status: active
+- uri: bos://harness/verify
+  domain: harness
+  package: harness-runtime
+  action: verify
+  transport: stdio
+  command:
+  - python3
+  - bin/harness
+  - verify
+  - --parallel
+  - --cache
+  description: "Harness 并行校验 (DAG + 缓存)"
+  status: active
+- uri: bos://harness/probe
+  domain: harness
+  package: harness-runtime
+  action: probe
+  transport: stdio
+  command:
+  - python3
+  - bin/harness
+  - probe
+  - --emit
+  description: "Harness 7 探针 + Event Bus 发射"
+  status: active
