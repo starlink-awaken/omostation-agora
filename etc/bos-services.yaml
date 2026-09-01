@@ -4083,9 +4083,9 @@ services:
   - bin/gac/harness-omo-bridge.py
   description: "Harness OMO 状态同步检查 (Harness/GaC/漂移/已知债)"
   status: active
-- uri: bos://harness/enforce
+- uri: bos://harness/constraint/enforce
   domain: harness
-  package: harness-enforce
+  package: harness-constraint
   action: enforce
   transport: stdio
   command:
@@ -4094,9 +4094,9 @@ services:
   - "--ci"
   description: "Harness 统一约束与驱动 (整合 4 引擎 CI 模式)"
   status: active
-- uri: bos://harness/perceive
+- uri: bos://harness/architecture/perceive
   domain: harness
-  package: harness-perceive
+  package: harness-architecture
   action: perceive
   transport: stdio
   command:
