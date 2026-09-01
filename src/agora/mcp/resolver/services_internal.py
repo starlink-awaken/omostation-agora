@@ -85,4 +85,15 @@ _INTERNAL_SERVICES: list[BosService] = [
         func_name="persona_bdsk_evaluate",
         description="B.D.S.K. 虚拟董事会并发对抗与结构化方案评审网关 (Persona Evaluate)",
     ),
+    # T10-122: HITL family-dashboard document write execution
+    BosService(
+        uri="bos://governance/hitl/execute/family_dashboard_document_write",
+        domain="governance",
+        package="family-hub",
+        action="hitl/execute/family_dashboard_document_write",
+        transport="internal",
+        module_path="family_hub.hitl.executor",
+        func_name="execute_family_dashboard_mutation",
+        description="CAS-bound family dashboard document write via HITL approval (T10-122)",
+    ),
 ]

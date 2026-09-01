@@ -4,8 +4,8 @@ services:
   package: family-hub
   action: hitl/execute/family_dashboard_document_write
   transport: internal
-  module_path: family_hub.dashboard_mutation
-  func_name: execute_approved_mutation
+  module_path: family_hub.hitl.executor
+  func_name: execute_family_dashboard_mutation
   description: Execute one Cockpit-approved family Documents CAS transaction through the family-hub owner.
   status: active
 - action: search
