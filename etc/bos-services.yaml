@@ -4103,9 +4103,9 @@ services:
   - .githooks/pre-edit-architecture.sh
   description: "Harness 架构感知预编辑检查 (场景卡/Journey/标准/Harness)"
   status: active
-- uri: bos://compliance/full
+- uri: bos://harness/compliance/full
   domain: harness
-  package: compliance-full
+  package: harness-compliance
   action: full
   transport: stdio
   command:
