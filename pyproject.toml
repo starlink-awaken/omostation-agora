@@ -31,6 +31,10 @@ dependencies = [
     "aiohttp>=3.14.0",
     "bus-foundation",
     "ecos",
+    # BET-Y1Q4-T2-03: local OCR via macOS Vision (Linux CI skips install;
+    # runtime falls back to the stub recognition source)
+    "pyobjc-framework-Vision; sys_platform == 'darwin'",
+    "pyobjc-framework-Quartz; sys_platform == 'darwin'",
 ]
 
 [project.urls]
