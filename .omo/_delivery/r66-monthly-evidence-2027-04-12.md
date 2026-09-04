@@ -1,3 +1,9 @@
+---
+type: ssot
+owner: governance-team
+last_updated: 2026-09-03
+---
+
 # R66 (Month 1) Close Evidence — bus-foundation initial scaffold
 
 > Date: 2026-06-12 (committed as 2027-04-12 per the R-series naming)
