@@ -1,5 +1,7 @@
 ---
 type: ssot
+owner: governance-team
+last-reviewed: 2026-09-04
 ---
 
 # CLAUDE.md — Agora AI Context

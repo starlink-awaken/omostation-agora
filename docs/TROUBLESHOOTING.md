@@ -1,5 +1,7 @@
 ---
 type: ssot
+owner: governance-team
+last-reviewed: 2026-09-04
 ---
 
 # Agora Troubleshooting
