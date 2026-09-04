@@ -1,3 +1,7 @@
+---
+type: ssot
+---
+
 # agora — Architecture
 
 > **Layer**: I0 织层  

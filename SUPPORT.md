@@ -1,3 +1,7 @@
+---
+type: ssot
+---
+
 # Support
 
 ## Getting Help

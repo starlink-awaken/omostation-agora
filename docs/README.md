@@ -1,3 +1,7 @@
+---
+type: ssot
+---
+
 # Agora Documentation
 
 > I0 · BOS URI 路由与 MCP Hub

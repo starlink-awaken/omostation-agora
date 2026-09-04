@@ -1,3 +1,7 @@
+---
+type: ssot
+---
+
 # Agora Contributors
 
 This project is part of the [omostation](https://github.com/starlink-awaken/omostation) workspace.

@@ -1,4 +1,5 @@
 ---
+type: ssot
 name: dormant-adapter
 version: 0.3.1
 status: ACTIVE

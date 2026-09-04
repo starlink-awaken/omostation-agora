@@ -1,3 +1,7 @@
+---
+type: ssot
+---
+
 # R68 (Month 3) Close Evidence — bus-foundation independent CI + governance
 
 > Date: 2026-06-12 (committed as 2027-06-12 per the R-series naming)

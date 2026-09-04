@@ -1,3 +1,7 @@
+---
+type: ssot
+---
+
 # Phase A.0 (R57) Completion Evidence
 
 > Date: 2026-06-12

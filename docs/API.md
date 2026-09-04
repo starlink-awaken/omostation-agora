@@ -1,3 +1,7 @@
+---
+type: ssot
+---
+
 # Agora API / Usage Reference
 
 > Quick reference for using **Agora** programmatically and from the command line.

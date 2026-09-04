@@ -1,3 +1,7 @@
+---
+type: ssot
+---
+
 # Agora Troubleshooting
 
 ## Installation / Setup

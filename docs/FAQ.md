@@ -1,3 +1,7 @@
+---
+type: ssot
+---
+
 # Agora FAQ
 
 ## What is Agora?

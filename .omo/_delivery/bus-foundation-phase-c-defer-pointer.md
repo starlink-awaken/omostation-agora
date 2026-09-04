@@ -1,3 +1,7 @@
+---
+type: ssot
+---
+
 # bus-foundation Phase C: DEFER (one-line pointer)
 
 > Date: 2026-06-12 (committed as 2027-09-12 per R-series naming)

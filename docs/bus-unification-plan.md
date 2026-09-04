@@ -1,3 +1,7 @@
+---
+type: ssot
+---
+
 # Bus Unification Plan
 
 > Date: 2026-06-12

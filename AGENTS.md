@@ -1,3 +1,7 @@
+---
+type: ssot
+---
+
 # AGENTS.md — Agora
 
     > Scope: project-local developer guide for `agora`.

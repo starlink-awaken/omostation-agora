@@ -1,3 +1,7 @@
+---
+type: ssot
+---
+
 # R66 (Month 1) Close Evidence — bus-foundation initial scaffold
 
 > Date: 2026-06-12 (committed as 2027-04-12 per the R-series naming)

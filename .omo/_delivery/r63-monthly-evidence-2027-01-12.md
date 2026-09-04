@@ -1,3 +1,7 @@
+---
+type: ssot
+---
+
 # R63 Monthly Evidence — 2027-01-12
 
 > **Sedimentation period (R59–R65) — Month 5**

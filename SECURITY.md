@@ -1,3 +1,7 @@
+---
+type: ssot
+---
+
 # Security Policy
 
 ## Supported Versions

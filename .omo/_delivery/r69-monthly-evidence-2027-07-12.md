@@ -1,3 +1,7 @@
+---
+type: ssot
+---
+
 # R69 (Month 4) Close Evidence — Phase B GO gate
 
 > Date: 2026-06-12 (committed as 2027-07-12 per the R-series naming)

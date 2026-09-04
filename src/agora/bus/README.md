@@ -1,3 +1,7 @@
+---
+type: ssot
+---
+
 # agora.bus — 统一接口层 (Phase A.0)
 
 ## 公共 API

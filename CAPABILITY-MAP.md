@@ -1,3 +1,7 @@
+---
+type: ssot
+---
+
 # Agora 能力地图
 
 > I0 Service Convergence Hub (服务网格 Mesh) · 服务发现 · BOS URI 统一路由

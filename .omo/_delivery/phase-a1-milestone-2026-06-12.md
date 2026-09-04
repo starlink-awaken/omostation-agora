@@ -1,3 +1,7 @@
+---
+type: ssot
+---
+
 # Phase A.1 (R58) Milestone Evidence
 
 > Date: 2026-06-12

@@ -1,3 +1,7 @@
+---
+type: ssot
+---
+
 # R67 (Month 2) Close Evidence — 7 consumers migrated to bus-foundation
 
 > Date: 2026-06-12 (committed as 2027-05-12 per the R-series naming)

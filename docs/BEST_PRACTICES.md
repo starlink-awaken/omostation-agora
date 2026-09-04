@@ -1,3 +1,7 @@
+---
+type: ssot
+---
+
 # Best Practices
 
 ## Code

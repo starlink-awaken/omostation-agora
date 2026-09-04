@@ -1,3 +1,7 @@
+---
+type: ssot
+---
+
 # Examples
 
 This directory contains runnable examples for `agora`.
