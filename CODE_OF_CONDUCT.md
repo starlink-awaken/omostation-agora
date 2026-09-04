@@ -1,3 +1,7 @@
+---
+type: ssot
+---
+
 # Contributor Covenant Code of Conduct
 
 ## Our Pledge

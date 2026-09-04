@@ -1,3 +1,7 @@
+---
+type: ssot
+---
+
 # Retry Ownership Rule (R57+)
 
 ## 核心规则

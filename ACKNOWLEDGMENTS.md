@@ -1,3 +1,7 @@
+---
+type: ssot
+---
+
 # Acknowledgments
 
 We thank everyone who has contributed to `agora` through issues, pull requests, documentation, feedback, and testing.

@@ -1,3 +1,7 @@
+---
+type: ssot
+---
+
 # ADR-0008: Bus Foundation Strategy — 先沉淀再拆
 
 > Status: Accepted (R57)

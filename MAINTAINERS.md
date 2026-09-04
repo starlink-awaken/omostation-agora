@@ -1,3 +1,7 @@
+---
+type: ssot
+---
+
 # Maintainers
 
 ## Current Maintainers

@@ -1,3 +1,7 @@
+---
+type: ssot
+---
+
 # Migration Guide
 
 ## Upgrading Within Major Versions

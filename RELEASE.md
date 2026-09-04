@@ -1,3 +1,7 @@
+---
+type: ssot
+---
+
 # Release Process
 
 This document describes how to cut a new release for `agora`.

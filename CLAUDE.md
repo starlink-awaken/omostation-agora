@@ -1,3 +1,7 @@
+---
+type: ssot
+---
+
 # CLAUDE.md — Agora AI Context
 
     > Session loader for AI work inside `agora`.

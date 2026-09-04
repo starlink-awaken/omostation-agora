@@ -1,3 +1,7 @@
+---
+type: ssot
+---
+
 # Agora server/mcp.py God Module 拆分计划
 
 > 当前状态: `server/mcp.py` 1,757 行，混合 接入/路由/代理/治理/审计 5 层逻辑

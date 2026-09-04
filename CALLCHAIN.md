@@ -1,3 +1,7 @@
+---
+type: ssot
+---
+
 # agora — Call Chain
 
 > 本文档描述 agora 内部最核心的一条调用链 / 数据流。

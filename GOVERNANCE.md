@@ -1,3 +1,7 @@
+---
+type: ssot
+---
+
 # Governance
 
 ## Decision Making
