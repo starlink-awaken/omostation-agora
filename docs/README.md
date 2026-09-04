@@ -1,3 +1,10 @@
+---
+type: derived
+source: projects/agora
+owner: governance-team
+last_updated: 2026-09-03
+---
+
 # Agora Documentation
 
 > I0 · BOS URI 路由与 MCP Hub

@@ -1,3 +1,10 @@
+---
+type: derived
+source: projects/agora
+owner: governance-team
+last_updated: 2026-09-03
+---
+
 # agora.bus — 统一接口层 (Phase A.0)
 
 ## 公共 API
