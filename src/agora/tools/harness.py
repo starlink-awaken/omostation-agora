@@ -47,7 +47,10 @@ TOOL_DEFINITIONS = [
             "type": "object",
             "properties": {
                 "bet_id": {"type": "string", "description": "BET ID"},
-                "profile": {"type": "string", "description": "Agent profile (default: default)"},
+                "profile": {
+                    "type": "string",
+                    "description": "Agent profile (default: default)",
+                },
                 "objective": {"type": "string", "description": "Run objective"},
             },
         },
@@ -92,15 +95,25 @@ def handle_harness_compliance_check(arguments: dict) -> dict:
     elif mode == "omo":
         cmd = ["python3", str(workspace_root / "bin/gac/harness-omo-bridge.py")]
     elif mode == "enforce":
-        cmd = ["python3", str(workspace_root / "bin/gac/harness-constraint-enforcer.py"), "--ci"]
+        cmd = [
+            "python3",
+            str(workspace_root / "bin/gac/harness-constraint-enforcer.py"),
+            "--ci",
+        ]
     else:  # full
-        cmd = ["python3", str(workspace_root / "bin/gac/harness-constraint-enforcer.py"), "--ci"]
+        cmd = [
+            "python3",
+            str(workspace_root / "bin/gac/harness-constraint-enforcer.py"),
+            "--ci",
+        ]
 
     if strict:
         cmd.append("--strict")
 
     try:
-        result = subprocess.run(cmd, capture_output=True, text=True, cwd=str(workspace_root), timeout=120)
+        result = subprocess.run(
+            cmd, capture_output=True, text=True, cwd=str(workspace_root), timeout=120
+        )
         return {
             "ok": result.returncode == 0,
             "exit_code": result.returncode,
@@ -119,7 +132,9 @@ def handle_harness_status(arguments: dict) -> dict:
     cmd = ["python3", str(workspace_root / "bin/gac/harness-compliance-check.py")]
 
     try:
-        result = subprocess.run(cmd, capture_output=True, text=True, cwd=str(workspace_root), timeout=60)
+        result = subprocess.run(
+            cmd, capture_output=True, text=True, cwd=str(workspace_root), timeout=60
+        )
         return {
             "ok": result.returncode == 0,
             "exit_code": result.returncode,
@@ -146,7 +161,9 @@ def handle_harness_run(arguments: dict) -> dict:
         cmd.extend(["--objective", objective])
 
     try:
-        result = subprocess.run(cmd, capture_output=True, text=True, cwd=str(workspace_root), timeout=300)
+        result = subprocess.run(
+            cmd, capture_output=True, text=True, cwd=str(workspace_root), timeout=300
+        )
         return {
             "ok": result.returncode == 0,
             "exit_code": result.returncode,
@@ -162,10 +179,18 @@ def handle_harness_run(arguments: dict) -> dict:
 def handle_harness_verify(arguments: dict) -> dict:
     """Handle harness verify command (parallel DAG + cache)."""
     workspace_root = _get_workspace_root()
-    cmd = ["python3", str(workspace_root / "bin/harness"), "verify", "--parallel", "--cache"]
+    cmd = [
+        "python3",
+        str(workspace_root / "bin/harness"),
+        "verify",
+        "--parallel",
+        "--cache",
+    ]
 
     try:
-        result = subprocess.run(cmd, capture_output=True, text=True, cwd=str(workspace_root), timeout=120)
+        result = subprocess.run(
+            cmd, capture_output=True, text=True, cwd=str(workspace_root), timeout=120
+        )
         return {
             "ok": result.returncode == 0,
             "exit_code": result.returncode,
@@ -184,7 +209,9 @@ def handle_harness_probe(arguments: dict) -> dict:
     cmd = ["python3", str(workspace_root / "bin/harness"), "probe", "--emit"]
 
     try:
-        result = subprocess.run(cmd, capture_output=True, text=True, cwd=str(workspace_root), timeout=60)
+        result = subprocess.run(
+            cmd, capture_output=True, text=True, cwd=str(workspace_root), timeout=60
+        )
         return {
             "ok": result.returncode == 0,
             "exit_code": result.returncode,

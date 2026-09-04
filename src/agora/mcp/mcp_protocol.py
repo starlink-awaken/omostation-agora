@@ -382,7 +382,12 @@ def _handle_builtin_tool(tool_name: str, arguments: dict) -> dict | None:
     if tool_name in HARNESS_HANDLERS:
         result = HARNESS_HANDLERS[tool_name](arguments)
         return {
-            "content": [{"type": "text", "text": json.dumps(result, ensure_ascii=False, indent=2)}],
+            "content": [
+                {
+                    "type": "text",
+                    "text": json.dumps(result, ensure_ascii=False, indent=2),
+                }
+            ],
             "isError": not result.get("ok", False),
         }
     return None

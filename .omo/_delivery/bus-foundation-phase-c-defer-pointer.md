@@ -1,3 +1,9 @@
+---
+type: ssot
+owner: governance-team
+last_updated: 2026-09-03
+---
+
 # bus-foundation Phase C: DEFER (one-line pointer)
 
 > Date: 2026-06-12 (committed as 2027-09-12 per R-series naming)

@@ -1,3 +1,9 @@
+---
+type: ssot
+owner: governance-team
+last_updated: 2026-09-03
+---
+
 # R63 Monthly Evidence — 2027-01-12
 
 > **Sedimentation period (R59–R65) — Month 5**

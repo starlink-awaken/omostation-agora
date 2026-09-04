@@ -37,7 +37,9 @@ from agora.mcp.bos_resolver import (
 def test_family_dashboard_hitl_route_is_internal_and_exact():
     from agora.mcp.resolver import api
 
-    service = api.get_service("bos://governance/hitl/execute/family_dashboard_document_write")
+    service = api.get_service(
+        "bos://governance/hitl/execute/family_dashboard_document_write"
+    )
     assert service is not None
     assert service.transport == "internal"
     assert service.package == "family-hub"
@@ -48,7 +50,10 @@ def test_family_dashboard_hitl_route_is_internal_and_exact():
 def test_family_dashboard_mutation_route_has_zero_cache_ttl():
     from agora.server._response import _get_cache_ttl
 
-    assert _get_cache_ttl("bos://governance/hitl/execute/family_dashboard_document_write") == 0
+    assert (
+        _get_cache_ttl("bos://governance/hitl/execute/family_dashboard_document_write")
+        == 0
+    )
 
 
 def test_family_dashboard_mutation_route_never_replays_cached_result(monkeypatch):
