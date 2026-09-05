@@ -212,6 +212,48 @@ async def bos_spine_distill(
         return _error(f"Distill invocation exception: {exc}")
 
 
+async def bos_spine_replay(domain: str = "all") -> dict:
+    """Inspect experience replay buffer statistics and domain sample distribution."""
+    ws = _get_workspace_root()
+    try:
+        cmd = [
+            "uv",
+            "run",
+            "--directory",
+            str(ws / "projects" / "cockpit"),
+            "python",
+            "-m",
+            "cockpit.cli",
+            "spine",
+            "replay",
+            "--json",
+        ]
+        proc = subprocess.run(cmd, capture_output=True, text=True, timeout=15)
+        if proc.returncode == 0 and proc.stdout.strip():
+            try:
+                data = json.loads(proc.stdout.strip())
+                return _ok(
+                    {
+                        "format_version": FORMAT_VERSION,
+                        "status": "ok",
+                        "domain": domain,
+                        "replay_stats": data,
+                    }
+                )
+            except json.JSONDecodeError:
+                pass
+        return _ok(
+            {
+                "format_version": FORMAT_VERSION,
+                "status": "ok" if proc.returncode == 0 else "error",
+                "domain": domain,
+                "output": proc.stdout.strip() or proc.stderr.strip(),
+            }
+        )
+    except Exception as exc:
+        return _error(f"Replay inspection exception: {exc}")
+
+
 async def bos_mesh_dma_status() -> dict:
     """Inspect Thunderbolt 5 DMA (120Gbps / 0.21ms) physical link telemetry."""
     ws = _get_workspace_root()

@@ -40,6 +40,7 @@ from .spine import (
     bos_spine_diff,
     bos_spine_distill,
     bos_spine_draft,
+    bos_spine_replay,
     bos_spine_sign,
     bos_spine_status,
 )
@@ -65,6 +66,7 @@ __all__ = [
     "bos_spine_diff",
     "bos_spine_distill",
     "bos_spine_draft",
+    "bos_spine_replay",
     "bos_spine_sign",
     "bos_spine_status",
     "logger",

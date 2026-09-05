@@ -1138,6 +1138,20 @@ def register_bos_tools(mcp: FastMCP, bus: Any) -> None:
 
         return await _self_mod.bos_mesh_dma_status()
 
+    @mcp.tool()
+    async def bos_spine_distill(domain: str = "general", epochs: int = 3) -> dict:
+        """Cockpit Spine 触发 Mac mini M4 闲时在线 LoRA 增量蒸馏。"""
+        import agora.server.tools_bos as _self_mod
+
+        return await _self_mod.bos_spine_distill(domain=domain, epochs=epochs)
+
+    @mcp.tool()
+    async def bos_spine_replay(domain: str = "all") -> dict:
+        """Cockpit Spine 经验回放水塘状态、容量与样本域分布查看。"""
+        import agora.server.tools_bos as _self_mod
+
+        return await _self_mod.bos_spine_replay(domain=domain)
+
     # ── list_bos_tools ──────────────────────────────────
 
     @mcp.tool()
@@ -1268,6 +1282,19 @@ def register_bos_tools(mcp: FastMCP, bus: Any) -> None:
                 "name": "bos_mesh_dma_status",
                 "description": "omlxc 雷雳 5 DMA (120Gbps / 0.21ms) 跨机物理链路探活与状态遥测",
                 "arguments": {},
+            },
+            {
+                "name": "bos_spine_distill",
+                "description": "Cockpit Spine 触发 Mac mini M4 闲时在线 LoRA 增量蒸馏",
+                "arguments": {
+                    "domain": "业务域",
+                    "epochs": "训练轮数",
+                },
+            },
+            {
+                "name": "bos_spine_replay",
+                "description": "Cockpit Spine 经验回放水塘状态、容量与样本域分布查看",
+                "arguments": {"domain": "业务域过滤"},
             },
         ]
         return _ok(

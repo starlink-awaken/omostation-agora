@@ -4051,6 +4051,26 @@ services:
   transport: stdio
   uri: bos://cockpit/spine/distill
 
+- action: replay
+  command:
+  - uv
+  - run
+  - --directory
+  - projects/cockpit
+  - python
+  - -m
+  - cockpit.cli
+  - spine
+  - replay
+  description: Cockpit/Spine 经验回放水塘状态、容量与样本域分布查看
+  domain: cockpit
+  package: spine
+  security_level: internal
+  status: active
+  transport: stdio
+  uri: bos://cockpit/spine/replay
+
+
 # ── Harness 全生命周期合规 (Phase 8) ──
 - uri: bos://harness/compliance/check
   domain: harness
