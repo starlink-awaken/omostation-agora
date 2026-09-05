@@ -27,7 +27,7 @@ EXPECTED_SERVER_IDENTITY_DIGEST = (
     "sha256:2b6afc7cb86fa3f489bc300e346c69456b3320bb9a8d94e737e9b6ef5c02a8ae"
 )
 EXPECTED_TOOL_INVENTORY_DIGEST = (
-    "sha256:69d6598c5de6d6fdcb9639647df0c68326cd676b6090e2cdd410a59490461533"
+    "sha256:95da9468ffd474b0806fea523b4bffec03b80207fed2eaae1887f84d4092330c"
 )
 EXPECTED_TOOL_NAMES = frozenset(
     """
@@ -36,8 +36,9 @@ EXPECTED_TOOL_NAMES = frozenset(
     bcos_north_star bcos_signals bos_health bos_inbox_archive bos_inbox_draft
     bos_inbox_pending bos_inbox_search bos_inbox_triage bos_inbox_watch
     bos_mesh_dma_status bos_metrics_status bos_middleware_status bos_reload_discovery
-    bos_reload_m1 bos_reload_routes bos_spine_diff bos_spine_draft bos_spine_sign
-    bos_spine_status cartridge_pack check_health create_api_key daemon_bus_publish
+    bos_reload_m1 bos_reload_routes bos_spine_diff bos_spine_distill bos_spine_draft
+    bos_spine_replay bos_spine_sign bos_spine_status cartridge_pack check_health
+    create_api_key daemon_bus_publish
     debt_auto_seed_tool entropy_cleanup_tool get_agent_card get_bos_schema
     get_event_log get_state_transitions governance_auto_fix health_check
     lifecycle_load_all lifecycle_start_watch lifecycle_status lifecycle_stop_watch
@@ -494,7 +495,7 @@ def test_inventory_probe_stdio_transcript_is_clean_and_bounded() -> None:
         assert _canonical_digest(server_info) == EXPECTED_SERVER_IDENTITY_DIGEST
         tools = listing["tools"]
         assert isinstance(tools, list)
-        assert len(tools) == 104
+        assert len(tools) == 106
         tool_names = [tool["name"] for tool in tools if isinstance(tool, dict)]
         assert frozenset(tool_names) == EXPECTED_TOOL_NAMES
         assert (
