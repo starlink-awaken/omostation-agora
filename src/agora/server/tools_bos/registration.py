@@ -1072,6 +1072,22 @@ def register_bos_tools(mcp: FastMCP, bus: Any) -> None:
         )
 
     @mcp.tool()
+    async def bos_mail_draft(
+        body: str,
+        subject: str = "",
+        attachment_fmt: str = "csv",
+        attachment_text: str = "",
+    ) -> dict:
+        """BOS Mail 3 档拟复与表格附件提取 (bos://inbox/mail/draft, BET-Y1Q3-T10-113)."""
+        auth_ok, auth_reason = _bos_domain_authorized("bos://inbox/mail/draft", "read")
+        if not auth_ok:
+            return _error(f"Permission denied: {auth_reason}")
+        from agora.server.tools_bos.mail import bos_mail_draft as _impl
+
+        atts = [{"fmt": attachment_fmt, "text": attachment_text, "name": "attachment"}] if attachment_text else []
+        return _impl(body=body, subject=subject or None, attachments=atts)
+
+    @mcp.tool()
     async def persona_bdsk_evaluate(
         topic: str,
         mode: str = "deep",
