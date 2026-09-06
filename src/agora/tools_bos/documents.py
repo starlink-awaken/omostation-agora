@@ -95,7 +95,9 @@ def handle_documents_registry(domain: str | None = None) -> dict[str, Any]:
         Structured dict with registry data and metadata.
     """
     root = _resolve_workspace_root()
-    registry_path = root / ".omo" / "_truth" / "registry" / "documents-domain-projects.yaml"
+    registry_path = _DOMAIN_REGISTRY_FILE
+    if not registry_path.exists():
+        registry_path = root / ".omo" / "_truth" / "registry" / "documents-domain-projects.yaml"
     data = _load_yaml(registry_path)
 
     if not data:
@@ -104,6 +106,12 @@ def handle_documents_registry(domain: str | None = None) -> dict[str, Any]:
     errors = _schema_validate(data, "registry")
     if errors:
         return {"error": "Schema validation failed", "errors": errors, "path": str(registry_path)}
+
+    {
+        "domains": data.get("domains", []),
+        "client_contracts": data.get("clients", {}),
+        "schema_valid": not errors,
+    }
 
     if domain:
         domains = data.get("domains", [])
@@ -140,7 +148,9 @@ def handle_documents_jobs(domain: str | None = None) -> dict[str, Any]:
         Structured dict with job definitions.
     """
     root = _resolve_workspace_root()
-    registry_path = root / ".omo" / "_truth" / "registry" / "documents-domain-projects.yaml"
+    registry_path = _DOMAIN_REGISTRY_FILE
+    if not registry_path.exists():
+        registry_path = root / ".omo" / "_truth" / "registry" / "documents-domain-projects.yaml"
     data = _load_yaml(registry_path)
 
     if not data:
@@ -176,14 +186,16 @@ def handle_documents_state(domain: str | None = None) -> dict[str, Any]:
         Structured dict with runtime state data.
     """
     root = _resolve_workspace_root()
-    registry_path = root / ".omo" / "_truth" / "registry" / "documents-domain-projects.yaml"
+    registry_path = _DOMAIN_REGISTRY_FILE
+    if not registry_path.exists():
+        registry_path = root / ".omo" / "_truth" / "registry" / "documents-domain-projects.yaml"
     data = _load_yaml(registry_path)
 
     runtime_state_config = data.get("runtime_state", {})
-    env_override = runtime_state_config.get("environment_override", "")
+    env_override = runtime_state_config.get("environment_override", "OMOSTATION_RUNTIME_STATE_ROOT")
     default_rel = runtime_state_config.get("default_home_relative", ".local/state/omostation/runtime")
 
-    state_root = Path(os.environ.get(env_override, str(Path.home() / default_rel))) if env_override else Path.home() / default_rel
+    state_root = Path(os.environ.get(env_override, str(Path.home() / default_rel)))
 
     if not state_root.exists():
         return {
