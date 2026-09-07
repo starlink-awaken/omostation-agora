@@ -99,6 +99,7 @@ def draft_three_tiers(
 
 # ── 表格附件 → Markdown 还原 ──────────────────────────────────────────
 
+
 class _SimpleHTMLTable(HTMLParser):
     """Minimal <table> parser: rows of cell texts."""
 
@@ -183,6 +184,11 @@ def bos_mail_draft(
     att_results = []
     for att in attachments or []:
         fmt = att.get("fmt", "csv")
-        att_results.append({"name": att.get("name", "attachment"), **extract_tables(att.get("text", ""), fmt)})
+        att_results.append(
+            {
+                "name": att.get("name", "attachment"),
+                **extract_tables(att.get("text", ""), fmt),
+            }
+        )
     result["attachments"] = att_results
     return result

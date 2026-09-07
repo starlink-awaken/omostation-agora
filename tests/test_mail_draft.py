@@ -2,7 +2,11 @@
 
 from __future__ import annotations
 
-from agora.server.tools_bos.mail import bos_mail_draft, draft_three_tiers, extract_tables
+from agora.server.tools_bos.mail import (
+    bos_mail_draft,
+    draft_three_tiers,
+    extract_tables,
+)
 
 
 def test_three_tiers_structure_and_latency():
@@ -21,7 +25,9 @@ def test_three_tiers_tier_distinctness():
 
 
 def test_csv_table_fidelity_ge_90():
-    csv_text = "机构,床位数,预算（万元）\n人民医院,1200,800\n中医院,600,400\n卫生院,150,100\n"
+    csv_text = (
+        "机构,床位数,预算（万元）\n人民医院,1200,800\n中医院,600,400\n卫生院,150,100\n"
+    )
     result = extract_tables(csv_text, "csv")
     assert result["ok"] is True
     assert result["fidelity"] >= 0.9, result
@@ -41,7 +47,9 @@ def test_html_table_fidelity_ge_90():
 
 def test_bos_mail_draft_with_attachment():
     body = "请审阅附表数据并反馈意见。"
-    result = bos_mail_draft(body, attachments=[{"fmt": "csv", "text": "a,b\n1,2\n", "name": "data.csv"}])
+    result = bos_mail_draft(
+        body, attachments=[{"fmt": "csv", "text": "a,b\n1,2\n", "name": "data.csv"}]
+    )
     assert result["service"] == "bos://inbox/mail/draft"
     assert len(result["attachments"]) == 1
     assert result["attachments"][0]["ok"] is True

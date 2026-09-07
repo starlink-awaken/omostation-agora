@@ -15,7 +15,9 @@ def test_polish_removes_fillers_and_keeps_content():
 
 
 def test_polish_essay_classification():
-    result = polish("今天看了架构评审的记录，有些想法。微服务的边界还是要按团队规模来定。")
+    result = polish(
+        "今天看了架构评审的记录，有些想法。微服务的边界还是要按团队规模来定。"
+    )
     assert result["kind"] == "essay"
     assert "微服务" in result["essay"]
 
@@ -38,4 +40,6 @@ def test_ingest_memo_needs_asr_backend_honest(tmp_path):
     # 引擎强制不存在 → 诚实失败，绝不伪造文本
     assert result["ok"] is False
     assert result["error_code"] == "needs_asr_backend"
-    assert "安装" in result.get("install_hint", "") or "权重" in result.get("detail", "")
+    assert "安装" in result.get("install_hint", "") or "权重" in result.get(
+        "detail", ""
+    )

@@ -1084,7 +1084,11 @@ def register_bos_tools(mcp: FastMCP, bus: Any) -> None:
             return _error(f"Permission denied: {auth_reason}")
         from agora.server.tools_bos.mail import bos_mail_draft as _impl
 
-        atts = [{"fmt": attachment_fmt, "text": attachment_text, "name": "attachment"}] if attachment_text else []
+        atts = (
+            [{"fmt": attachment_fmt, "text": attachment_text, "name": "attachment"}]
+            if attachment_text
+            else []
+        )
         return _impl(body=body, subject=subject or None, attachments=atts)
 
     @mcp.tool()

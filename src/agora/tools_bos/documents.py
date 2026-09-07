@@ -83,6 +83,7 @@ def _schema_validate(data: dict[str, Any], resource: str) -> list[str]:
 # BOS route handlers
 # ---------------------------------------------------------------------------
 
+
 def handle_documents_registry(domain: str | None = None) -> dict[str, Any]:
     """Handle ``bos://documents/{domain}/registry`` — returns the domain
     registry configuration.
@@ -97,7 +98,9 @@ def handle_documents_registry(domain: str | None = None) -> dict[str, Any]:
     root = _resolve_workspace_root()
     registry_path = _DOMAIN_REGISTRY_FILE
     if not registry_path.exists():
-        registry_path = root / ".omo" / "_truth" / "registry" / "documents-domain-projects.yaml"
+        registry_path = (
+            root / ".omo" / "_truth" / "registry" / "documents-domain-projects.yaml"
+        )
     data = _load_yaml(registry_path)
 
     if not data:
@@ -105,7 +108,11 @@ def handle_documents_registry(domain: str | None = None) -> dict[str, Any]:
 
     errors = _schema_validate(data, "registry")
     if errors:
-        return {"error": "Schema validation failed", "errors": errors, "path": str(registry_path)}
+        return {
+            "error": "Schema validation failed",
+            "errors": errors,
+            "path": str(registry_path),
+        }
 
     {
         "domains": data.get("domains", []),
@@ -117,12 +124,13 @@ def handle_documents_registry(domain: str | None = None) -> dict[str, Any]:
         domains = data.get("domains", [])
         matched = [d for d in domains if d.get("id") == domain]
         if not matched:
-            return {"error": f"Domain '{domain}' not found", "available": [d.get("id") for d in domains]}
+            return {
+                "error": f"Domain '{domain}' not found",
+                "available": [d.get("id") for d in domains],
+            }
         return {
             "domain": matched[0],
-            "client_contracts": {
-                k: v for k, v in data.get("clients", {}).items()
-            },
+            "client_contracts": {k: v for k, v in data.get("clients", {}).items()},
             "schema_valid": True,
             "source": str(registry_path),
         }
@@ -150,7 +158,9 @@ def handle_documents_jobs(domain: str | None = None) -> dict[str, Any]:
     root = _resolve_workspace_root()
     registry_path = _DOMAIN_REGISTRY_FILE
     if not registry_path.exists():
-        registry_path = root / ".omo" / "_truth" / "registry" / "documents-domain-projects.yaml"
+        registry_path = (
+            root / ".omo" / "_truth" / "registry" / "documents-domain-projects.yaml"
+        )
     data = _load_yaml(registry_path)
 
     if not data:
@@ -188,12 +198,18 @@ def handle_documents_state(domain: str | None = None) -> dict[str, Any]:
     root = _resolve_workspace_root()
     registry_path = _DOMAIN_REGISTRY_FILE
     if not registry_path.exists():
-        registry_path = root / ".omo" / "_truth" / "registry" / "documents-domain-projects.yaml"
+        registry_path = (
+            root / ".omo" / "_truth" / "registry" / "documents-domain-projects.yaml"
+        )
     data = _load_yaml(registry_path)
 
     runtime_state_config = data.get("runtime_state", {})
-    env_override = runtime_state_config.get("environment_override", "OMOSTATION_RUNTIME_STATE_ROOT")
-    default_rel = runtime_state_config.get("default_home_relative", ".local/state/omostation/runtime")
+    env_override = runtime_state_config.get(
+        "environment_override", "OMOSTATION_RUNTIME_STATE_ROOT"
+    )
+    default_rel = runtime_state_config.get(
+        "default_home_relative", ".local/state/omostation/runtime"
+    )
 
     state_root = Path(os.environ.get(env_override, str(Path.home() / default_rel)))
 
