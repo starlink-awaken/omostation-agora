@@ -46,11 +46,13 @@ def test_bos_services_registry_spine_entries():
 @pytest.mark.asyncio
 async def test_bos_spine_replay_mcp_structure(monkeypatch):
     """验证 bos_spine_replay 输出格式遵循标准。"""
-    fake_json = json.dumps({
-        "status": "ok",
-        "total_domains": 3,
-        "domains": {"document-review": {"size": 12}}
-    })
+    fake_json = json.dumps(
+        {
+            "status": "ok",
+            "total_domains": 3,
+            "domains": {"document-review": {"size": 12}},
+        }
+    )
 
     class FakeProc:
         returncode = 0
@@ -67,6 +69,7 @@ async def test_bos_spine_replay_mcp_structure(monkeypatch):
 @pytest.mark.asyncio
 async def test_bos_spine_distill_mcp_structure(monkeypatch):
     """验证 bos_spine_distill 输出结构正确。"""
+
     class FakeProc:
         returncode = 0
         stdout = "distillation successful"

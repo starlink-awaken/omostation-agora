@@ -25,15 +25,30 @@ TTFT_BUDGET_S = 1.5  # done_when: 1 分钟语音端到端 ≤1.5s (引擎可用�
 
 # 口水词/冗余清洗表（按频次排序的中文口语填充词）
 _FILLERS = [
-    "那个那个", "这个这个", "就是就是", "然后然后",
-    "呃", "嗯", "啊", "那个", "这个", "就是说", "怎么说呢",
-    "反正", "其实呢", "对吧", "你知道吗", "我觉得吧",
+    "那个那个",
+    "这个这个",
+    "就是就是",
+    "然后然后",
+    "呃",
+    "嗯",
+    "啊",
+    "那个",
+    "这个",
+    "就是说",
+    "怎么说呢",
+    "反正",
+    "其实呢",
+    "对吧",
+    "你知道吗",
+    "我觉得吧",
 ]
 _FILLER_RE = re.compile("|".join(_FILLERS))
 
 _TASK_VERB = r"(?:落实|跟进|牵头|负责|完成|提交|梳理|输出|反馈|组织|协调|编制|推动|采购|复审|预约|安排)"
 _TIME_HINT = r"(?:(本周|下周|本月|月底|今天|明天|后天|周五|下周一)[之]?前|\d{1,2}月\d{1,2}日前|(\d+)\s*个?工作日[之]?内|下午|上午|晚上)"
-_RESPONSIBLE = r"([\u4e00-\u9fff]{2,4}(?:处|科|室|中心|组|团队|部门)|夏明星|[A-Z][a-z]+)"
+_RESPONSIBLE = (
+    r"([\u4e00-\u9fff]{2,4}(?:处|科|室|中心|组|团队|部门)|夏明星|[A-Z][a-z]+)"
+)
 
 
 def _detect_engines() -> list[str]:
@@ -45,6 +60,7 @@ def _detect_engines() -> list[str]:
             break
     try:
         import importlib.util
+
         if importlib.util.find_spec("funasr"):
             available.append("funasr")
     except Exception:
@@ -63,7 +79,7 @@ def transcribe(audio_path: str | Path, engine: str | None = None) -> dict[str, A
             "ok": False,
             "error_code": "needs_asr_backend",
             "detail": "本机未检测到 whisper-cli/whisper-cpp/whisper/funasr — "
-                      "安装任一端侧引擎后重试（不伪造转录文本）",
+            "安装任一端侧引擎后重试（不伪造转录文本）",
             "install_hint": "brew install whisper-cpp  |  pip install funasr",
         }
     t0 = time.perf_counter()
@@ -76,7 +92,10 @@ def transcribe(audio_path: str | Path, engine: str | None = None) -> dict[str, A
         try:
             res = subprocess.run(
                 [exe, "--file", str(audio), "--output-txt"],  # whisper.cpp 约定
-                capture_output=True, text=True, check=False, timeout=120,
+                capture_output=True,
+                text=True,
+                check=False,
+                timeout=120,
             )
             txt = res.stdout.strip()
             txt_path = audio.with_suffix(".txt")
@@ -84,14 +103,16 @@ def transcribe(audio_path: str | Path, engine: str | None = None) -> dict[str, A
                 txt = txt_path.read_text(encoding="utf-8").strip()
             if txt:
                 return {
-                    "ok": True, "engine": name,
+                    "ok": True,
+                    "engine": name,
                     "text": txt,
                     "elapsed_s": round(time.perf_counter() - t0, 3),
                 }
         except Exception:
             continue
     return {
-        "ok": False, "error_code": "needs_asr_backend",
+        "ok": False,
+        "error_code": "needs_asr_backend",
         "detail": f"引擎 {engines} 存在但转录失败（模型权重或参数问题）",
         "install_hint": "检查模型权重路径，或改用 brew install whisper-cpp / pip install funasr",
     }
@@ -112,11 +133,13 @@ def polish(text: str) -> dict[str, Any]:
         if re.search(_TASK_VERB, s):
             tm = re.search(_TIME_HINT, s)
             rm = re.search(_RESPONSIBLE, s)
-            tasks.append({
-                "task": s[:80],
-                "deadline": tm.group(0) if tm else "待排期",
-                "owner": (rm.group(1) if rm else "待指定"),
-            })
+            tasks.append(
+                {
+                    "task": s[:80],
+                    "deadline": tm.group(0) if tm else "待排期",
+                    "owner": (rm.group(1) if rm else "待指定"),
+                }
+            )
             if tm:
                 times.append(tm.group(0))
             if rm:

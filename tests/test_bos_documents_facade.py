@@ -39,8 +39,18 @@ def mock_registry(tmp_path: Path) -> Path:
             {"id": "work-weijian", "profile": "content-domain"},
         ],
         "runtime_jobs": [
-            {"id": "test-job-1", "domain_id": "shared", "schedule": "manual", "action": "validate"},
-            {"id": "test-job-2", "domain_id": "work-weijian", "schedule": "manual", "action": "audit"},
+            {
+                "id": "test-job-1",
+                "domain_id": "shared",
+                "schedule": "manual",
+                "action": "validate",
+            },
+            {
+                "id": "test-job-2",
+                "domain_id": "work-weijian",
+                "schedule": "manual",
+                "action": "audit",
+            },
         ],
         "runtime_state": {
             "owner": "runtime",
@@ -65,6 +75,7 @@ class TestDocumentsRegistry:
             mock_root.return_value = mock_registry.parent.parent
             # Patch the registry path resolution
             import agora.tools_bos.documents as mod
+
             original = mod._DOMAIN_REGISTRY_FILE
             mod._DOMAIN_REGISTRY_FILE = mock_registry
             try:
@@ -82,6 +93,7 @@ class TestDocumentsRegistry:
         from agora.tools_bos.documents import handle_documents_registry
 
         import agora.tools_bos.documents as mod
+
         original = mod._DOMAIN_REGISTRY_FILE
         mod._DOMAIN_REGISTRY_FILE = mock_registry
         try:
@@ -98,6 +110,7 @@ class TestDocumentsRegistry:
         from agora.tools_bos.documents import handle_documents_registry
 
         import agora.tools_bos.documents as mod
+
         original = mod._DOMAIN_REGISTRY_FILE
         mod._DOMAIN_REGISTRY_FILE = mock_registry
         try:
@@ -114,6 +127,7 @@ class TestDocumentsRegistry:
         from agora.tools_bos.documents import handle_documents_registry
 
         import agora.tools_bos.documents as mod
+
         original = mod._DOMAIN_REGISTRY_FILE
         mod._DOMAIN_REGISTRY_FILE = tmp_path / "nonexistent.yaml"
         try:
@@ -132,6 +146,7 @@ class TestDocumentsJobs:
         from agora.tools_bos.documents import handle_documents_jobs
 
         import agora.tools_bos.documents as mod
+
         original = mod._DOMAIN_REGISTRY_FILE
         mod._DOMAIN_REGISTRY_FILE = mock_registry
         try:
@@ -148,6 +163,7 @@ class TestDocumentsJobs:
         from agora.tools_bos.documents import handle_documents_jobs
 
         import agora.tools_bos.documents as mod
+
         original = mod._DOMAIN_REGISTRY_FILE
         mod._DOMAIN_REGISTRY_FILE = mock_registry
         try:
@@ -170,10 +186,13 @@ class TestDocumentsState:
         state_root.mkdir()
 
         import agora.tools_bos.documents as mod
+
         original = mod._DOMAIN_REGISTRY_FILE
         mod._DOMAIN_REGISTRY_FILE = mock_registry
         try:
-            with patch.dict("os.environ", {"OMOSTATION_RUNTIME_STATE_ROOT": str(state_root)}):
+            with patch.dict(
+                "os.environ", {"OMOSTATION_RUNTIME_STATE_ROOT": str(state_root)}
+            ):
                 result = handle_documents_state()
         finally:
             mod._DOMAIN_REGISTRY_FILE = original
@@ -186,10 +205,13 @@ class TestDocumentsState:
         from agora.tools_bos.documents import handle_documents_state
 
         import agora.tools_bos.documents as mod
+
         original = mod._DOMAIN_REGISTRY_FILE
         mod._DOMAIN_REGISTRY_FILE = mock_registry
         try:
-            with patch.dict("os.environ", {"OMOSTATION_RUNTIME_STATE_ROOT": "/nonexistent/path"}):
+            with patch.dict(
+                "os.environ", {"OMOSTATION_RUNTIME_STATE_ROOT": "/nonexistent/path"}
+            ):
                 result = handle_documents_state()
         finally:
             mod._DOMAIN_REGISTRY_FILE = original
@@ -260,4 +282,6 @@ class TestToolDefinitions:
         from agora.tools_bos.documents import BOS_DOCUMENTS_TOOLS
 
         for name, tool in BOS_DOCUMENTS_TOOLS.items():
-            assert callable(tool.get("handler")), f"{name} should have a callable handler"
+            assert callable(tool.get("handler")), (
+                f"{name} should have a callable handler"
+            )
