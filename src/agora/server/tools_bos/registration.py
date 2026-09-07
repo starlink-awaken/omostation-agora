@@ -1168,6 +1168,29 @@ def register_bos_tools(mcp: FastMCP, bus: Any) -> None:
 
         return await _self_mod.bos_spine_replay(domain=domain)
 
+    # ── Documents Facade (bos://documents/{domain}/{resource}, BET-Y1Q4-T6-21) ──
+
+    @mcp.tool()
+    async def bos_documents_registry(domain: str = "") -> dict:
+        """Documents 域注册表只读查询 — 域元数据/客户端契约/能力路由。"""
+        from agora.tools_bos.documents import handle_documents_registry
+
+        return handle_documents_registry(domain if domain else None)
+
+    @mcp.tool()
+    async def bos_documents_jobs(domain: str = "") -> dict:
+        """Documents 运行时任务配置只读查询 — job 定义/调度/证据路径。"""
+        from agora.tools_bos.documents import handle_documents_jobs
+
+        return handle_documents_jobs(domain if domain else None)
+
+    @mcp.tool()
+    async def bos_documents_state(domain: str = "") -> dict:
+        """Documents 运行时状态只读查询。"""
+        from agora.tools_bos.documents import handle_documents_state
+
+        return handle_documents_state(domain if domain else None)
+
     # ── list_bos_tools ──────────────────────────────────
 
     @mcp.tool()
@@ -1298,6 +1321,21 @@ def register_bos_tools(mcp: FastMCP, bus: Any) -> None:
                 "name": "bos_mesh_dma_status",
                 "description": "omlxc 雷雳 5 DMA (120Gbps / 0.21ms) 跨机物理链路探活与状态遥测",
                 "arguments": {},
+            },
+            {
+                "name": "bos_documents_registry",
+                "description": "Documents 域注册表只读查询 (域元数据/客户端契约/能力路由)",
+                "arguments": {"domain": "域 ID 过滤 (可省略=全量)"},
+            },
+            {
+                "name": "bos_documents_jobs",
+                "description": "Documents 运行时任务配置只读查询",
+                "arguments": {"domain": "域 ID 过滤"},
+            },
+            {
+                "name": "bos_documents_state",
+                "description": "Documents 运行时状态只读查询",
+                "arguments": {"domain": "域 ID 过滤"},
             },
             {
                 "name": "bos_spine_distill",
