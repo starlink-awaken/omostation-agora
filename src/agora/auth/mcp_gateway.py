@@ -313,7 +313,7 @@ async def start_all() -> dict[str, str]:
     _gateway_manager = manager
 
     # gateway 自身经 launchd `--directory __AGORA_DIR__` 启动, cwd=agora 项目。
-    # KNOWN_BACKENDS 用相对路径 (projects/gbrain, projects/c2g) 和 `--package`,
+    # KNOWN_BACKENDS 用相对路径 (projects/knowledge/gbrain, projects/c2g) 和 `--package`,
     # 需 cwd=workspace 根才能解析。给每个 backend 补 workspace 根 cwd。
     # enabled=False 的 backend (本地环境不可用: 包/项目缺失) 跳过, 避免每次报错。
     workspace_root = Path(__file__).resolve().parents[4]  # agora → projects → workspace

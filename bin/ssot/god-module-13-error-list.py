@@ -167,7 +167,7 @@ def classify_module(path: str, lines: int, analysis: dict | None) -> dict:
         category = "python-omo"
     elif path.startswith("projects/ecos/") or "/projects/ecos/" in path:
         category = "python-ecos"
-    elif path.startswith("projects/gbrain/") or "/projects/gbrain/" in path:
+    elif path.startswith("projects/knowledge/gbrain/") or "/projects/knowledge/gbrain/" in path:
         category = "ts-gbrain"
     elif path.endswith((".ts", ".tsx")) or path.endswith((".js", ".jsx")):
         category = "ts-other"
