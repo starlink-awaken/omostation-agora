@@ -11,7 +11,7 @@ import re
 from dataclasses import dataclass, field
 from typing import Literal
 
-Transport = Literal["stdio", "internal", "http", "mcp_stdio", "mcp_proxy", "inline"]
+Transport = Literal["stdio", "internal", "http", "mcp_stdio", "mcp_proxy", "inline", "mcp"]
 
 # ── BOS URI 模式 ─────────────────────────────────────
 BOS_URI_DOMAINS = (
@@ -39,6 +39,7 @@ BOS_URI_DOMAINS = (
     "resident",
     "bcos",
     "harness",
+    "documents",
 )
 BOS_URI_DOMAIN_PATTERN = "|".join(BOS_URI_DOMAINS)
 
