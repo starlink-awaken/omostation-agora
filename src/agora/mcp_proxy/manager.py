@@ -184,7 +184,7 @@ class ProxyManager:
         # 治本 (backend dead=20 真根因): --package X 无 --directory 时在 agora 目录跑报
         # "workspace does not have a member X" (X 非 agora workspace member) + agora venv
         # 缺大部分 backend 包. 加 --directory 让 backend 回各自 workspace:
-        #   kairon 包 → projects/kairon (保 --package, kairon workspace member)
+        #   kairon 包 → projects/knowledge/kairon (保 --package, kairon workspace member)
         #   独立项目 (omo/ecos/cockpit) → projects/<X> (去 --package, root package -m)
         if "--package" in args and "--directory" not in args:
             from pathlib import Path
@@ -195,16 +195,16 @@ class ProxyManager:
             _pi = args.index("--package")
             _pkg = args[_pi + 1] if _pi + 1 < len(args) else ""
             # 动态检测 kairon workspace member (治本硬编码漏列, e.g. kos 事故 PR#277):
-            # kairon 包都在 projects/kairon/packages/<pkg>, 独立项目在 projects/<pkg>.
+            # kairon 包都在 projects/knowledge/kairon/packages/<pkg>, 独立项目在 projects/<pkg>.
             # 替代旧 frozenset 硬编码 (漏 kos 致 os error 2), 新包加入 kairon 自动识别.
             _kairon_member = (
-                _ws_root / "projects" / "kairon" / "packages" / _pkg
+                _ws_root / "projects" / "knowledge" / "kairon" / "packages" / _pkg
             ).is_dir()
             if _kairon_member:
                 _ri = args.index("run") + 1
                 args = (
                     args[:_ri]
-                    + ["--directory", str(_ws_root / "projects" / "kairon")]
+                    + ["--directory", str(_ws_root / "projects" / "knowledge" / "kairon")]
                     + args[_ri:]
                 )
             else:
