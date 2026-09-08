@@ -4170,3 +4170,24 @@ services:
   - --emit
   description: "Harness 7 探针 + Event Bus 发射"
   status: active
+- uri: bos://documents/registry
+  domain: documents
+  package: agora
+  action: read
+  transport: mcp
+  description: "Documents L4 域注册表只读查询 (域元数据/客户端契约/能力路由)"
+  status: active
+- uri: bos://documents/jobs
+  domain: documents
+  package: agora
+  action: read
+  transport: mcp
+  description: "Documents 运行时任务配置只读查询 (job 定义/调度/证据路径)"
+  status: active
+- uri: bos://documents/state
+  domain: documents
+  package: agora
+  action: read
+  transport: mcp
+  description: "Documents 运行时状态只读查询"
+  status: active
