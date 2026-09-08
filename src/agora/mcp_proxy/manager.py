@@ -204,7 +204,10 @@ class ProxyManager:
                 _ri = args.index("run") + 1
                 args = (
                     args[:_ri]
-                    + ["--directory", str(_ws_root / "projects" / "knowledge" / "kairon")]
+                    + [
+                        "--directory",
+                        str(_ws_root / "projects" / "knowledge" / "kairon"),
+                    ]
                     + args[_ri:]
                 )
             else:
