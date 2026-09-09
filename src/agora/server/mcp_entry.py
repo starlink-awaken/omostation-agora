@@ -22,7 +22,7 @@ import os
 import sys
 
 from starlette.requests import Request
-from starlette.responses import JSONResponse, Response
+from starlette.responses import JSONResponse, Response, StreamingResponse
 from starlette.routing import Route
 
 from agora.server.mcp import logger, mcp
@@ -172,6 +172,57 @@ def _register_common_routes() -> None:
         )
     )
     mcp._additional_http_routes.append(Route("/metrics", endpoint=metrics_endpoint))
+
+    async def events_sse_endpoint(request: Request):
+        """GET /v1/events — Server-Sent Events stream from Agora EventBus.
+
+        P0-FIX: SSE event stream for cockpit `events` command.
+        Backfills recent events then streams live events via EventBus hook.
+        """
+        from agora.server.mcp import _bus
+
+        # Set of last-seen event ids (for dedup)
+        seen_ids: set[str] = set()
+        queue: asyncio.Queue = asyncio.Queue()
+
+        def _hook(event: dict):
+            queue.put_nowait(event)
+
+        _bus.register_hook(_hook)
+        try:
+            async def _stream():
+                # Backfill: send last 50 events
+                existing = _bus.get_event_log(limit=50)
+                for evt in existing:
+                    seen_ids.add(evt.get("id", ""))
+                    payload = json.dumps(evt, ensure_ascii=False)
+                    yield f"data: {payload}\n\n"
+
+                # Stream live events
+                while True:
+                    try:
+                        evt = await asyncio.wait_for(queue.get(), timeout=30.0)
+                    except asyncio.TimeoutError:
+                        yield ": keepalive\n\n"
+                        continue
+                    if evt.get("id") in seen_ids:
+                        continue
+                    seen_ids.add(evt.get("id", ""))
+                    payload = json.dumps(evt, ensure_ascii=False)
+                    yield f"data: {payload}\n\n"
+
+            headers = {
+                "Content-Type": "text/event-stream",
+                "Cache-Control": "no-cache",
+                "Connection": "keep-alive",
+            }
+            return StreamingResponse(_stream(), headers=headers)
+        finally:
+            _bus.remove_hook(_hook)
+
+    mcp._additional_http_routes.append(
+        Route("/v1/events", endpoint=events_sse_endpoint, methods=["GET"])
+    )
 
 
 def http_main() -> None:
