@@ -3062,7 +3062,7 @@ services:
 - action: status
   description: KEMS 知识管理引擎与图谱服务运行状态 (ADR-0300)
   domain: memory
-  http_url: http://localhost:8000/api/kems/status
+  http_url: http://localhost:8090/api/kems/status
   package: kems
   status: active
   transport: http
@@ -3070,7 +3070,7 @@ services:
 - action: graph
   description: KEMS 实体关系图谱查询与关系拓扑推导 (ADR-0300)
   domain: memory
-  http_url: http://localhost:8000/api/kems/graph/entities
+  http_url: http://localhost:8090/api/kems/graph/entities
   package: kems
   status: active
   transport: http
@@ -3078,7 +3078,7 @@ services:
 - action: ocr-queue
   description: KEMS 多源知识抽提与 OCR 纠错审阅队列 (ADR-0300)
   domain: memory
-  http_url: http://localhost:8000/api/kems/ocr/review-queue
+  http_url: http://localhost:8090/api/kems/ocr/review-queue
   package: kems
   status: active
   transport: http
@@ -3086,7 +3086,8 @@ services:
 - action: forecast
   description: KEMS 知识推断与影子评估推演分析 (ADR-0300)
   domain: analysis
-  http_url: http://localhost:8000/api/kems/forecast/shadow
+  http_method: POST
+  http_url: http://localhost:8090/api/kems/forecast/shadow
   package: kems
   status: active
   transport: http
