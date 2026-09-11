@@ -3525,6 +3525,88 @@ services:
   - resident
   - decision
   description: Resident 决策提案处理 (WP-F)
+- domain: resident
+  package: omo-resident
+  action: task_submit
+  uri: bos://resident/task/submit
+  transport: stdio
+  status: active
+  command:
+  - uv
+  - run
+  - --directory
+  - projects/omo
+  - python
+  - -W
+  - ignore::DeprecationWarning
+  - -m
+  - omo.cli
+  - resident
+  - task
+  - submit
+  - --json
+  description: 提交异步任务到 Resident 就绪队列 (T10-125 task_gateway)
+- domain: resident
+  package: omo-resident
+  action: task_status
+  uri: bos://resident/task/status
+  transport: stdio
+  status: active
+  command:
+  - uv
+  - run
+  - --directory
+  - projects/omo
+  - python
+  - -W
+  - ignore::DeprecationWarning
+  - -m
+  - omo.cli
+  - resident
+  - task
+  - status
+  - --json
+  description: 查询异步任务状态 (T10-125 task_gateway)
+- domain: resident
+  package: omo-resident
+  action: sediment_trigger
+  uri: bos://resident/sediment/trigger
+  transport: stdio
+  status: active
+  command:
+  - uv
+  - run
+  - --directory
+  - projects/omo
+  - python
+  - -W
+  - ignore::DeprecationWarning
+  - -m
+  - omo.cli
+  - resident
+  - sediment
+  - --async
+  description: 触发知识 sediment 异步写入 (T10-125 dual-write)
+- domain: resident
+  package: omo-resident
+  action: decision_trigger
+  uri: bos://resident/decision/trigger
+  transport: stdio
+  status: active
+  command:
+  - uv
+  - run
+  - --directory
+  - projects/omo
+  - python
+  - -W
+  - ignore::DeprecationWarning
+  - -m
+  - omo.cli
+  - resident
+  - decision
+  - --async
+  description: 触发决策提案异步处理 (T10-125 dual-write)
 - domain: agent-cell
   package: cell-pool
   action: status
