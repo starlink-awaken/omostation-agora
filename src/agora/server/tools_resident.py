@@ -24,6 +24,83 @@ from agora.server._response import _error, _ok
 logger = structlog.get_logger(__name__)
 
 
+# ── Resident Orchestrator A2A identity (BET-Y1Q4-T5-03) ──────────────
+# Well-known Agent Card for the resident 常驻 Agent 体系 so external
+# transient agents (Antigravity / Claude Code / Codex) can discover it via
+# list_agent_cards / get_agent_card and delegate via a2a_send_task.
+
+RESIDENT_ORCHESTRATOR_NAME = "resident-orchestrator"
+
+RESIDENT_ORCHESTRATOR_SKILLS = [
+    {
+        "id": "background-analysis",
+        "name": "后台分析",
+        "description": "长时后台分析任务：沉淀事件流并产出结构化结论。",
+    },
+    {
+        "id": "deep-inspection",
+        "name": "深度巡检",
+        "description": "深度巡检：治理漂移、债务与健康面的系统性检查。",
+    },
+    {
+        "id": "reconciliation",
+        "name": "对账",
+        "description": "对账：跨源状态核对与差异收敛。",
+    },
+]
+
+RESIDENT_ORCHESTRATOR_CAPABILITIES = [
+    "a2a-task-delegation",
+    "background-analysis",
+    "deep-inspection",
+    "reconciliation",
+    "status-snapshot",
+    "role-introspection",
+]
+
+
+def build_resident_orchestrator_card(
+    registry_card: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    """Build the canonical resident-orchestrator A2A Agent Card.
+
+    When the service registry already carries a live `resident-orchestrator`
+    entry, its fields take precedence (merge); otherwise the static
+    canonical card below is returned so discovery never comes back empty.
+    """
+    card: dict[str, Any] = {
+        "name": RESIDENT_ORCHESTRATOR_NAME,
+        "description": "Resident 常驻 Agent 体系编排器：后台分析、深度巡检、对账。",
+        "capabilities": list(RESIDENT_ORCHESTRATOR_CAPABILITIES),
+        "skills": [dict(s) for s in RESIDENT_ORCHESTRATOR_SKILLS],
+        "provider": {"organization": "Agora Hub"},
+        "protocol": "a2a",
+        "documentation_url": "https://github.com/starlink-awaken/agora",
+    }
+    if registry_card:
+        merged = dict(card)
+        merged.update({k: v for k, v in registry_card.items() if v is not None})
+        # Union capabilities/skills so static skills are never dropped.
+        for key, static_vals in (
+            ("capabilities", RESIDENT_ORCHESTRATOR_CAPABILITIES),
+            ("skills", RESIDENT_ORCHESTRATOR_SKILLS),
+        ):
+            seen: set[str] = set()
+            union: list[Any] = []
+            for item in list(merged.get(key) or []) + list(static_vals):
+                marker = (
+                    item.get("id", item.get("name", item))
+                    if isinstance(item, dict)
+                    else item
+                )
+                if marker not in seen:
+                    seen.add(marker)
+                    union.append(item)
+            merged[key] = union
+        return merged
+    return card
+
+
 def _resolve_workspace_root() -> str:
     this_file = Path(__file__).resolve()
     default_root = this_file.parent.parent.parent.parent.parent
@@ -72,6 +149,30 @@ def _run_omo_resident(args: list[str]) -> dict[str, Any]:
         return {"ok": True, "text": proc.stdout.strip()[-2000:]}
 
 
+def fetch_resident_status() -> dict[str, Any]:
+    """Return the resident runtime status snapshot (testable sync impl)."""
+    return _run_omo_resident(["status"])
+
+
+def fetch_resident_roles() -> dict[str, Any]:
+    """Return the five resident role configs (testable sync impl)."""
+    return _run_omo_resident(["roles", "--json"])
+
+
+# A2A-local dispatch table (BET-Y1Q4-T5-03): resident.* tool names that
+# a2a_send_task short-circuits locally instead of routing through the core
+# Router. Unknown resident.* names resolve to None → caller fails closed.
+RESIDENT_A2A_TOOLMAP: dict[str, Any] = {
+    "resident.status": fetch_resident_status,
+    "resident.roles": fetch_resident_roles,
+}
+
+
+def resolve_resident_tool(tool_name: str) -> Any | None:
+    """Resolve a resident.* A2A tool name to its sync impl, or None."""
+    return RESIDENT_A2A_TOOLMAP.get(tool_name)
+
+
 def register_resident_tools(mcp: FastMCP) -> None:
     """Register resident system MCP tools."""
 
@@ -84,7 +185,7 @@ def register_resident_tools(mcp: FastMCP) -> None:
         五组件 + health (recovered/degraded)。基于 omo resident status。
         """
         try:
-            data = _run_omo_resident(["status"])
+            data = fetch_resident_status()
             return _ok(data)
         except (OSError, ValueError) as e:  # defensive fallback
             logger.exception("resident_status_error")
@@ -99,7 +200,7 @@ def register_resident_tools(mcp: FastMCP) -> None:
         topic_filter / handler。基于 omo resident roles。
         """
         try:
-            data = _run_omo_resident(["roles", "--json"])
+            data = fetch_resident_roles()
             return _ok(data)
         except (OSError, ValueError) as e:  # defensive fallback
             logger.exception("resident_roles_error")
