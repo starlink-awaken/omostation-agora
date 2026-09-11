@@ -6,6 +6,7 @@ and agent card discovery.
 
 from __future__ import annotations
 
+import asyncio
 import json
 import os
 
@@ -17,8 +18,22 @@ from agora.plugins.identity.agent_card import (
     service_to_agent_card,  # type: ignore[import-not-found]
 )
 from agora.server._response import FORMAT_VERSION, _error, _ok
+from agora.server.tools_resident import (
+    RESIDENT_ORCHESTRATOR_NAME,
+    build_resident_orchestrator_card,
+    resolve_resident_tool,
+)
 
 logger = structlog.get_logger(__name__)
+
+
+# ── Resident A2A dispatch guards (BET-Y1Q4-T5-03, circuit_breaker) ──
+# 幂等 ID → task_id 索引：重复提交同一 idempotency_key 直接返回原 task，
+# 不重复执行。进程内索引 + TaskManager 持久化双层保障。
+_RESIDENT_IDEMPOTENCY_INDEX: dict[str, str] = {}
+
+# 本地 resident 派发默认超时 (秒)：超时只标记 task failed，严禁挂起主进程。
+RESIDENT_DISPATCH_TIMEOUT_S = 120.0
 
 
 def _get_registry():
@@ -83,6 +98,7 @@ def _resolve_convergence_meta(
             "ontoderive": "analysis",
             "metaos": "governance",
             "omo": "governance",
+            "resident": "governance",
             "cockpit": "capability",
             "aetherforge": "compute",
         }
@@ -167,6 +183,85 @@ def _build_agent_card(service_name: str) -> tuple[dict | None, str | None]:
         return card.to_dict(), None
     except Exception as e:  # defensive fallback
         return None, str(e)
+
+
+async def _dispatch_resident_task(
+    tm: object,
+    tool_name: str,
+    args: dict,
+    session_id: str,
+    run_id: str,
+    bos_uri: str,
+    execute_immediately: bool,
+    idempotency_key: str = "",
+    timeout_s: float = RESIDENT_DISPATCH_TIMEOUT_S,
+) -> dict:
+    """Local short-circuit dispatch for resident.* A2A tasks (BET-Y1Q4-T5-03).
+
+    Bypasses the core Router (non-goal: 不重构核心调度协议) and invokes the
+    resident impl from tools_resident.py directly:
+    - unknown resident.* tool name → fail closed (no task created);
+    - repeated idempotency_key → return the original task, never re-execute;
+    - execution wrapped in asyncio.wait_for → timeout marks task failed,
+      never hangs the caller.
+    """
+    impl = resolve_resident_tool(tool_name)
+    if impl is None:
+        return _error(
+            f"Unknown resident tool '{tool_name}' "
+            f"(available: resident.status, resident.roles)"
+        )
+
+    if idempotency_key:
+        existing_id = _RESIDENT_IDEMPOTENCY_INDEX.get(idempotency_key)
+        if existing_id:
+            existing = tm.get_task(existing_id)  # type: ignore[reportAttributeAccessIssue]
+            if existing is not None:
+                return _ok(
+                    {
+                        "format_version": FORMAT_VERSION,
+                        "task": existing.to_dict(),
+                        "deduplicated": True,
+                        "idempotency_key": idempotency_key,
+                    }
+                )
+
+    task = tm.create_task(RESIDENT_ORCHESTRATOR_NAME, tool_name, args, session_id)  # type: ignore[reportCallIssue,reportAttributeAccessIssue]
+    if idempotency_key:
+        _RESIDENT_IDEMPOTENCY_INDEX[idempotency_key] = task.id
+
+    if execute_immediately:
+        try:
+            result = await asyncio.wait_for(
+                asyncio.to_thread(impl), timeout=timeout_s
+            )
+            updated = tm.update_task(task.id, "completed", result=result if isinstance(result, dict) else {"payload": result})  # type: ignore[reportAttributeAccessIssue]
+        except TimeoutError:
+            logger.warning(
+                "resident_dispatch_timeout",
+                extra={"tool": tool_name, "timeout_s": timeout_s},
+            )
+            updated = tm.update_task(task.id, "failed", error=f"resident dispatch timed out after {timeout_s}s")  # type: ignore[reportAttributeAccessIssue]
+        except Exception as e:  # defensive fallback → fail closed
+            logger.exception("resident_dispatch_error")
+            updated = tm.update_task(task.id, "failed", error=str(e)[:500])  # type: ignore[reportAttributeAccessIssue]
+        if updated is None:
+            return _error("Task execution returned no result")
+        task = updated
+
+    convergence_meta = _resolve_convergence_meta(tool_name, run_id, bos_uri)
+    result_dict = task.to_dict()
+    if convergence_meta["run_id"]:
+        result_dict["run_id"] = convergence_meta["run_id"]
+    result_dict["bos_uri"] = convergence_meta["bos_uri"]
+
+    return _ok(
+        {
+            "format_version": FORMAT_VERSION,
+            "task": result_dict,
+            "convergence_meta": convergence_meta,
+        }
+    )
 
 
 # ═══════════════════════════════════════════════════════════════
@@ -282,11 +377,17 @@ def register_governance_tools(mcp: FastMCP) -> None:
         run_id: str = "",
         bos_uri: str = "",
         execute_immediately: bool = True,
+        idempotency_key: str = "",
+        timeout_s: float = RESIDENT_DISPATCH_TIMEOUT_S,
     ) -> dict:
         """Submit an A2A task, optionally executing it immediately (ADR-0300).
 
         By default the task is routed synchronously for backward compatibility.
         Deferred tasks remain submitted so callers can query or cancel them.
+
+        `resident.*` tool names are short-circuited to the local resident
+        orchestrator (BET-Y1Q4-T5-03): idempotent via `idempotency_key`,
+        timeout-isolated via `timeout_s`, fail-closed on unknown tools.
 
         Args:
             tool_name: Full tool name (e.g. 'minerva.research_now')
@@ -295,6 +396,9 @@ def register_governance_tools(mcp: FastMCP) -> None:
             run_id: Optional OMO Agent Workflow run identifier for task convergence
             bos_uri: Optional BOS URI mapping for 5-domain convergence
             execute_immediately: Execute now when true; otherwise leave submitted
+            idempotency_key: Optional idempotency ID (resident.* only) —
+                repeated submissions return the original task without re-executing
+            timeout_s: Local dispatch timeout in seconds (resident.* only)
         """
         try:
             args = json.loads(arguments) if isinstance(arguments, str) else arguments
@@ -304,6 +408,18 @@ def register_governance_tools(mcp: FastMCP) -> None:
             return _error("arguments must be a valid JSON object")
 
         tm = _get_task_manager()
+        if tool_name == "resident" or tool_name.startswith("resident."):
+            return await _dispatch_resident_task(
+                tm,
+                tool_name,
+                args,
+                session_id,
+                run_id,
+                bos_uri,
+                execute_immediately,
+                idempotency_key=idempotency_key,
+                timeout_s=timeout_s,
+            )
         task = tm.create_task("", tool_name, args, session_id)  # type: ignore[reportCallIssue]
         result = task
         if execute_immediately:
@@ -414,6 +530,17 @@ def register_governance_tools(mcp: FastMCP) -> None:
             card, err = _build_agent_card(svc.name)
             cards[svc.name] = card if card else {"error": err}
 
+        # BET-Y1Q4-T5-03: resident-orchestrator is always discoverable, even
+        # when no same-named service is registered in the hub registry.
+        if RESIDENT_ORCHESTRATOR_NAME in cards and isinstance(
+            cards[RESIDENT_ORCHESTRATOR_NAME], dict
+        ):
+            cards[RESIDENT_ORCHESTRATOR_NAME] = build_resident_orchestrator_card(
+                cards[RESIDENT_ORCHESTRATOR_NAME]
+            )
+        else:
+            cards[RESIDENT_ORCHESTRATOR_NAME] = build_resident_orchestrator_card()
+
         return _ok(
             {
                 "format_version": FORMAT_VERSION,
@@ -434,6 +561,22 @@ def register_governance_tools(mcp: FastMCP) -> None:
         Returns a single A2A-compatible Agent Card with identity, capabilities,
         and skills for the requested service.
         """
+        # BET-Y1Q4-T5-03: well-known resident orchestrator card (registry merge
+        # when a same-named service exists, canonical static card otherwise).
+        if name == RESIDENT_ORCHESTRATOR_NAME:
+            registry_card = None
+            try:
+                registry = _get_registry()
+                if registry.get(name):
+                    registry_card, _ = _build_agent_card(name)
+            except Exception:  # defensive fallback → canonical static card
+                registry_card = None
+            return _ok(
+                {
+                    "format_version": FORMAT_VERSION,
+                    "agent_card": build_resident_orchestrator_card(registry_card),
+                }
+            )
         card, err = _build_agent_card(name)
         if card is None:
             return _error(err or "Failed to build Agent Card")
