@@ -980,6 +980,22 @@ services:
   status: active
   transport: stdio
   uri: bos://persona/health-profile/update
+- action: ingest
+  command:
+  - uv
+  - run
+  - --directory
+  - projects/knowledge/kairon
+  - python
+  - -m
+  - health_profile.cli
+  - ingest
+  description: Health Profile 批量导入 (T6-25 OpenHuman Bridge)
+  domain: persona
+  package: health-profile
+  status: active
+  transport: stdio
+  uri: bos://persona/health-profile/ingest
 - action: recall-entity
   description: SharedBrain Bridge 实体召回 (P36-W1 GAP 补全, canonical URI)
   domain: persona
