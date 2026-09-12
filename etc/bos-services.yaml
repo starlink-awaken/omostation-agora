@@ -4276,22 +4276,22 @@ services:
   status: active
 
 # ── BET-Y1Q4-T5-04: 主权连接器 BOS 网关 ──
-- uri: bos://connectors/list
-  domain: connectors
+- uri: bos://agora/connectors/list
+  domain: agora
   package: agora
   action: list
   transport: inline
   description: "列出所有已注册连接器 (支持 status/type/package 过滤)"
   status: active
-- uri: bos://connectors/sync
-  domain: connectors
+- uri: bos://agora/connectors/sync
+  domain: agora
   package: agora
   action: sync
   transport: inline
   description: "触发指定连接器的增量同步 (支持 dry_run 与 watermark)"
   status: active
-- uri: bos://connectors/manifest
-  domain: connectors
+- uri: bos://agora/connectors/manifest
+  domain: agora
   package: agora
   action: read
   transport: inline
