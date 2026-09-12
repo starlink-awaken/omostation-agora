@@ -4274,3 +4274,49 @@ services:
   transport: inline
   description: "Documents 运行时状态只读查询"
   status: active
+
+# ── BET-Y1Q4-T5-04: 主权连接器 BOS 网关 ──
+
+- uri: bos://connectors/list
+# ── BET-Y1Q4-T5-04: 主权连接器 BOS 网关 ──
+  domain: connectors
+- uri: bos://connectors/list
+  package: agora
+  domain: connectors
+  action: list
+  package: agora
+  transport: inline
+  action: list
+  description: "列出所有已注册连接器 (支持 status/type/package 过滤)"
+  transport: inline
+  status: active
+  description: "列出所有已注册连接器 (支持 status/type/package 过滤)"
+- uri: bos://connectors/sync
+  status: active
+  domain: connectors
+- uri: bos://connectors/sync
+  package: agora
+  domain: connectors
+  action: sync
+  package: agora
+  transport: inline
+  description: "触发指定连接器的增量同步 (支持 dry_run 与 watermark)"
+  action: sync
+  status: active
+  transport: inline
+- uri: bos://connectors/manifest
+  description: "触发指定连接器的增量同步 (支持 dry_run 与 watermark)"
+  domain: connectors
+  status: active
+  package: agora
+- uri: bos://connectors/manifest
+  action: read
+  domain: connectors
+  transport: inline
+  package: agora
+  description: "读取连接器注册表 manifest (只读)"
+  action: read
+  status: active
+  transport: inline
+  description: "读取连接器注册表 manifest (只读)"
+  status: active
