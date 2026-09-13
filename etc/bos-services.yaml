@@ -2914,54 +2914,6 @@ services:
   status: active
   transport: stdio
   uri: bos://compute/omlxc/replay
-- action: cache
-  command:
-  - uv
-  - run
-  - --directory
-  - projects/omlxc
-  - python
-  - bin/demo/live_context_and_cache_benchmark.py
-  description: '[UNIMPLEMENTED] omlxc Radix 动态前缀树与三级分层缓存指标与压测（旧 demo 已不存在，待 canonical
-    CLI parity）'
-  domain: compute
-  package: omlxc
-  security_level: internal
-  status: unimplemented
-  transport: stdio
-  uri: bos://compute/omlxc/cache
-- action: dflash
-  command:
-  - uv
-  - run
-  - --directory
-  - projects/omlxc
-  - python
-  - bin/demo/live_cluster_wide_benchmark.py
-  description: '[UNIMPLEMENTED] omlxc DFlash 2 块扩散投机解码加速与集群分工（旧 demo 已不存在，待 canonical
-    CLI parity）'
-  domain: compute
-  package: omlxc
-  security_level: internal
-  status: unimplemented
-  transport: stdio
-  uri: bos://compute/omlxc/dflash
-- action: cluster
-  command:
-  - uv
-  - run
-  - --directory
-  - projects/omlxc
-  - python
-  - bin/demo/live_cluster_wide_benchmark.py
-  description: '[UNIMPLEMENTED] omlxc 异构三节点智能调度、心跳与故障自愈拓扑（旧 demo 已不存在，待 canonical
-    CLI parity）'
-  domain: compute
-  package: omlxc
-  security_level: internal
-  status: unimplemented
-  transport: stdio
-  uri: bos://compute/omlxc/cluster
 - action: tree
   cli_command: cockpit mesh tree
   command:
@@ -3633,7 +3585,7 @@ services:
   action: status
   uri: bos://agent-cell/pool/status
   transport: stdio
-  status: active
+  status: unimplemented
   command:
   - python3
   - projects/omo/src/omo/resident/cell_pool.py
@@ -3645,7 +3597,7 @@ services:
   action: submit
   uri: bos://agent-cell/pool/submit
   transport: stdio
-  status: active
+  status: unimplemented
   command:
   - python3
   - projects/omo/src/omo/resident/cell_pool.py
@@ -3657,7 +3609,7 @@ services:
   action: scale
   uri: bos://agent-cell/pool/scale
   transport: stdio
-  status: active
+  status: unimplemented
   command:
   - python3
   - projects/omo/src/omo/resident/cell_pool.py
@@ -3669,7 +3621,7 @@ services:
   action: auto-scale
   uri: bos://agent-cell/pool/auto-scale
   transport: stdio
-  status: active
+  status: unimplemented
   command:
   - python3
   - projects/omo/src/omo/resident/cell_pool.py
@@ -3681,7 +3633,7 @@ services:
   action: metrics
   uri: bos://agent-cell/pool/metrics
   transport: stdio
-  status: active
+  status: unimplemented
   command:
   - python3
   - projects/omo/src/omo/resident/cell_pool.py
@@ -3693,7 +3645,7 @@ services:
   action: execute
   uri: bos://agent-cell/dag/execute
   transport: stdio
-  status: active
+  status: unimplemented
   command:
   - python3
   - projects/omo/src/omo/resident/cell_dag.py
@@ -3705,7 +3657,7 @@ services:
   action: publish
   uri: bos://agent-cell/memory/publish
   transport: stdio
-  status: active
+  status: unimplemented
   command:
   - python3
   - projects/omo/src/omo/resident/cell_memory_network.py
@@ -3721,7 +3673,7 @@ services:
   action: search
   uri: bos://agent-cell/memory/search
   transport: stdio
-  status: active
+  status: unimplemented
   command:
   - python3
   - projects/omo/src/omo/resident/cell_memory_network.py
@@ -3735,7 +3687,7 @@ services:
   action: audit
   uri: bos://agent-cell/governance/audit
   transport: stdio
-  status: active
+  status: unimplemented
   command:
   - python3
   - projects/omo/src/omo/resident/cell_governance.py
@@ -3749,7 +3701,7 @@ services:
   action: report
   uri: bos://agent-cell/governance/report
   transport: stdio
-  status: active
+  status: unimplemented
   command:
   - python3
   - projects/omo/src/omo/resident/cell_governance.py
@@ -3761,7 +3713,7 @@ services:
   action: list
   uri: bos://agent-cell/config/list
   transport: stdio
-  status: active
+  status: unimplemented
   command:
   - python3
   - projects/omo/src/omo/resident/cell_config.py
@@ -3773,7 +3725,7 @@ services:
   action: create
   uri: bos://agent-cell/config/create
   transport: stdio
-  status: active
+  status: unimplemented
   command:
   - python3
   - projects/omo/src/omo/resident/cell_config.py
@@ -3785,7 +3737,7 @@ services:
   action: plan
   uri: bos://agent-cell/plan
   transport: stdio
-  status: active
+  status: unimplemented
   command:
   - python3
   - projects/omo/src/omo/resident/planner.py
@@ -3798,7 +3750,7 @@ services:
   action: execute
   uri: bos://agent-cell/execute
   transport: stdio
-  status: active
+  status: unimplemented
   command:
   - python3
   - projects/omo/src/omo/resident/executor.py
@@ -3811,7 +3763,7 @@ services:
   action: verify
   uri: bos://agent-cell/verify
   transport: stdio
-  status: active
+  status: unimplemented
   command:
   - python3
   - projects/omo/src/omo/resident/verifier.py
@@ -3824,7 +3776,7 @@ services:
   action: govern
   uri: bos://agent-cell/govern
   transport: stdio
-  status: active
+  status: unimplemented
   command:
   - python3
   - projects/omo/src/omo/resident/governor.py
@@ -3837,7 +3789,7 @@ services:
   action: pdp-evaluate
   uri: bos://agent-cell/pdp/evaluate
   transport: stdio
-  status: active
+  status: unimplemented
   command:
   - python3
   - projects/omo/src/omo/resident/pdp_pep.py
@@ -3850,7 +3802,7 @@ services:
   action: pep-enforce
   uri: bos://agent-cell/pep/enforce
   transport: stdio
-  status: active
+  status: unimplemented
   command:
   - python3
   - projects/omo/src/omo/resident/pdp_pep.py
@@ -3864,7 +3816,7 @@ services:
   action: memory-process
   uri: bos://agent-cell/memory/process
   transport: stdio
-  status: active
+  status: unimplemented
   command:
   - python3
   - projects/omo/src/omo/resident/memory_pipeline.py
@@ -3877,7 +3829,7 @@ services:
   action: memory-consolidate
   uri: bos://agent-cell/memory/consolidate
   transport: stdio
-  status: active
+  status: unimplemented
   command:
   - python3
   - projects/omo/src/omo/resident/memory_pipeline.py
@@ -3889,7 +3841,7 @@ services:
   action: replay
   uri: bos://agent-cell/replay/run
   transport: stdio
-  status: active
+  status: unimplemented
   command:
   - python3
   - projects/omo/src/omo/resident/replay.py
@@ -3902,7 +3854,7 @@ services:
   action: shadow
   uri: bos://agent-cell/replay/shadow
   transport: stdio
-  status: active
+  status: unimplemented
   command:
   - python3
   - projects/omo/src/omo/resident/replay.py
@@ -3916,7 +3868,7 @@ services:
   action: eval
   uri: bos://agent-cell/replay/eval
   transport: stdio
-  status: active
+  status: unimplemented
   command:
   - python3
   - projects/omo/src/omo/resident/replay.py
@@ -4298,51 +4250,6 @@ services:
   action: read
   transport: inline
   description: 读取连接器注册表 manifest (只读)
-  status: active
-- uri: bos://governance/decision/record
-  domain: governance
-  package: kairon
-  action: record
-  transport: stdio
-  module_path: kairon.decision.causal_tracer
-  func_name: record_decision
-  description: 记录决策到因果图
-  status: active
-- uri: bos://governance/decision/trace-causes
-  domain: governance
-  package: kairon
-  action: trace-causes
-  transport: stdio
-  module_path: kairon.decision.causal_tracer
-  func_name: trace_causes
-  description: 追溯决策的因果祖先链
-  status: active
-- uri: bos://governance/decision/trace-effects
-  domain: governance
-  package: kairon
-  action: trace-effects
-  transport: stdio
-  module_path: kairon.decision.causal_tracer
-  func_name: trace_effects
-  description: 追溯决策的下游影响面
-  status: active
-- uri: bos://memory/graph/query
-  domain: memory
-  package: kairon
-  action: query
-  transport: stdio
-  module_path: kairon.graph.semantica_kernel
-  func_name: query
-  description: SPARQL 查询嵌入式图引擎
-  status: active
-- uri: bos://memory/graph/reason
-  domain: memory
-  package: kairon
-  action: reason
-  transport: stdio
-  module_path: kairon.graph.semantica_kernel
-  func_name: reason_datalog
-  description: Datalog 确定性推理
   status: active
 - uri: bos://governance/decision/record
   domain: governance
