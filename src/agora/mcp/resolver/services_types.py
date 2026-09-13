@@ -42,6 +42,7 @@ BOS_URI_DOMAINS = (
     "bcos",
     "harness",
     "documents",
+    "observatory",
 )
 BOS_URI_DOMAIN_PATTERN = "|".join(BOS_URI_DOMAINS)
 
