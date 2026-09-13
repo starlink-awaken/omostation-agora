@@ -68,3 +68,18 @@ unimplemented:
 - uri: bos://agent-cell/replay/eval
   reason: agent-cell runtime files not yet implemented (planned component); restore
     only with verified implementation
+- uri: bos://observatory/project/perception
+  reason: cockpit.observatory module not yet landed (in-flight BET-Y1Q4-T5-03); restore
+    when topology_engine.py merges
+- uri: bos://observatory/agents/collisions
+  reason: cockpit.observatory module not yet landed (in-flight BET-Y1Q4-T5-03); restore
+    when topology_engine.py merges
+- uri: bos://observatory/sentinel/status
+  reason: cockpit.observatory module not yet landed (in-flight BET-Y1Q4-T5-03); restore
+    when topology_engine.py merges
+- uri: bos://observatory/callchains/get
+  reason: cockpit.observatory module not yet landed (in-flight BET-Y1Q4-T5-03); restore
+    when topology_engine.py merges
+- uri: bos://observatory/system/overview
+  reason: cockpit.observatory module not yet landed (in-flight BET-Y1Q4-T5-03); restore
+    when topology_engine.py merges

@@ -24,6 +24,7 @@ _EXTERNAL_MODULES = (
     "omo.",
     "bus_foundation.",
     "kairon.",
+    "cockpit.",
 )
 
 

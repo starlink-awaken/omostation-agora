@@ -4319,7 +4319,7 @@ services:
   module_path: cockpit.observatory.topology_engine
   func_name: get_agent_context
   description: 获取单项目的超紧凑架构感知信息与并发写冲突状态 (<800 tokens)
-  status: active
+  status: unimplemented
 - uri: bos://observatory/agents/collisions
   domain: observatory
   package: cockpit
@@ -4328,7 +4328,7 @@ services:
   module_path: cockpit.observatory.topology_engine
   func_name: get_workspace_agents
   description: 全局检查 42 个未合并工作树并发写争用风险与防撞守卫建议
-  status: active
+  status: unimplemented
 - uri: bos://observatory/sentinel/status
   domain: observatory
   package: cockpit
@@ -4337,7 +4337,7 @@ services:
   module_path: cockpit.observatory.topology_engine
   func_name: get_sentinel_status
   description: 探测 16 个子模块 Gitlink 对齐状态与 7 大主权端口健康度
-  status: active
+  status: unimplemented
 - uri: bos://observatory/callchains/get
   domain: observatory
   package: cockpit
@@ -4346,7 +4346,7 @@ services:
   module_path: cockpit.observatory.topology_engine
   func_name: get_callchains
   description: 获取 4 大跨层调用链时序步骤与契约规约
-  status: active
+  status: unimplemented
 - uri: bos://observatory/system/overview
   domain: observatory
   package: cockpit
@@ -4355,5 +4355,5 @@ services:
   module_path: cockpit.observatory.topology_engine
   func_name: get_overview
   description: 获取八层架构项目分布与接口大厅汇总统计
-  status: active
+  status: unimplemented
 
