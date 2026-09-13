@@ -4255,7 +4255,7 @@ services:
   domain: governance
   package: kairon
   action: record
-  transport: stdio
+  transport: internal
   module_path: kairon.decision.causal_tracer
   func_name: record_decision
   description: 记录决策到因果图
@@ -4264,7 +4264,7 @@ services:
   domain: governance
   package: kairon
   action: trace-causes
-  transport: stdio
+  transport: internal
   module_path: kairon.decision.causal_tracer
   func_name: trace_causes
   description: 追溯决策的因果祖先链
@@ -4273,7 +4273,7 @@ services:
   domain: governance
   package: kairon
   action: trace-effects
-  transport: stdio
+  transport: internal
   module_path: kairon.decision.causal_tracer
   func_name: trace_effects
   description: 追溯决策的下游影响面
@@ -4282,7 +4282,7 @@ services:
   domain: memory
   package: kairon
   action: query
-  transport: stdio
+  transport: internal
   module_path: kairon.graph.semantica_kernel
   func_name: query
   description: SPARQL 查询嵌入式图引擎
@@ -4291,7 +4291,7 @@ services:
   domain: memory
   package: kairon
   action: reason
-  transport: stdio
+  transport: internal
   module_path: kairon.graph.semantica_kernel
   func_name: reason_datalog
   description: Datalog 确定性推理

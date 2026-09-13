@@ -1,7 +1,79 @@
 unimplemented:
-  - uri: bos://compute/omlxc/cache
-    reason: canonical cache demo is absent; restore only with a verified CLI parity implementation
-  - uri: bos://compute/omlxc/cluster
-    reason: canonical cluster demo is absent; restore only with a verified CLI parity implementation
-  - uri: bos://compute/omlxc/dflash
-    reason: canonical DFlash demo is absent; restore only with a verified CLI parity implementation
+- uri: bos://compute/omlxc/cache
+  reason: canonical cache demo is absent; restore only with a verified CLI parity
+    implementation
+- uri: bos://compute/omlxc/cluster
+  reason: canonical cluster demo is absent; restore only with a verified CLI parity
+    implementation
+- uri: bos://compute/omlxc/dflash
+  reason: canonical DFlash demo is absent; restore only with a verified CLI parity
+    implementation
+- uri: bos://agent-cell/pool/status
+  reason: agent-cell runtime files not yet implemented (planned component); restore
+    only with verified implementation
+- uri: bos://agent-cell/pool/submit
+  reason: agent-cell runtime files not yet implemented (planned component); restore
+    only with verified implementation
+- uri: bos://agent-cell/pool/scale
+  reason: agent-cell runtime files not yet implemented (planned component); restore
+    only with verified implementation
+- uri: bos://agent-cell/pool/auto-scale
+  reason: agent-cell runtime files not yet implemented (planned component); restore
+    only with verified implementation
+- uri: bos://agent-cell/pool/metrics
+  reason: agent-cell runtime files not yet implemented (planned component); restore
+    only with verified implementation
+- uri: bos://agent-cell/dag/execute
+  reason: agent-cell runtime files not yet implemented (planned component); restore
+    only with verified implementation
+- uri: bos://agent-cell/memory/publish
+  reason: agent-cell runtime files not yet implemented (planned component); restore
+    only with verified implementation
+- uri: bos://agent-cell/memory/search
+  reason: agent-cell runtime files not yet implemented (planned component); restore
+    only with verified implementation
+- uri: bos://agent-cell/governance/audit
+  reason: agent-cell runtime files not yet implemented (planned component); restore
+    only with verified implementation
+- uri: bos://agent-cell/governance/report
+  reason: agent-cell runtime files not yet implemented (planned component); restore
+    only with verified implementation
+- uri: bos://agent-cell/config/list
+  reason: agent-cell runtime files not yet implemented (planned component); restore
+    only with verified implementation
+- uri: bos://agent-cell/config/create
+  reason: agent-cell runtime files not yet implemented (planned component); restore
+    only with verified implementation
+- uri: bos://agent-cell/plan
+  reason: agent-cell runtime files not yet implemented (planned component); restore
+    only with verified implementation
+- uri: bos://agent-cell/execute
+  reason: agent-cell runtime files not yet implemented (planned component); restore
+    only with verified implementation
+- uri: bos://agent-cell/verify
+  reason: agent-cell runtime files not yet implemented (planned component); restore
+    only with verified implementation
+- uri: bos://agent-cell/govern
+  reason: agent-cell runtime files not yet implemented (planned component); restore
+    only with verified implementation
+- uri: bos://agent-cell/pdp/evaluate
+  reason: agent-cell runtime files not yet implemented (planned component); restore
+    only with verified implementation
+- uri: bos://agent-cell/pep/enforce
+  reason: agent-cell runtime files not yet implemented (planned component); restore
+    only with verified implementation
+- uri: bos://agent-cell/memory/process
+  reason: agent-cell runtime files not yet implemented (planned component); restore
+    only with verified implementation
+- uri: bos://agent-cell/memory/consolidate
+  reason: agent-cell runtime files not yet implemented (planned component); restore
+    only with verified implementation
+- uri: bos://agent-cell/replay/run
+  reason: agent-cell runtime files not yet implemented (planned component); restore
+    only with verified implementation
+- uri: bos://agent-cell/replay/shadow
+  reason: agent-cell runtime files not yet implemented (planned component); restore
+    only with verified implementation
+- uri: bos://agent-cell/replay/eval
+  reason: agent-cell runtime files not yet implemented (planned component); restore
+    only with verified implementation
