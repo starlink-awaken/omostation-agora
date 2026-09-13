@@ -4402,7 +4402,6 @@ services:
   description: 获取八层架构项目分布与接口大厅汇总统计
   status: active
 
-||||||| 76963e0
 - uri: bos://governance/decision/record
   domain: governance
   package: kairon
