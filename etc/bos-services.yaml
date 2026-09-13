@@ -4331,23 +4331,19 @@ services:
   action: sentinel/status
   transport: mcp_proxy
   description: 探测 16 个子模块 Gitlink 对齐状态与 7 大主权端口健康度
-  status: active
+  status: unimplemented
 - uri: bos://observatory/callchains/get
   domain: observatory
   package: cockpit
   action: callchains/get
   transport: internal
-  module_path: cockpit.observatory.topology_engine
-  func_name: get_callchains
   description: 获取 4 大跨层调用链时序步骤与契约规约
-  status: active
+  status: unimplemented
 - uri: bos://observatory/system/overview
   domain: observatory
   package: cockpit
   action: system/overview
   transport: internal
-  module_path: cockpit.observatory.topology_engine
-  func_name: get_overview
   description: 获取八层架构项目分布与接口大厅汇总统计
-  status: active
+  status: unimplemented
 
