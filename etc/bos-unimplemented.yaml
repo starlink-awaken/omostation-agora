@@ -1,13 +1,4 @@
 unimplemented:
-- uri: bos://compute/omlxc/cache
-  reason: canonical cache demo is absent; restore only with a verified CLI parity
-    implementation
-- uri: bos://compute/omlxc/cluster
-  reason: canonical cluster demo is absent; restore only with a verified CLI parity
-    implementation
-- uri: bos://compute/omlxc/dflash
-  reason: canonical DFlash demo is absent; restore only with a verified CLI parity
-    implementation
 - uri: bos://agent-cell/pool/status
   reason: agent-cell runtime files not yet implemented (planned component); restore
     only with verified implementation
