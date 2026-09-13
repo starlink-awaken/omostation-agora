@@ -674,3 +674,36 @@ def register_governance_tools(mcp: FastMCP) -> None:
                 return _ok({"format_version": FORMAT_VERSION, "bus_status": data})
         except Exception as exc:
             return _error(f"Daemon bus offline or unreachable on :7432 ({exc})")
+
+    # ── a2a_update_task ─────────────────────────────────────────────
+    # BET-Y1Q4-T5-03 batch 2: working status progression + result retrieval.
+
+    @mcp.tool()
+    def a2a_update_task(
+        task_id: str,
+        status: str,
+        result: dict | None = None,
+        error: str = "",
+    ) -> dict:
+        """Update an A2A task's status and optionally set result or error.
+
+        BET-Y1Q4-T5-03 batch 2: enables working status progression for
+        long-running resident tasks (submitted → working → completed).
+
+        Args:
+            task_id: The task ID to update
+            status: New status — submitted | working | completed | failed | canceled
+            result: Optional result dict (for completed tasks)
+            error: Optional error message (for failed tasks)
+        """
+        tm = _get_task_manager()
+        if status not in ("submitted", "working", "completed", "failed", "canceled"):
+            return _error(f"Invalid status '{status}'; must be one of: submitted, working, completed, failed, canceled")
+        updated = tm.update_task(task_id, status, result=result, error=error)
+        if updated is None:
+            return _error(f"Task '{task_id}' not found")
+        return _ok({
+            "format_version": FORMAT_VERSION,
+            "task": updated.to_dict(),
+            "updated": True,
+        })

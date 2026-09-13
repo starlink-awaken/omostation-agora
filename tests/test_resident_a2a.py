@@ -243,3 +243,70 @@ class TestResidentTaskDelegation:
         assert sent["status"] == "ok"
         assert sent["task"]["status"] == "failed"
         assert "timed out" in sent["task"]["error"]
+
+
+class TestResidentTaskWorkingProgression:
+    """Long-running resident task semantics: working status progression + result retrieval."""
+
+    async def test_deferred_task_can_be_set_to_working(
+        self, mcp_app, task_manager, fake_resident_impl, fresh_idempotency
+    ):
+        sent = await _call_tool(
+            mcp_app,
+            "a2a_send_task",
+            {
+                "tool_name": "resident.status",
+                "arguments": "{}",
+                "session_id": "t5-03-batch2-working",
+                "execute_immediately": False,
+            },
+        )
+        assert sent["status"] == "ok"
+        task_id = sent["task"]["id"]
+        assert sent["task"]["status"] == "submitted"
+
+        updated = await _call_tool(
+            mcp_app,
+            "a2a_update_task",
+            {"task_id": task_id, "status": "working"},
+        )
+        assert updated["status"] == "ok"
+        assert updated["task"]["status"] == "working"
+
+        queried = await _call_tool(mcp_app, "a2a_get_task", {"task_id": task_id})
+        assert queried["task"]["status"] == "working"
+
+    async def test_working_task_can_be_completed_with_result(
+        self, mcp_app, task_manager, fake_resident_impl, fresh_idempotency
+    ):
+        sent = await _call_tool(
+            mcp_app,
+            "a2a_send_task",
+            {
+                "tool_name": "resident.status",
+                "arguments": "{}",
+                "session_id": "t5-03-batch2-complete",
+                "execute_immediately": False,
+            },
+        )
+        assert sent["status"] == "ok"
+        task_id = sent["task"]["id"]
+
+        await _call_tool(
+            mcp_app,
+            "a2a_update_task",
+            {"task_id": task_id, "status": "working"},
+        )
+        result_payload = {"ok": True, "health": "degraded", "note": "batch2-result"}
+        completed = await _call_tool(
+            mcp_app,
+            "a2a_update_task",
+            {"task_id": task_id, "status": "completed", "result": result_payload},
+        )
+        assert completed["status"] == "ok"
+        assert completed["task"]["status"] == "completed"
+        assert completed["task"]["result"] == result_payload
+
+        queried = await _call_tool(mcp_app, "a2a_get_task", {"task_id": task_id})
+        assert queried["task"]["status"] == "completed"
+        assert queried["task"]["result"] == result_payload
