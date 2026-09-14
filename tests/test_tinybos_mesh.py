@@ -308,3 +308,186 @@ class TestMapToTrigger:
         # empty values → rmssd=0.0 → triggers
         trigger = map_to_trigger(reading)
         assert trigger is not None  # 0.0 < HRV_CRITICAL_LOW
+
+
+# ---------------------------------------------------------------------------
+# TinyBOSBridge class tests
+# ---------------------------------------------------------------------------
+
+class TestTinyBOSBridgeInit:
+    """Tests for TinyBOSBridge construction and configuration."""
+
+    def test_default_socket_path(self):
+        from agora.transport.tinybos_bridge import TinyBOSBridge
+        bridge = TinyBOSBridge()
+        assert bridge.socket_path == "/tmp/tinybos.sock"
+        assert bridge._running is False
+        assert bridge._handlers == []
+
+    def test_custom_socket_path(self):
+        from agora.transport.tinybos_bridge import TinyBOSBridge
+        bridge = TinyBOSBridge(socket_path="/tmp/custom.sock")
+        assert bridge.socket_path == "/tmp/custom.sock"
+
+    def test_initial_state(self):
+        from agora.transport.tinybos_bridge import TinyBOSBridge
+        bridge = TinyBOSBridge()
+        assert bridge._reader is None
+        assert bridge._writer is None
+
+
+class TestTinyBOSBridgeOnTrigger:
+    """Tests for trigger handler registration."""
+
+    def test_register_handler(self):
+        from agora.transport.tinybos_bridge import TinyBOSBridge, SceneTrigger
+        bridge = TinyBOSBridge()
+
+        called = []
+        def handler(trigger: SceneTrigger) -> None:
+            called.append(trigger)
+
+        bridge.on_trigger(handler)
+        assert len(bridge._handlers) == 1
+
+    def test_register_multiple_handlers(self):
+        from agora.transport.tinybos_bridge import TinyBOSBridge
+        bridge = TinyBOSBridge()
+
+        bridge.on_trigger(lambda t: None)
+        bridge.on_trigger(lambda t: None)
+        assert len(bridge._handlers) == 2
+
+    def test_handler_invoked_on_trigger(self):
+        from agora.transport.tinybos_bridge import TinyBOSBridge, SceneTrigger, decode_sensor_frame
+        bridge = TinyBOSBridge()
+
+        called = []
+        def handler(trigger: SceneTrigger) -> None:
+            called.append(trigger.trigger_type)
+
+        bridge.on_trigger(handler)
+
+        # Simulate a critical HRV reading
+        raw = struct.pack("<BQHI", 0x01, 1700000000000, 1, 1) + struct.pack("<f", 15.0)
+        raw = _pack_sensor_frame(0x01, 1700000000000, 1, [15.0])
+        asyncio.run(bridge._process_sensor_frame(raw))
+        assert called == ["health-visit.hrv_critical"]
+
+
+def _pack_sensor_frame(sensor_type: int, timestamp_ms: int, precision: int, values: list[float]) -> bytes:
+    """Helper to pack a sensor frame for testing."""
+    data = struct.pack("<BQHB", sensor_type, timestamp_ms, precision, len(values))
+    for v in values:
+        data += struct.pack("<f", v)
+    return data
+
+
+class TestTinyBOSBridgeProcessFrame:
+    """Tests for sensor frame processing pipeline."""
+
+    def test_process_valid_hrv_frame(self):
+        from agora.transport.tinybos_bridge import TinyBOSBridge, decode_sensor_frame, map_to_trigger
+        bridge = TinyBOSBridge()
+
+        # Normal HRV reading (65 ms) — no trigger
+        raw = _pack_sensor_frame(0x01, 1700000000000, 1, [65.0])
+        reading = decode_sensor_frame(raw)
+        assert reading.sensor_type == 0x01
+        assert reading.sensor_name == "hrv"
+        assert map_to_trigger(reading) is None
+
+    def test_process_critical_hrv_frame(self):
+        from agora.transport.tinybos_bridge import TinyBOSBridge, decode_sensor_frame, map_to_trigger
+        bridge = TinyBOSBridge()
+
+        # Critical HRV (15 ms) — should trigger
+        raw = _pack_sensor_frame(0x01, 1700000000000, 1, [15.0])
+        reading = decode_sensor_frame(raw)
+        trigger = map_to_trigger(reading)
+        assert trigger is not None
+        assert trigger.trigger_type == "health-visit.hrv_critical"
+        assert trigger.severity == "critical"
+
+    def test_process_fall_detection_frame(self):
+        from agora.transport.tinybos_bridge import TinyBOSBridge, decode_sensor_frame, map_to_trigger
+        bridge = TinyBOSBridge()
+
+        # Fall: 3g on each axis → magnitude ~5.2g
+        raw = _pack_sensor_frame(0x02, 1700000000000, 2, [3.0, 3.0, 3.0])
+        reading = decode_sensor_frame(raw)
+        trigger = map_to_trigger(reading)
+        assert trigger is not None
+        assert trigger.trigger_type == "health-visit.fall_detected"
+
+    def test_process_malformed_frame_no_crash(self):
+        from agora.transport.tinybos_bridge import TinyBOSBridge, BridgeError
+        bridge = TinyBOSBridge()
+
+        # Too short
+        raw = b"\x01\x02\x03"
+        import pytest
+        with pytest.raises(BridgeError):
+            from agora.transport.tinybos_bridge import decode_sensor_frame
+            decode_sensor_frame(raw)
+
+    def test_process_truncated_frame_no_crash(self):
+        from agora.transport.tinybos_bridge import TinyBOSBridge, BridgeError
+        bridge = TinyBOSBridge()
+
+        # Header says 3 values but only 2 present
+        import struct
+        raw = struct.pack("<BQHI", 0x02, 1700000000000, 2, 3)
+        raw += struct.pack("<f", 1.0) + struct.pack("<f", 2.0)
+        with pytest.raises(BridgeError):
+            from agora.transport.tinybos_bridge import decode_sensor_frame
+            decode_sensor_frame(raw)
+
+
+class TestSensorReading:
+    """Tests for SensorReading dataclass."""
+
+    def test_unix_timestamp_property(self):
+        from agora.transport.tinybos_bridge import SensorReading
+        reading = SensorReading(
+            sensor_type=0x01,
+            sensor_name="hrv",
+            timestamp_ms=1700000000000,
+            precision=2,
+            values=[65.0],
+        )
+        assert abs(reading.unix_timestamp - 1700000000.0) < 0.001
+
+    def test_to_dict(self):
+        from agora.transport.tinybos_bridge import SensorReading
+        reading = SensorReading(
+            sensor_type=0x02,
+            sensor_name="accel",
+            timestamp_ms=1700000000000,
+            precision=3,
+            values=[0.1, -0.2, 9.8],
+        )
+        d = reading.to_dict()
+        assert d["sensor_type"] == 0x02
+        assert d["sensor_name"] == "accel"
+        assert d["timestamp_ms"] == 1700000000000
+        assert d["values"] == [0.1, -0.2, 9.8]
+
+
+class TestTinyBOSBridgeLifecycle:
+    """Tests for bridge start/stop lifecycle (non-blocking)."""
+
+    def test_stop_without_start(self):
+        """stop() should be safe to call without start()."""
+        import asyncio
+        from agora.transport.tinybos_bridge import TinyBOSBridge
+        bridge = TinyBOSBridge()
+        asyncio.run(bridge.stop())
+        assert bridge._running is False
+
+    def test_running_flag(self):
+        from agora.transport.tinybos_bridge import TinyBOSBridge
+        bridge = TinyBOSBridge()
+        assert bridge._running is False
+        bridge._running = True
+        assert bridge._running is True
