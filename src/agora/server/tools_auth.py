@@ -6,7 +6,12 @@ import os
 from contextvars import ContextVar
 
 import jwt
-from fastmcp.server.auth.authorization import AuthContext
+
+try:
+    # fastmcp 3.x 路径
+    from fastmcp.server.auth.authorization import AuthContext
+except ImportError:  # fastmcp 4.x: AuthContext 迁移至 utilities.authorization
+    from fastmcp.utilities.authorization import AuthContext
 from fastmcp.server.dependencies import get_access_token
 
 _AGORA_API_KEY = os.environ.get("AGORA_API_KEY", "")

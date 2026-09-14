@@ -11,7 +11,11 @@ from __future__ import annotations
 
 from unittest.mock import MagicMock
 
-from fastmcp.server.auth.authorization import AuthContext
+try:
+    # fastmcp 3.x 路径
+    from fastmcp.server.auth.authorization import AuthContext
+except ImportError:  # fastmcp 4.x: AuthContext 迁移至 utilities.authorization
+    from fastmcp.utilities.authorization import AuthContext
 
 from agora.auth.mcp_auth import MCPAuthError, MCPAuthMiddleware
 

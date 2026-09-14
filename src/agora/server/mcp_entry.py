@@ -103,7 +103,11 @@ def _register_common_routes() -> None:
         token = set_http_request(request)
         try:
             # 校验认证: permissive 放行; required+有 key 需 Bearer token 匹配
-            from fastmcp.server.auth.authorization import AuthContext
+            try:
+                # fastmcp 3.x 路径
+                from fastmcp.server.auth.authorization import AuthContext
+            except ImportError:  # fastmcp 4.x: AuthContext 迁移至 utilities
+                from fastmcp.utilities.authorization import AuthContext
 
             auth_ctx = AuthContext(token=None, component=None)
             if not require_agora_api_key(auth_ctx):
