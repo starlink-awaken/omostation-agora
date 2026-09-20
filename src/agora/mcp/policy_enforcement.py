@@ -270,6 +270,11 @@ def get_pep_provider() -> PolicyEnforcementPort | None:
     return provider
 
 
+def _pep_mode() -> str:
+    mode = os.environ.get("AGORA_PEP_MODE", "required").strip().lower()
+    return mode if mode in {"required", "strict", "degraded"} else "required"
+
+
 # ── Enforcement gate (single lifecycle) ──────────────────────────────────
 
 
@@ -287,6 +292,7 @@ def enforce(
 
     Returns:
         (None, None) — read-only exemption, no mandate needed.
+        (None, None) — degraded mode bypass, no mandate needed.
         (PolicyDecision, ActionReceipt) — permitted by PDP.
 
     Raises:
@@ -296,9 +302,17 @@ def enforce(
     if is_server_read_only(tool_name):
         return None, None
 
-    # Rule 1: effectful/unknown with no provider → deny
+    # Rule 1: effectful/unknown with no provider → deny (fail-closed)
     provider = get_pep_provider()
     if provider is None:
+        if _pep_mode() == "degraded":
+            logger.info(
+                "pep_degraded_bypass",
+                tool=tool_name,
+                caller_id=caller_id,
+                reason="pdp_unavailable",
+            )
+            return None, None
         raise PEPDenied("pdp_unavailable")
 
     # Build request and compute trusted canonical hash
@@ -372,6 +386,14 @@ def complete(
 
     provider = get_pep_provider()
     if provider is None:
+        if _pep_mode() == "degraded":
+            logger.info(
+                "pep_degraded_complete",
+                decision_id=decision.decision_id if decision else "",
+                succeeded=succeeded,
+                reason="pdp_unavailable",
+            )
+            return
         # Provider vanished mid-flight — can't confirm, can't succeed
         if succeeded:
             raise PEPDenied("pdp_unavailable", decision.decision_id)
