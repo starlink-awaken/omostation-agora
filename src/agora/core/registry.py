@@ -4,9 +4,12 @@ from __future__ import annotations
 
 import asyncio
 import json
+import os
 import time
 from pathlib import Path
 from typing import Any
+
+import structlog
 
 from agora.core.circuit_breaker import CircuitBreaker  # type: ignore[import-not-found]
 from agora.core.service_base import (  # type: ignore[import-not-found]
@@ -16,6 +19,8 @@ from agora.core.service_base import (  # type: ignore[import-not-found]
     is_safe_url,
 )
 from agora.core.transition_log import TransitionLog  # type: ignore[import-not-found]
+
+logger = structlog.get_logger(__name__)
 
 
 class ServiceRegistry:
@@ -80,6 +85,8 @@ class ServiceRegistry:
             )
             self._services[svc.name] = svc
 
+        self._apply_env_overrides()
+
     def _save(self):
         """Persist services to storage (SQLite + JSON fallback)."""
         from agora.persistence import json_save as _file_save
@@ -107,6 +114,35 @@ class ServiceRegistry:
         _db_save(Path(self._storage_path), payload)
         _file_save(Path(self._storage_path), payload)
 
+    def _apply_env_overrides(self) -> None:
+        prefix = "AGORA_SVC_"
+        for name in list(self._services):
+            self._apply_env_overrides_for(name)
+
+    def _apply_env_overrides_for(self, name: str) -> None:
+        prefix = "AGORA_SVC_"
+        svc = self._services.get(name)
+        if svc is None:
+            return
+        env_name = f"{prefix}{name.upper()}_ENDPOINT"
+        env_port = f"{prefix}{name.upper()}_PORT"
+        endpoint = os.environ.get(env_name)
+        port = os.environ.get(env_port)
+        if endpoint or port:
+            svc.mcp_endpoint = endpoint or svc.mcp_endpoint
+            if port:
+                try:
+                    svc.port = int(port)
+                except ValueError:
+                    pass
+            self._services[name] = svc
+            logger.info(
+                "service_env_override",
+                service=name,
+                endpoint=endpoint,
+                port=port,
+            )
+
     # ── CRUD ──────────────────────────────────────────────────────
 
     def register(self, service: Service):
@@ -133,6 +169,7 @@ class ServiceRegistry:
                         f"See protocols/port-registry.yaml for SSOT."
                     )
         self._services[service.name] = service
+        self._apply_env_overrides_for(service.name)
         self._save()
         self._transitions.add(
             service.name, "", "registered", "Service registered", "register"

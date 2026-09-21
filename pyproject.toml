@@ -32,6 +32,8 @@ dependencies = [
     "bus-foundation",
     "ecos",
     "family-hub",
+    "metaos",
+    "omo",
     # BET-Y1Q4-T2-03: local OCR via macOS Vision (Linux CI skips install;
     # runtime falls back to the stub recognition source)
     "pyobjc-framework-Vision; sys_platform == 'darwin'",
@@ -151,3 +153,4 @@ core-models = { path = "../knowledge/kairon/packages/core-models", editable = tr
 ecos = { path = "../ecos" }
 family-hub = { path = "../family-hub" }
 metaos = { path = "../metaos", editable = true }
+omo = { path = "../omo" }

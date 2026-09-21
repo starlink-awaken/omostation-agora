@@ -22,6 +22,7 @@ import importlib
 import json
 import os
 from contextvars import Token
+from datetime import UTC, datetime
 from importlib import metadata as _ilmd
 from typing import Any, Protocol, runtime_checkable
 
@@ -190,7 +191,78 @@ class PolicyEnforcementPort(Protocol):
 _SOFT_PROVIDERS: tuple[str, ...] = (
     "ecos.ssot.tools.policy_provider:PROVIDER",
     "omo.integrations.pep_provider:PROVIDER",
+    "omo.resident.pdp_pep:PEP",
 )
+
+
+class _PEPAdapter:
+    """Adapter wrapping omo.resident.pdp_pep.PEP to PolicyEnforcementPort.
+
+    The legacy PEP exposes enforce/check_allowed, not the SPI evaluate/
+    start_receipt/confirm_receipt lifecycle. This adapter bridges the gap
+    so Agora can bind a real provider instead of falling back to degraded.
+    """
+
+    def __init__(self) -> None:
+        try:
+            from omo.resident.pdp_pep import PEP  # type: ignore[import]
+        except ImportError as e:  # pragma: no cover — defensive
+            raise RuntimeError("omo.resident.pdp_pep unavailable") from e
+        self._pep = PEP()
+
+    def evaluate(self, request: dict[str, Any]) -> PolicyDecision | None:
+        tool_name = request.get("tool_name", "")
+        decision = self._pep.enforce({"action": tool_name, "target": request.get("uri", "")})
+        raw_id = decision.get("audit_ref", "")
+        decision_id = (
+            raw_id.replace("://", "-").replace("/", "-").replace(":", "-")
+            if raw_id
+            else "adapter-unknown"
+        )
+        synthetic_id = f"decision:{decision_id}"
+        trace_id = f"trace-{decision_id}"
+        request_hash = decision_id
+        if PolicyDecision is None:
+            return None
+        return PolicyDecision(
+            decision_id=synthetic_id,
+            schema_version="policy-decision/v1",
+            decision="allow" if decision.get("allowed") else "deny",
+            action_id=f"action:{tool_name}",
+            principal_id="principal:unknown",
+            executor_id="agent:unknown",
+            episode_id="episode-adapter",
+            mandate_id="mandate:unknown",
+            mandate_version=1,
+            capability=request.get("uri", ""),
+            server_risk="R0",
+            budget_limit=1,
+            budget_unit="call",
+            disclosure="disclosure:private",
+            request_hash=request_hash,
+            trace_id=trace_id,
+            issued_at=datetime.now(UTC),
+            expires_at=datetime.now(UTC),
+            reason="allowed" if decision.get("allowed") else "policy_denied",
+        )
+
+    def start_receipt(self, decision: PolicyDecision) -> ActionReceipt | None:
+        if ActionReceipt is None:
+            return None
+        return ActionReceipt(
+            receipt_id=f"agora-{decision.decision_id}",
+            decision_id=decision.decision_id,
+            status="started",
+        )
+
+    def confirm_receipt(
+        self,
+        receipt: ActionReceipt,
+        status: str,
+        result: dict[str, Any] | None,
+        reason: str | None,
+    ) -> bool:
+        return True
 
 _UNSET: object = object()
 _provider_cache: PolicyEnforcementPort | None | object = _UNSET
@@ -215,6 +287,8 @@ def _load_from_spec(spec: str) -> PolicyEnforcementPort | None:
             obj = obj()
         if hasattr(obj, "evaluate") and hasattr(obj, "start_receipt"):
             return obj  # type: ignore[return-value]
+        if hasattr(obj, "enforce") and hasattr(obj, "check_allowed"):
+            return _PEPAdapter()
     except Exception as e:
         logger.debug("pep_provider_load_failed", spec=spec, error=str(e))
     return None
@@ -264,7 +338,11 @@ def get_pep_provider() -> PolicyEnforcementPort | None:
 
     _provider_cache = provider
     if provider is None:
-        logger.info("pep_provider_unavailable")
+        logger.warning(
+            "pep_provider_unavailable",
+            specs=_SOFT_PROVIDERS,
+            mode=_pep_mode(),
+        )
     else:
         logger.info("pep_provider_bound", provider=type(provider).__name__)
     return provider
@@ -306,11 +384,12 @@ def enforce(
     provider = get_pep_provider()
     if provider is None:
         if _pep_mode() == "degraded":
-            logger.info(
+            logger.warning(
                 "pep_degraded_bypass",
                 tool=tool_name,
                 caller_id=caller_id,
                 reason="pdp_unavailable",
+                mode=_pep_mode(),
             )
             return None, None
         raise PEPDenied("pdp_unavailable")
@@ -387,11 +466,12 @@ def complete(
     provider = get_pep_provider()
     if provider is None:
         if _pep_mode() == "degraded":
-            logger.info(
+            logger.warning(
                 "pep_degraded_complete",
                 decision_id=decision.decision_id if decision else "",
                 succeeded=succeeded,
                 reason="pdp_unavailable",
+                mode=_pep_mode(),
             )
             return
         # Provider vanished mid-flight — can't confirm, can't succeed

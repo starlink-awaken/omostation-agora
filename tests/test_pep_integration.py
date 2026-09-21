@@ -23,6 +23,7 @@ from ecos.ssot.mof.generated.control.mof_control_models import (
 
 from agora.mcp.policy_enforcement import (
     PEPDenied,
+    _PEPAdapter,
     complete,
     compute_request_hash,
     enforce,
@@ -540,3 +541,48 @@ class TestPEPDeniedPropagation:
             enforce(uri="bos://x/y/z", tool_name="mutate_resource", operation="write")
         # Verify the exception carries structured info
         assert exc_info.value.reason == "policy_denied"
+
+
+# ── Tests: degraded mode bypass ────────────────────────────────────────────
+
+
+class TestDegradedMode:
+    def test_degraded_bypass_effectful(self, monkeypatch):
+        """Rule 1 relaxed: effectful with no provider → bypass in degraded mode."""
+        _inject_provider(monkeypatch, None)
+        monkeypatch.setenv("AGORA_PEP_MODE", "degraded")
+        decision, receipt = enforce(
+            uri="bos://test/data",
+            tool_name="mutate_resource",
+            operation="write",
+        )
+        assert decision is None
+        assert receipt is None
+
+    def test_degraded_complete_noop(self, monkeypatch):
+        """complete() is no-op in degraded mode even with None provider."""
+        _inject_provider(monkeypatch, None)
+        monkeypatch.setenv("AGORA_PEP_MODE", "degraded")
+        complete(None, None, succeeded=True)
+        complete(None, None, succeeded=False, error="boom")
+
+
+# ── Tests: _PEPAdapter bridge ───────────────────────────────────────────────
+
+
+class TestPEPAdapter:
+    def test_adapter_exposes_spi_methods(self):
+        """_PEPAdapter exposes evaluate/start_receipt/confirm_receipt."""
+        adapter = _PEPAdapter()
+        assert hasattr(adapter, "evaluate")
+        assert hasattr(adapter, "start_receipt")
+        assert hasattr(adapter, "confirm_receipt")
+
+    def test_adapter_evaluate_returns_policy_decision(self):
+        """evaluate() returns a valid PolicyDecision."""
+        adapter = _PEPAdapter()
+        decision = adapter.evaluate({"tool_name": "test_tool", "uri": "bos://test"})
+        assert decision is not None
+        assert decision.decision in {"allow", "deny"}
+        assert isinstance(decision.decision_id, str)
+        assert len(decision.decision_id) > 0

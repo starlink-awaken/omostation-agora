@@ -1,5 +1,6 @@
 """Tests for Agora service registry."""
 
+import os
 import tempfile
 from pathlib import Path
 
@@ -260,6 +261,57 @@ class TestGrpcHealthCheck:
         r = _new_registry()
         r.register(Service("no-ep", protocol="grpc"))
         assert r.grpc_health_check("no-ep") is False
+
+
+class TestEnvOverrides:
+    def test_endpoint_override(self, monkeypatch, tmp_path):
+        """AGORA_SVC_<NAME>_ENDPOINT overrides mcp_endpoint."""
+        monkeypatch.setenv("AGORA_SVC_TEST-SVC_ENDPOINT", "http://127.0.0.1:9999")
+        storage = str(tmp_path / "services.json")
+        r = ServiceRegistry(storage_path=storage)
+        r.register(Service("test-svc", mcp_endpoint="http://127.0.0.1:1111", port=1111))
+        svc = r.get("test-svc")
+        assert svc.mcp_endpoint == "http://127.0.0.1:9999"
+        assert svc.port == 1111
+
+    def test_port_override(self, monkeypatch, tmp_path):
+        """AGORA_SVC_<NAME>_PORT overrides port."""
+        monkeypatch.setenv("AGORA_SVC_TEST-SVC_PORT", "2222")
+        storage = str(tmp_path / "services.json")
+        r = ServiceRegistry(storage_path=storage)
+        r.register(Service("test-svc", mcp_endpoint="http://127.0.0.1:1111", port=1111))
+        svc = r.get("test-svc")
+        assert svc.port == 2222
+        assert svc.mcp_endpoint == "http://127.0.0.1:1111"
+
+    def test_no_override_keeps_defaults(self, monkeypatch, tmp_path):
+        """Without env vars, defaults are preserved."""
+        monkeypatch.delenv("AGORA_SVC_TEST-SVC_ENDPOINT", raising=False)
+        monkeypatch.delenv("AGORA_SVC_TEST-SVC_PORT", raising=False)
+        storage = str(tmp_path / "services.json")
+        r = ServiceRegistry(storage_path=storage)
+        r.register(Service("test-svc", mcp_endpoint="http://127.0.0.1:1111", port=1111))
+        svc = r.get("test-svc")
+        assert svc.mcp_endpoint == "http://127.0.0.1:1111"
+        assert svc.port == 1111
+
+    def test_env_override_persists_through_save_load(self, monkeypatch, tmp_path):
+        """Env overrides survive save/load cycle."""
+        monkeypatch.setenv("AGORA_SVC_PERSIST-SVC_ENDPOINT", "http://127.0.0.1:5555")
+        monkeypatch.setenv("AGORA_SVC_PERSIST-SVC_PORT", "6666")
+        storage = str(tmp_path / "services.json")
+        r = ServiceRegistry(storage_path=storage)
+        r.register(Service("persist-svc", mcp_endpoint="http://127.0.0.1:7777", port=7777))
+        svc = r.get("persist-svc")
+        assert svc.mcp_endpoint == "http://127.0.0.1:5555"
+        assert svc.port == 6666
+
+        # Load into a new registry instance
+        r2 = ServiceRegistry(storage_path=storage)
+        svc2 = r2.get("persist-svc")
+        assert svc2 is not None
+        assert svc2.mcp_endpoint == "http://127.0.0.1:5555"
+        assert svc2.port == 6666
 
 
 class TestParseGrpcEndpoint:

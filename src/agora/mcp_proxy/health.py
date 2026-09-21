@@ -247,10 +247,23 @@ class BackendHealthChecker:
                     del self._status[name]
 
         alive = sum(1 for s in self._status.values() if s.alive)
-        dead = len(self._status) - alive
+        dead = sum(1 for s in self._status.values() if not s.alive)
+        transport = {
+            name: "stdio" if self._is_transient(name) else "http/sse"
+            for name in self._status
+        }
         if dead > 0:
             logger.warning(
-                "heartbeat_report", alive=alive, dead=dead, total=len(self._status)
+                "heartbeat_report",
+                alive=alive,
+                dead=dead,
+                total=len(self._status),
+                transport=transport,
             )
         else:
-            logger.debug("heartbeat_report", alive=alive, total=len(self._status))
+            logger.debug(
+                "heartbeat_report",
+                alive=alive,
+                total=len(self._status),
+                transport=transport,
+            )

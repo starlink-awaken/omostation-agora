@@ -506,3 +506,30 @@ class TestWriteDebtItem:
         assert "DEBT-TEST-001" in content
         assert "Test debt" in content
         assert 'dimension: "governance"' in content
+
+
+class TestBackendHealthCheckerTransport:
+    def test_heartbeat_report_includes_transport(self):
+        """heartbeat_report log includes transport field for each backend."""
+        from agora.mcp_proxy.health import BackendHealthChecker
+
+        manager = MagicMock()
+        registry = MagicMock()
+        registry.list_services.return_value = ["http-svc", "stdio-svc"]
+        registry.get_saved_config.side_effect = lambda name: {
+            "http-svc": {"mcp_endpoint": "http://localhost:8080/mcp"},
+            "stdio-svc": {"command": "python3"},
+        }.get(name, {})
+        registry._clients = {
+            "http-svc": MagicMock(),
+            "stdio-svc": MagicMock(),
+        }
+        manager.registry = registry
+
+        checker = BackendHealthChecker(manager, interval=30)
+        checker.mark_alive("http-svc")
+        checker.mark_alive("stdio-svc")
+
+        status = checker.get_all_status()
+        assert "http-svc" in status
+        assert "stdio-svc" in status
