@@ -6,8 +6,7 @@ services:
   transport: internal
   module_path: family_hub.hitl.executor
   func_name: execute_family_dashboard_mutation
-  description: Execute one Cockpit-approved family Documents CAS transaction through
-    the family-hub owner.
+  description: Execute one Cockpit-approved family Documents CAS transaction through the family-hub owner.
   status: active
 - action: search
   command:
@@ -19,7 +18,7 @@ services:
   - -m
   - kos.cli
   - search
-  description: KOS 知识图谱检索入口 (P33-W1 战役 2 起步)
+  description: "KOS \u77E5\u8BC6\u56FE\u8C31\u68C0\u7D22\u5165\u53E3 (P33-W1 \u6218\u5F79 2 \u8D77\u6B65)"
   domain: memory
   package: kos
   status: active
@@ -266,7 +265,7 @@ services:
   transport: http
   uri: bos://memory/kos/rest-api
 - action: graphrag
-  description: 'KOS GraphRAG: 实体+BFS+证据+LLM'
+  description: "KOS GraphRAG: \u5B9E\u4F53+BFS+\u8BC1\u636E+LLM"
   domain: memory
   mcp_tool: knowledge_ask
   package: kos
@@ -297,7 +296,7 @@ services:
   - -m
   - kos.cli
   - ingest
-  description: KOS 知识摄取入口
+  description: "KOS \u77E5\u8BC6\u6444\u53D6\u5165\u53E3"
   domain: memory
   package: kos
   status: active
@@ -313,7 +312,7 @@ services:
   - -m
   - kos.cli
   - schema
-  description: KOS Schema 查询
+  description: "KOS Schema \u67E5\u8BE2"
   domain: memory
   package: kos
   status: active
@@ -329,7 +328,7 @@ services:
   - -m
   - kronos.cli
   - ingest
-  description: Kronos 知识摄取管线入口
+  description: "Kronos \u77E5\u8BC6\u6444\u53D6\u7BA1\u7EBF\u5165\u53E3"
   domain: memory
   package: kronos
   status: active
@@ -345,7 +344,7 @@ services:
   - -m
   - kronos.cli
   - scan
-  description: Kronos 扫描入口
+  description: "Kronos \u626B\u63CF\u5165\u53E3"
   domain: memory
   package: kronos
   status: active
@@ -361,7 +360,7 @@ services:
   - -m
   - metaos.cli
   - decide
-  description: MetaOS 决策门控
+  description: "MetaOS \u51B3\u7B56\u95E8\u63A7"
   domain: governance
   package: metaos
   status: active
@@ -377,7 +376,7 @@ services:
   - -m
   - metaos.cli
   - immune
-  description: MetaOS 免疫响应
+  description: "MetaOS \u514D\u75AB\u54CD\u5E94"
   domain: governance
   package: metaos
   status: active
@@ -393,7 +392,7 @@ services:
   - -m
   - metaos.cli
   - route
-  description: MetaOS 路由决策
+  description: "MetaOS \u8DEF\u7531\u51B3\u7B56"
   domain: governance
   package: metaos
   status: active
@@ -409,7 +408,7 @@ services:
   - -m
   - omo.cli
   - state
-  description: OMO 状态查询
+  description: "OMO \u72B6\u6001\u67E5\u8BE2"
   domain: governance
   package: omo
   status: active
@@ -426,7 +425,7 @@ services:
   - omo.cli
   - compass
   - trace
-  description: 8 维全景元架构立体重构追溯
+  description: "8 \u7EF4\u5168\u666F\u5143\u67B6\u6784\u7ACB\u4F53\u91CD\u6784\u8FFD\u6EAF"
   domain: governance
   package: omo
   status: active
@@ -443,7 +442,7 @@ services:
   - omo.cli
   - project
   - inspect
-  description: 17 项目全景 4D 体检与诊断
+  description: "17 \u9879\u76EE\u5168\u666F 4D \u4F53\u68C0\u4E0E\u8BCA\u65AD"
   domain: governance
   package: omo
   status: active
@@ -459,7 +458,7 @@ services:
   - -m
   - omo.cli
   - debt
-  description: OMO 债务查询
+  description: "OMO \u503A\u52A1\u67E5\u8BE2"
   domain: governance
   package: omo
   status: active
@@ -476,7 +475,7 @@ services:
   - bootstrap
   - --skip-health
   - --json
-  description: Agent Governance Control Plane 启动上下文
+  description: "Agent Governance Control Plane \u542F\u52A8\u4E0A\u4E0B\u6587"
   domain: governance
   package: agent-workflow
   status: active
@@ -494,7 +493,7 @@ services:
   - --file
   - bin/agent-workflow.py
   - --json
-  description: Agent Governance Control Plane diff-aware 验证规划
+  description: "Agent Governance Control Plane diff-aware \u9A8C\u8BC1\u89C4\u5212"
   domain: governance
   package: agent-workflow
   status: active
@@ -510,7 +509,7 @@ services:
   - bin/agent-workflow.py
   - observe
   - --json
-  description: Agent Governance Control Plane run/lock/ledger 观察
+  description: "Agent Governance Control Plane run/lock/ledger \u89C2\u5BDF"
   domain: governance
   package: agent-workflow
   status: active
@@ -526,7 +525,7 @@ services:
   - bin/agent-workflow.py
   - compliance
   - --json
-  description: Agent Governance Control Plane 合规审计
+  description: "Agent Governance Control Plane \u5408\u89C4\u5BA1\u8BA1"
   domain: governance
   package: agent-workflow
   status: active
@@ -542,7 +541,7 @@ services:
   - bin/agent-workflow.py
   - doctor
   - --json
-  description: Agent Governance Control Plane 内外部集成健康检查
+  description: "Agent Governance Control Plane \u5185\u5916\u90E8\u96C6\u6210\u5065\u5EB7\u68C0\u67E5"
   domain: governance
   package: agent-workflow
   status: active
@@ -558,7 +557,7 @@ services:
   - bin/gac/governance-evolution.py
   - status
   - --json
-  description: 治理演进路线图状态入口
+  description: "\u6CBB\u7406\u6F14\u8FDB\u8DEF\u7EBF\u56FE\u72B6\u6001\u5165\u53E3"
   domain: governance
   package: governance-evolution
   status: active
@@ -574,7 +573,7 @@ services:
   - bin/gac/governance-evolution.py
   - validate
   - --json
-  description: 治理演进路线图结构与追踪校验
+  description: "\u6CBB\u7406\u6F14\u8FDB\u8DEF\u7EBF\u56FE\u7ED3\u6784\u4E0E\u8FFD\u8E2A\u6821\u9A8C"
   domain: governance
   package: governance-evolution
   status: active
@@ -590,7 +589,7 @@ services:
   - bin/gac/governance-evolution.py
   - traces
   - --json
-  description: 治理能力到入口/SSOT/验证器的追踪视图
+  description: "\u6CBB\u7406\u80FD\u529B\u5230\u5165\u53E3/SSOT/\u9A8C\u8BC1\u5668\u7684\u8FFD\u8E2A\u89C6\u56FE"
   domain: governance
   package: governance-evolution
   status: active
@@ -606,7 +605,7 @@ services:
   - bin/gac/governance-evolution.py
   - golden-paths
   - --json
-  description: 治理 Golden Path 端到端流程视图
+  description: "\u6CBB\u7406 Golden Path \u7AEF\u5230\u7AEF\u6D41\u7A0B\u89C6\u56FE"
   domain: governance
   package: governance-evolution
   status: active
@@ -622,7 +621,7 @@ services:
   - bin/gac/governance-evolution.py
   - packages
   - --json
-  description: 治理演进发布包与工作树收口视图
+  description: "\u6CBB\u7406\u6F14\u8FDB\u53D1\u5E03\u5305\u4E0E\u5DE5\u4F5C\u6811\u6536\u53E3\u89C6\u56FE"
   domain: governance
   package: governance-evolution
   status: active
@@ -638,7 +637,7 @@ services:
   - -m
   - eidos.cli
   - validate
-  description: Eidos Schema 约束校验
+  description: "Eidos Schema \u7EA6\u675F\u6821\u9A8C"
   domain: governance
   package: eidos
   status: active
@@ -654,7 +653,7 @@ services:
   - -m
   - minerva.cli
   - research
-  description: Minerva 深度研究入口
+  description: "Minerva \u6DF1\u5EA6\u7814\u7A76\u5165\u53E3"
   domain: analysis
   package: minerva
   status: active
@@ -670,7 +669,7 @@ services:
   - -m
   - minerva.cli
   - ask
-  description: Minerva 追问入口
+  description: "Minerva \u8FFD\u95EE\u5165\u53E3"
   domain: analysis
   package: minerva
   status: active
@@ -686,7 +685,7 @@ services:
   - -m
   - minerva.cli
   - summarize
-  description: Minerva 摘要入口
+  description: "Minerva \u6458\u8981\u5165\u53E3"
   domain: analysis
   package: minerva
   status: active
@@ -702,7 +701,7 @@ services:
   - -m
   - ontoderive.cli
   - derive
-  description: OntoDerive 本体推导入口
+  description: "OntoDerive \u672C\u4F53\u63A8\u5BFC\u5165\u53E3"
   domain: analysis
   package: ontoderive
   status: active
@@ -718,7 +717,7 @@ services:
   - -m
   - ontoderive.cli
   - validate
-  description: OntoDerive 推导验证
+  description: "OntoDerive \u63A8\u5BFC\u9A8C\u8BC1"
   domain: analysis
   package: ontoderive
   status: active
@@ -734,7 +733,7 @@ services:
   - -m
   - ontoderive.cli
   - explain
-  description: OntoDerive 推导解释
+  description: "OntoDerive \u63A8\u5BFC\u89E3\u91CA"
   domain: analysis
   package: ontoderive
   status: active
@@ -752,7 +751,7 @@ services:
   - serve
   - --action
   - audit
-  description: OntoDerive 审计入口
+  description: "OntoDerive \u5BA1\u8BA1\u5165\u53E3"
   domain: analysis
   package: ontoderive
   status: active
@@ -770,7 +769,7 @@ services:
   - serve
   - --action
   - fact-check
-  description: OntoDerive 事实核验入口
+  description: "OntoDerive \u4E8B\u5B9E\u6838\u9A8C\u5165\u53E3"
   domain: analysis
   package: ontoderive
   status: active
@@ -785,7 +784,7 @@ services:
   - python
   - -m
   - ontoderive.toolforge.mcp_server
-  description: ToolForge 分组匹配思维工具
+  description: "ToolForge \u5206\u7EC4\u5339\u914D\u601D\u7EF4\u5DE5\u5177"
   domain: analysis
   package: ontoderive
   status: active
@@ -800,7 +799,7 @@ services:
   - python
   - -m
   - ontoderive.toolforge.mcp_server
-  description: ToolForge 跨类别 Top-N 工具选择
+  description: "ToolForge \u8DE8\u7C7B\u522B Top-N \u5DE5\u5177\u9009\u62E9"
   domain: analysis
   package: ontoderive
   status: active
@@ -815,7 +814,7 @@ services:
   - python
   - -m
   - ontoderive.toolforge.mcp_server
-  description: ToolForge OntoDerive 推导指导
+  description: "ToolForge OntoDerive \u63A8\u5BFC\u6307\u5BFC"
   domain: analysis
   package: ontoderive
   status: active
@@ -831,7 +830,7 @@ services:
   - -m
   - codeanalyze.cli
   - scan
-  description: CodeAnalyze AST 扫描入口
+  description: "CodeAnalyze AST \u626B\u63CF\u5165\u53E3"
   domain: analysis
   package: codeanalyze
   status: active
@@ -847,7 +846,7 @@ services:
   - -m
   - codeanalyze.cli
   - analyze
-  description: CodeAnalyze 深度分析
+  description: "CodeAnalyze \u6DF1\u5EA6\u5206\u6790"
   domain: analysis
   package: codeanalyze
   status: active
@@ -863,7 +862,7 @@ services:
   - -m
   - codeanalyze.cli
   - metrics
-  description: CodeAnalyze 代码度量
+  description: "CodeAnalyze \u4EE3\u7801\u5EA6\u91CF"
   domain: analysis
   package: codeanalyze
   status: active
@@ -879,7 +878,7 @@ services:
   - -m
   - iris.cli
   - discover
-  description: Iris 发现入口
+  description: "Iris \u53D1\u73B0\u5165\u53E3"
   domain: analysis
   package: iris
   status: active
@@ -895,7 +894,7 @@ services:
   - -m
   - iris.cli
   - scan
-  description: Iris 扫描入口
+  description: "Iris \u626B\u63CF\u5165\u53E3"
   domain: analysis
   package: iris
   status: active
@@ -911,7 +910,7 @@ services:
   - -m
   - iris.cli
   - recall
-  description: Iris 召回入口
+  description: "Iris \u53EC\u56DE\u5165\u53E3"
   domain: analysis
   package: iris
   status: active
@@ -927,7 +926,7 @@ services:
   - -m
   - core_models.cli
   - schema
-  description: Core Models Schema 查询
+  description: "Core Models Schema \u67E5\u8BE2"
   domain: persona
   package: core-models
   status: active
@@ -943,7 +942,7 @@ services:
   - -m
   - core_models.cli
   - validate
-  description: Core Models 校验
+  description: "Core Models \u6821\u9A8C"
   domain: persona
   package: core-models
   status: active
@@ -959,7 +958,7 @@ services:
   - -m
   - health_profile.cli
   - query
-  description: Health Profile 查询
+  description: "Health Profile \u67E5\u8BE2"
   domain: persona
   package: health-profile
   status: active
@@ -975,7 +974,7 @@ services:
   - -m
   - health_profile.cli
   - update
-  description: Health Profile 更新
+  description: "Health Profile \u66F4\u65B0"
   domain: persona
   package: health-profile
   status: active
@@ -991,14 +990,14 @@ services:
   - -m
   - health_profile.cli
   - ingest
-  description: Health Profile 批量导入 (T6-25 OpenHuman Bridge)
+  description: "Health Profile \u6279\u91CF\u5BFC\u5165 (T6-25 OpenHuman Bridge)"
   domain: persona
   package: health-profile
   status: active
   transport: stdio
   uri: bos://persona/health-profile/ingest
 - action: recall-entity
-  description: SharedBrain Bridge 实体召回 (P36-W1 GAP 补全, canonical URI)
+  description: "SharedBrain Bridge \u5B9E\u4F53\u53EC\u56DE (P36-W1 GAP \u8865\u5168, canonical URI)"
   domain: persona
   func_name: _sharedbrain_bridge_recall_entity
   module_path: agora.mcp.bos_resolver
@@ -1015,13 +1014,13 @@ services:
   - python
   - -m
   - runtime.mcp_server
-  description: Agent Runtime 执行入口
+  description: "Agent Runtime \u6267\u884C\u5165\u53E3"
   domain: capability
   package: agent-runtime
   status: active
   transport: mcp_stdio
   uri: bos://capability/agent-runtime/execute
-  note: 'BET-Y1Q3-T1-05: 服务实现存在 (runtime.mcp_server), 修正为 active'
+  note: "BET-Y1Q3-T1-05: \u670D\u52A1\u5B9E\u73B0\u5B58\u5728 (runtime.mcp_server), \u4FEE\u6B63\u4E3A active"
 - action: list-tools
   command:
   - uv
@@ -1031,13 +1030,13 @@ services:
   - python
   - -m
   - runtime.mcp_server
-  description: Agent Runtime 工具列表
+  description: "Agent Runtime \u5DE5\u5177\u5217\u8868"
   domain: capability
   package: agent-runtime
   status: active
   transport: mcp_stdio
   uri: bos://capability/agent-runtime/list-tools
-  note: 'BET-Y1Q3-T1-05: 服务实现存在 (runtime.mcp_server), 修正为 active'
+  note: "BET-Y1Q3-T1-05: \u670D\u52A1\u5B9E\u73B0\u5B58\u5728 (runtime.mcp_server), \u4FEE\u6B63\u4E3A active"
 - action: status
   command:
   - uv
@@ -1047,13 +1046,13 @@ services:
   - python
   - -m
   - runtime.mcp_server
-  description: Agent Runtime 状态
+  description: "Agent Runtime \u72B6\u6001"
   domain: capability
   package: agent-runtime
   status: active
   transport: mcp_stdio
   uri: bos://capability/agent-runtime/status
-  note: 'BET-Y1Q3-T1-05: 服务实现存在 (runtime.mcp_server), 修正为 active'
+  note: "BET-Y1Q3-T1-05: \u670D\u52A1\u5B9E\u73B0\u5B58\u5728 (runtime.mcp_server), \u4FEE\u6B63\u4E3A active"
 - action: agent-list
   command:
   - uv
@@ -1064,13 +1063,13 @@ services:
   - -m
   - forge.cli
   - agent-list
-  description: Forge 集市 Agent 列表
+  description: "Forge \u96C6\u5E02 Agent \u5217\u8868"
   domain: capability
   package: forge
   status: deprecated
   transport: stdio
   uri: bos://capability/forge/agent-list
-  note: 'BET-Y1Q3-T1-05: 无实现, 标 deprecated (声明诚实, 不堆积 unimplemented)'
+  note: "BET-Y1Q3-T1-05: \u65E0\u5B9E\u73B0, \u6807 deprecated (\u58F0\u660E\u8BDA\u5B9E, \u4E0D\u5806\u79EF unimplemented)"
 - action: agent-install
   command:
   - uv
@@ -1081,13 +1080,13 @@ services:
   - -m
   - forge.cli
   - agent-install
-  description: Forge 集市 Agent 安装
+  description: "Forge \u96C6\u5E02 Agent \u5B89\u88C5"
   domain: capability
   package: forge
   status: deprecated
   transport: stdio
   uri: bos://capability/forge/agent-install
-  note: 'BET-Y1Q3-T1-05: 无实现, 标 deprecated (声明诚实, 不堆积 unimplemented)'
+  note: "BET-Y1Q3-T1-05: \u65E0\u5B9E\u73B0, \u6807 deprecated (\u58F0\u660E\u8BDA\u5B9E, \u4E0D\u5806\u79EF unimplemented)"
 - action: registry
   command:
   - uv
@@ -1098,13 +1097,13 @@ services:
   - -m
   - forge.cli
   - registry
-  description: Forge 注册表查询
+  description: "Forge \u6CE8\u518C\u8868\u67E5\u8BE2"
   domain: capability
   package: forge
   status: deprecated
   transport: stdio
   uri: bos://capability/forge/registry
-  note: 'BET-Y1Q3-T1-05: 无实现, 标 deprecated (声明诚实, 不堆积 unimplemented)'
+  note: "BET-Y1Q3-T1-05: \u65E0\u5B9E\u73B0, \u6807 deprecated (\u58F0\u660E\u8BDA\u5B9E, \u4E0D\u5806\u79EF unimplemented)"
 - action: publish
   command:
   - uv
@@ -1115,13 +1114,13 @@ services:
   - -m
   - forge.cli
   - publish
-  description: Forge 发布入口
+  description: "Forge \u53D1\u5E03\u5165\u53E3"
   domain: capability
   package: forge
   status: deprecated
   transport: stdio
   uri: bos://capability/forge/publish
-  note: 'BET-Y1Q3-T1-05: 无实现, 标 deprecated (声明诚实, 不堆积 unimplemented)'
+  note: "BET-Y1Q3-T1-05: \u65E0\u5B9E\u73B0, \u6807 deprecated (\u58F0\u660E\u8BDA\u5B9E, \u4E0D\u5806\u79EF unimplemented)"
 - action: lint
   command:
   - uv
@@ -1132,15 +1131,15 @@ services:
   - -m
   - forge.cli
   - lint
-  description: Forge Lint 检查
+  description: "Forge Lint \u68C0\u67E5"
   domain: capability
   package: forge
   status: deprecated
   transport: stdio
   uri: bos://capability/forge/lint
-  note: 'BET-Y1Q3-T1-05: 无实现, 标 deprecated (声明诚实, 不堆积 unimplemented)'
+  note: "BET-Y1Q3-T1-05: \u65E0\u5B9E\u73B0, \u6807 deprecated (\u58F0\u660E\u8BDA\u5B9E, \u4E0D\u5806\u79EF unimplemented)"
 - action: run
-  description: AetherForge Swarm 多智能体任务工作流运行接口 (internal 进程内反射直调)
+  description: "AetherForge Swarm \u591A\u667A\u80FD\u4F53\u4EFB\u52A1\u5DE5\u4F5C\u6D41\u8FD0\u884C\u63A5\u53E3 (internal \u8FDB\u7A0B\u5185\u53CD\u5C04\u76F4\u8C03)"
   domain: capability
   func_name: run_swarm_workflow
   module_path: aetherforge.swarm.rpc
@@ -1149,7 +1148,7 @@ services:
   transport: internal
   uri: bos://capability/swarm/run
 - action: generate
-  description: AetherForge 网关生成 — 经 SSOT registry 路由到 omlx/本地/云 (internal 直调)
+  description: "AetherForge \u7F51\u5173\u751F\u6210 \u2014 \u7ECF SSOT registry \u8DEF\u7531\u5230 omlx/\u672C\u5730/\u4E91 (internal \u76F4\u8C03)"
   domain: capability
   func_name: run_generate
   module_path: aetherforge.gateway.rpc
@@ -1158,7 +1157,7 @@ services:
   transport: internal
   uri: bos://capability/compute/generate
 - action: mesh-status
-  description: AetherForge 算力网格节点健康/在线摘要 (internal 直调)
+  description: "AetherForge \u7B97\u529B\u7F51\u683C\u8282\u70B9\u5065\u5EB7/\u5728\u7EBF\u6458\u8981 (internal \u76F4\u8C03)"
   domain: capability
   func_name: run_mesh_status
   module_path: aetherforge.mesh.rpc
@@ -1167,7 +1166,7 @@ services:
   transport: internal
   uri: bos://capability/compute/mesh-status
 - action: all-search
-  description: P2 多区聚合搜索 — cockpit local + KOS + vault
+  description: "P2 \u591A\u533A\u805A\u5408\u641C\u7D22 \u2014 cockpit local + KOS + vault"
   domain: memory
   func_name: _memory_all_search
   module_path: agora.mcp.bos_resolver
@@ -1188,7 +1187,7 @@ services:
   transport: mcp_stdio
   uri: bos://persona/family-hub/health
 - action: audit
-  description: OMO 治理审计 (internal — 同进程 importlib)
+  description: "OMO \u6CBB\u7406\u5BA1\u8BA1 (internal \u2014 \u540C\u8FDB\u7A0B importlib)"
   domain: governance
   func_name: run_governance_audit
   module_path: omo.omo_audit
@@ -1197,7 +1196,7 @@ services:
   transport: internal
   uri: bos://governance/omo/audit
 - action: inspect
-  description: OMO 系统检查 (internal 同进程)
+  description: "OMO \u7CFB\u7EDF\u68C0\u67E5 (internal \u540C\u8FDB\u7A0B)"
   domain: governance
   func_name: run_full_inspection
   module_path: omo.omo_inspect
@@ -1215,7 +1214,7 @@ services:
   - -m
   - omo
   - serve
-  description: OMO 状态同步 (mcp_stdio transport 跨进程)
+  description: "OMO \u72B6\u6001\u540C\u6B65 (mcp_stdio transport \u8DE8\u8FDB\u7A0B)"
   domain: governance
   package: omo
   status: active
@@ -1234,7 +1233,7 @@ services:
   - ledger
   - append
   - --agora
-  description: OMO 事件台账追加 (stdio one-shot)
+  description: "OMO \u4E8B\u4EF6\u53F0\u8D26\u8FFD\u52A0 (stdio one-shot)"
   domain: governance
   package: omo
   status: active
@@ -1253,7 +1252,7 @@ services:
   - ledger
   - read
   - --agora
-  description: OMO 事件台账读取 (stdio one-shot)
+  description: "OMO \u4E8B\u4EF6\u53F0\u8D26\u8BFB\u53D6 (stdio one-shot)"
   domain: governance
   package: omo
   status: active
@@ -1272,7 +1271,7 @@ services:
   - ledger
   - verify
   - --agora
-  description: OMO 事件台账完整性校验 (stdio one-shot)
+  description: "OMO \u4E8B\u4EF6\u53F0\u8D26\u5B8C\u6574\u6027\u6821\u9A8C (stdio one-shot)"
   domain: governance
   package: omo
   status: active
@@ -1291,7 +1290,7 @@ services:
   - ledger
   - status
   - --agora
-  description: OMO 事件台账状态查询 (stdio one-shot)
+  description: "OMO \u4E8B\u4EF6\u53F0\u8D26\u72B6\u6001\u67E5\u8BE2 (stdio one-shot)"
   domain: governance
   package: omo
   status: active
@@ -1306,7 +1305,7 @@ services:
   - python
   - -m
   - l4_kernel.mcp_server
-  description: L4 Domain Kernel MCP — 24域管理
+  description: "L4 Domain Kernel MCP \u2014 24\u57DF\u7BA1\u7406"
   domain: governance
   package: l4-kernel
   status: active
@@ -1321,7 +1320,7 @@ services:
   - python
   - -m
   - l4_kernel.mcp_server
-  description: L4 Kernel MCP (短路径别名)
+  description: "L4 Kernel MCP (\u77ED\u8DEF\u5F84\u522B\u540D)"
   domain: governance
   package: l4-kernel
   status: active
@@ -1336,7 +1335,7 @@ services:
   - python
   - -m
   - runtime.mcp_server
-  description: Runtime MCP — 服务注册表/健康/协议/KEI
+  description: "Runtime MCP \u2014 \u670D\u52A1\u6CE8\u518C\u8868/\u5065\u5EB7/\u534F\u8BAE/KEI"
   domain: capability
   package: runtime
   status: active
@@ -1351,14 +1350,14 @@ services:
   - python
   - -m
   - runtime.mcp_server
-  description: Runtime MCP (短路径别名)
+  description: "Runtime MCP (\u77ED\u8DEF\u5F84\u522B\u540D)"
   domain: capability
   package: runtime
   status: active
   transport: mcp_stdio
   uri: bos://runtime/health
 - action: discover
-  description: 发现所有可用 BOS 资源和入口
+  description: "\u53D1\u73B0\u6240\u6709\u53EF\u7528 BOS \u8D44\u6E90\u548C\u5165\u53E3"
   domain: governance
   func_name: _meta_discover
   module_path: agora.mcp.bos_resolver
@@ -1367,7 +1366,7 @@ services:
   transport: internal
   uri: bos://meta/discover
 - action: vault-search
-  description: L4 Vault 知识库搜索
+  description: "L4 Vault \u77E5\u8BC6\u5E93\u641C\u7D22"
   domain: memory
   func_name: _memory_vault_search
   module_path: agora.mcp.bos_resolver
@@ -1387,7 +1386,7 @@ services:
   - serve
   - --action
   - draft
-  description: '[POC] Minerva 草稿生成 (POC stdio)'
+  description: "[POC] Minerva \u8349\u7A3F\u751F\u6210 (POC stdio)"
   domain: analysis
   package: minerva
   status: active
@@ -1405,7 +1404,7 @@ services:
   - serve
   - --action
   - audit
-  description: '[POC] Minerva 审计 (POC stdio)'
+  description: "[POC] Minerva \u5BA1\u8BA1 (POC stdio)"
   domain: analysis
   package: minerva
   status: active
@@ -1423,7 +1422,7 @@ services:
   - serve
   - --action
   - report
-  description: '[POC] CodeAnalyze 分析报告 (POC stdio)'
+  description: "[POC] CodeAnalyze \u5206\u6790\u62A5\u544A (POC stdio)"
   domain: analysis
   package: codeanalyze
   status: active
@@ -1459,13 +1458,13 @@ services:
   - serve
   - --action
   - connect
-  description: '[UNIMPLEMENTED] Iris 连接 (POC stdio)'
+  description: "[UNIMPLEMENTED] Iris \u8FDE\u63A5 (POC stdio)"
   domain: analysis
   package: iris
   status: deprecated
   transport: mcp_stdio
   uri: bos://analysis/iris/connect
-  note: 'BET-Y1Q3-T1-05: 无实现, 标 deprecated (声明诚实, 不堆积 unimplemented)'
+  note: "BET-Y1Q3-T1-05: \u65E0\u5B9E\u73B0, \u6807 deprecated (\u58F0\u660E\u8BDA\u5B9E, \u4E0D\u5806\u79EF unimplemented)"
 - action: transform
   command:
   - uv
@@ -1478,13 +1477,13 @@ services:
   - serve
   - --action
   - transform
-  description: '[UNIMPLEMENTED] Iris 数据转换 (POC stdio)'
+  description: "[UNIMPLEMENTED] Iris \u6570\u636E\u8F6C\u6362 (POC stdio)"
   domain: analysis
   package: iris
   status: deprecated
   transport: mcp_stdio
   uri: bos://analysis/iris/transform
-  note: 'BET-Y1Q3-T1-05: 无实现, 标 deprecated (声明诚实, 不堆积 unimplemented)'
+  note: "BET-Y1Q3-T1-05: \u65E0\u5B9E\u73B0, \u6807 deprecated (\u58F0\u660E\u8BDA\u5B9E, \u4E0D\u5806\u79EF unimplemented)"
 - action: validate
   command:
   - uv
@@ -1497,13 +1496,13 @@ services:
   - serve
   - --action
   - validate
-  description: '[UNIMPLEMENTED] Iris 数据校验 (POC stdio)'
+  description: "[UNIMPLEMENTED] Iris \u6570\u636E\u6821\u9A8C (POC stdio)"
   domain: analysis
   package: iris
   status: deprecated
   transport: mcp_stdio
   uri: bos://analysis/iris/validate
-  note: 'BET-Y1Q3-T1-05: 无实现, 标 deprecated (声明诚实, 不堆积 unimplemented)'
+  note: "BET-Y1Q3-T1-05: \u65E0\u5B9E\u73B0, \u6807 deprecated (\u58F0\u660E\u8BDA\u5B9E, \u4E0D\u5806\u79EF unimplemented)"
 - action: summary
   command:
   - uv
@@ -1516,7 +1515,7 @@ services:
   - serve
   - --action
   - summary
-  description: '[POC] Health-Profile 健康摘要 (POC stdio)'
+  description: "[POC] Health-Profile \u5065\u5EB7\u6458\u8981 (POC stdio)"
   domain: persona
   package: health-profile
   status: active
@@ -1534,7 +1533,7 @@ services:
   - serve
   - --action
   - alert
-  description: '[POC] Health-Profile 健康告警 (POC stdio)'
+  description: "[POC] Health-Profile \u5065\u5EB7\u544A\u8B66 (POC stdio)"
   domain: persona
   package: health-profile
   status: active
@@ -1552,13 +1551,13 @@ services:
   - serve
   - --action
   - discover
-  description: '[POC] Forge 工具发现 (POC stdio)'
+  description: "[POC] Forge \u5DE5\u5177\u53D1\u73B0 (POC stdio)"
   domain: capability
   package: forge
   status: deprecated
   transport: mcp_stdio
   uri: bos://capability/forge/discover
-  note: 'BET-Y1Q3-T1-05: 无实现, 标 deprecated (声明诚实, 不堆积 unimplemented)'
+  note: "BET-Y1Q3-T1-05: \u65E0\u5B9E\u73B0, \u6807 deprecated (\u58F0\u660E\u8BDA\u5B9E, \u4E0D\u5806\u79EF unimplemented)"
 - action: exec-tool
   command:
   - uv
@@ -1571,13 +1570,13 @@ services:
   - serve
   - --action
   - exec-tool
-  description: '[POC] Forge 工具执行 (POC stdio)'
+  description: "[POC] Forge \u5DE5\u5177\u6267\u884C (POC stdio)"
   domain: capability
   package: forge
   status: deprecated
   transport: mcp_stdio
   uri: bos://capability/forge/exec-tool
-  note: 'BET-Y1Q3-T1-05: 无实现, 标 deprecated (声明诚实, 不堆积 unimplemented)'
+  note: "BET-Y1Q3-T1-05: \u65E0\u5B9E\u73B0, \u6807 deprecated (\u58F0\u660E\u8BDA\u5B9E, \u4E0D\u5806\u79EF unimplemented)"
 - action: list-tools
   command:
   - uv
@@ -1590,13 +1589,13 @@ services:
   - serve
   - --action
   - list-tools
-  description: '[POC] Forge 工具列表 (POC stdio)'
+  description: "[POC] Forge \u5DE5\u5177\u5217\u8868 (POC stdio)"
   domain: capability
   package: forge
   status: deprecated
   transport: mcp_stdio
   uri: bos://capability/forge/list-tools
-  note: 'BET-Y1Q3-T1-05: 无实现, 标 deprecated (声明诚实, 不堆积 unimplemented)'
+  note: "BET-Y1Q3-T1-05: \u65E0\u5B9E\u73B0, \u6807 deprecated (\u58F0\u660E\u8BDA\u5B9E, \u4E0D\u5806\u79EF unimplemented)"
 - action: register-tool
   command:
   - uv
@@ -1609,13 +1608,13 @@ services:
   - serve
   - --action
   - register-tool
-  description: '[POC] Forge 工具注册 (POC stdio)'
+  description: "[POC] Forge \u5DE5\u5177\u6CE8\u518C (POC stdio)"
   domain: capability
   package: forge
   status: deprecated
   transport: mcp_stdio
   uri: bos://capability/forge/register-tool
-  note: 'BET-Y1Q3-T1-05: 无实现, 标 deprecated (声明诚实, 不堆积 unimplemented)'
+  note: "BET-Y1Q3-T1-05: \u65E0\u5B9E\u73B0, \u6807 deprecated (\u58F0\u660E\u8BDA\u5B9E, \u4E0D\u5806\u79EF unimplemented)"
 - action: query
   command:
   - uv
@@ -1628,7 +1627,7 @@ services:
   - serve
   - --action
   - query
-  description: '[POC] KRONOS 时间序列查询 (POC stdio)'
+  description: "[POC] KRONOS \u65F6\u95F4\u5E8F\u5217\u67E5\u8BE2 (POC stdio)"
   domain: memory
   package: kronos
   status: active
@@ -1646,7 +1645,7 @@ services:
   - serve
   - --action
   - schedule
-  description: '[POC] KRONOS 调度任务 (POC stdio)'
+  description: "[POC] KRONOS \u8C03\u5EA6\u4EFB\u52A1 (POC stdio)"
   domain: memory
   package: kronos
   status: active
@@ -1664,7 +1663,7 @@ services:
   - serve
   - --action
   - gate
-  description: MetaOS 门控检查 (POC stdio)
+  description: "MetaOS \u95E8\u63A7\u68C0\u67E5 (POC stdio)"
   domain: governance
   package: metaos
   status: active
@@ -1682,14 +1681,14 @@ services:
   - serve
   - --action
   - register
-  description: MetaOS 包注册 (POC stdio)
+  description: "MetaOS \u5305\u6CE8\u518C (POC stdio)"
   domain: governance
   package: metaos
   status: active
   transport: mcp_stdio
   uri: bos://governance/metaos/register
 - action: data
-  description: Omni-Bus 数据面路由 (日志/遥测)
+  description: "Omni-Bus \u6570\u636E\u9762\u8DEF\u7531 (\u65E5\u5FD7/\u9065\u6D4B)"
   domain: capability
   func_name: emit
   module_path: bus_foundation.facade.data
@@ -1698,7 +1697,7 @@ services:
   transport: internal
   uri: bos://capability/bus/data
 - action: event
-  description: Omni-Bus 事件面路由 (Pub/Sub)
+  description: "Omni-Bus \u4E8B\u4EF6\u9762\u8DEF\u7531 (Pub/Sub)"
   domain: capability
   func_name: publish
   module_path: bus_foundation.facade.event
@@ -1707,7 +1706,7 @@ services:
   transport: internal
   uri: bos://capability/bus/event
 - action: control
-  description: Omni-Bus 控制面路由 (异步/定时任务)
+  description: "Omni-Bus \u63A7\u5236\u9762\u8DEF\u7531 (\u5F02\u6B65/\u5B9A\u65F6\u4EFB\u52A1)"
   domain: capability
   func_name: submit_task
   module_path: bus_foundation.facade.control
@@ -1721,7 +1720,7 @@ services:
   - run
   - projects/knowledge/gbrain/src/cli.ts
   - serve
-  description: gbrain 知识库全文搜索 (高性能 Postgres)
+  description: "gbrain \u77E5\u8BC6\u5E93\u5168\u6587\u641C\u7D22 (\u9AD8\u6027\u80FD Postgres)"
   domain: memory
   package: gbrain
   status: active
@@ -1733,7 +1732,7 @@ services:
   - run
   - projects/knowledge/gbrain/src/cli.ts
   - serve
-  description: gbrain 知识库结构化查询
+  description: "gbrain \u77E5\u8BC6\u5E93\u7ED3\u6784\u5316\u67E5\u8BE2"
   domain: memory
   package: gbrain
   status: active
@@ -1745,7 +1744,7 @@ services:
   - run
   - projects/knowledge/gbrain/src/cli.ts
   - serve
-  description: gbrain 知识库增量同步
+  description: "gbrain \u77E5\u8BC6\u5E93\u589E\u91CF\u540C\u6B65"
   domain: memory
   package: gbrain
   status: active
@@ -1765,8 +1764,7 @@ services:
   - -m
   - mos
   - write
-  description: Memory OS unified write (dual-track raw+theta; Neo4j FACT when NEO4J_URI)
-    — ADR-0372
+  description: "Memory OS unified write (dual-track raw+theta; Neo4j FACT when NEO4J_URI) \u2014 ADR-0372"
   domain: memory
   package: mos
   status: active
@@ -1792,8 +1790,7 @@ services:
   - -m
   - mos
   - recall
-  description: Memory OS unified intent-aware recall (neo4j+kos+gbrain fan-out) —
-    ADR-0372
+  description: "Memory OS unified intent-aware recall (neo4j+kos+gbrain fan-out) \u2014 ADR-0372"
   domain: memory
   package: mos
   status: active
@@ -1819,7 +1816,7 @@ services:
   - -m
   - mos
   - status
-  description: Memory OS control plane health and backlog — ADR-0372
+  description: "Memory OS control plane health and backlog \u2014 ADR-0372"
   domain: memory
   package: mos
   status: active
@@ -1845,7 +1842,7 @@ services:
   - -m
   - mos
   - forget
-  description: Memory OS forget propagation (raw+theta+mem0+neo4j invalidate) — ADR-0372
+  description: "Memory OS forget propagation (raw+theta+mem0+neo4j invalidate) \u2014 ADR-0372"
   domain: memory
   package: mos
   status: active
@@ -1870,7 +1867,7 @@ services:
   - -m
   - mos
   - consolidate
-  description: Memory OS sleep-time consolidate via gbrain dream orchestration — ADR-0372
+  description: "Memory OS sleep-time consolidate via gbrain dream orchestration \u2014 ADR-0372"
   domain: memory
   package: mos
   status: active
@@ -1893,7 +1890,7 @@ services:
   - -m
   - mos
   - knowledge-ref
-  description: Memory OS ADR-0315 knowledge citation metadata (no body) — ADR-0372
+  description: "Memory OS ADR-0315 knowledge citation metadata (no body) \u2014 ADR-0372"
   domain: memory
   package: mos
   status: active
@@ -1903,7 +1900,7 @@ services:
   - MOS_RBAC
   - MOS_TEMPORAL
 - action: status
-  description: 获取分布式蜂群实时拓扑与负载状态
+  description: "\u83B7\u53D6\u5206\u5E03\u5F0F\u8702\u7FA4\u5B9E\u65F6\u62D3\u6251\u4E0E\u8D1F\u8F7D\u72B6\u6001"
   domain: swarm
   func_name: get_swarm_status
   module_path: agora.mcp.swarm
@@ -1912,7 +1909,7 @@ services:
   transport: internal
   uri: bos://swarm/orchestrator/status
 - action: loop
-  description: OMO 自动进化循环监控
+  description: "OMO \u81EA\u52A8\u8FDB\u5316\u5FAA\u73AF\u76D1\u63A7"
   domain: governance
   func_name: get_loop_status
   module_path: omo.omo_evolution_loop
@@ -1921,7 +1918,7 @@ services:
   transport: internal
   uri: bos://governance/evolution/loop
 - action: audit
-  description: 记忆脊知识质量审计与评分
+  description: "\u8BB0\u5FC6\u810A\u77E5\u8BC6\u8D28\u91CF\u5BA1\u8BA1\u4E0E\u8BC4\u5206"
   domain: governance
   func_name: audit_knowledge_quality
   module_path: agora.mcp.knowledge_quality
@@ -1938,13 +1935,13 @@ services:
   - python
   - -m
   - runtime.mcp_server
-  description: Agent 交互式对话接口
+  description: "Agent \u4EA4\u4E92\u5F0F\u5BF9\u8BDD\u63A5\u53E3"
   domain: capability
   package: agent-runtime
   status: active
   transport: mcp_stdio
   uri: bos://capability/agent-runtime/chat
-  note: 'BET-Y1Q3-T1-05: 服务实现存在 (runtime.mcp_server), 修正为 active'
+  note: "BET-Y1Q3-T1-05: \u670D\u52A1\u5B9E\u73B0\u5B58\u5728 (runtime.mcp_server), \u4FEE\u6B63\u4E3A active"
 - action: run-task
   command:
   - uv
@@ -1954,13 +1951,13 @@ services:
   - python
   - -m
   - runtime.mcp_server
-  description: Agent 任务执行接口
+  description: "Agent \u4EFB\u52A1\u6267\u884C\u63A5\u53E3"
   domain: capability
   package: agent-runtime
   status: active
   transport: mcp_stdio
   uri: bos://capability/agent-runtime/run-task
-  note: 'BET-Y1Q3-T1-05: 服务实现存在 (runtime.mcp_server), 修正为 active'
+  note: "BET-Y1Q3-T1-05: \u670D\u52A1\u5B9E\u73B0\u5B58\u5728 (runtime.mcp_server), \u4FEE\u6B63\u4E3A active"
 - action: task-status
   command:
   - uv
@@ -1970,13 +1967,13 @@ services:
   - python
   - -m
   - runtime.mcp_server
-  description: Agent 任务状态查询
+  description: "Agent \u4EFB\u52A1\u72B6\u6001\u67E5\u8BE2"
   domain: capability
   package: agent-runtime
   status: active
   transport: mcp_stdio
   uri: bos://capability/agent-runtime/task-status
-  note: 'BET-Y1Q3-T1-05: 服务实现存在 (runtime.mcp_server), 修正为 active'
+  note: "BET-Y1Q3-T1-05: \u670D\u52A1\u5B9E\u73B0\u5B58\u5728 (runtime.mcp_server), \u4FEE\u6B63\u4E3A active"
 - action: agent-list
   command:
   - uv
@@ -1986,13 +1983,13 @@ services:
   - python
   - -m
   - runtime.mcp_server
-  description: 列出所有可用 Agent 实例
+  description: "\u5217\u51FA\u6240\u6709\u53EF\u7528 Agent \u5B9E\u4F8B"
   domain: capability
   package: agent-runtime
   status: active
   transport: mcp_stdio
   uri: bos://capability/agent-runtime/agent-list
-  note: 'BET-Y1Q3-T1-05: 服务实现存在 (runtime.mcp_server), 修正为 active'
+  note: "BET-Y1Q3-T1-05: \u670D\u52A1\u5B9E\u73B0\u5B58\u5728 (runtime.mcp_server), \u4FEE\u6B63\u4E3A active"
 - action: validate
   command:
   - uv
@@ -2003,7 +2000,7 @@ services:
   - -m
   - eidos.cli
   - validate
-  description: Eidos 数据模型校验
+  description: "Eidos \u6570\u636E\u6A21\u578B\u6821\u9A8C"
   domain: analysis
   package: eidos
   status: active
@@ -2019,7 +2016,7 @@ services:
   - -m
   - kos.cli
   - query
-  description: KOS 知识查询
+  description: "KOS \u77E5\u8BC6\u67E5\u8BE2"
   domain: memory
   package: kos
   status: active
@@ -2035,7 +2032,7 @@ services:
   - -m
   - ontoderive.cli
   - align
-  description: OntoDerive 语义对齐
+  description: "OntoDerive \u8BED\u4E49\u5BF9\u9F50"
   domain: analysis
   package: ontoderive
   status: active
@@ -2051,7 +2048,7 @@ services:
   - -m
   - eidos.cli
   - pipeline
-  description: Eidos 治理管线调度
+  description: "Eidos \u6CBB\u7406\u7BA1\u7EBF\u8C03\u5EA6"
   domain: omo
   package: eidos
   status: active
@@ -2067,7 +2064,7 @@ services:
   - -m
   - ecos.cli.workflow
   - list
-  description: eCOS L0 工作流列表
+  description: "eCOS L0 \u5DE5\u4F5C\u6D41\u5217\u8868"
   domain: meta
   package: ecos
   status: active
@@ -2083,7 +2080,7 @@ services:
   - -m
   - ecos.cli.workflow
   - describe
-  description: eCOS L0 工作流定义查询
+  description: "eCOS L0 \u5DE5\u4F5C\u6D41\u5B9A\u4E49\u67E5\u8BE2"
   domain: meta
   package: ecos
   status: active
@@ -2099,7 +2096,7 @@ services:
   - -m
   - ecos.cli.workflow
   - run
-  description: eCOS L0 工作流执行
+  description: "eCOS L0 \u5DE5\u4F5C\u6D41\u6267\u884C"
   domain: meta
   package: ecos
   status: active
@@ -2115,7 +2112,7 @@ services:
   - -m
   - ecos.cli.workflow
   - logs
-  description: eCOS L0 工作流运行历史
+  description: "eCOS L0 \u5DE5\u4F5C\u6D41\u8FD0\u884C\u5386\u53F2"
   domain: meta
   package: ecos
   status: active
@@ -2131,7 +2128,7 @@ services:
   - -m
   - ecos.cli.workflow
   - cache-status
-  description: eCOS 工作流缓存状态查询
+  description: "eCOS \u5DE5\u4F5C\u6D41\u7F13\u5B58\u72B6\u6001\u67E5\u8BE2"
   domain: meta
   package: ecos
   status: active
@@ -2147,7 +2144,7 @@ services:
   - -m
   - ecos.cli.workflow
   - cache-invalidate
-  description: eCOS 工作流缓存全部清除
+  description: "eCOS \u5DE5\u4F5C\u6D41\u7F13\u5B58\u5168\u90E8\u6E05\u9664"
   domain: meta
   package: ecos
   status: active
@@ -2163,7 +2160,7 @@ services:
   - -m
   - ecos.cli.workflow
   - cb-status
-  description: eCOS 后端熔断器状态查询
+  description: "eCOS \u540E\u7AEF\u7194\u65AD\u5668\u72B6\u6001\u67E5\u8BE2"
   domain: meta
   package: ecos
   status: active
@@ -2179,14 +2176,14 @@ services:
   - -m
   - ecos.cli.workflow
   - cb-reset
-  description: eCOS 后端熔断器全部重置
+  description: "eCOS \u540E\u7AEF\u7194\u65AD\u5668\u5168\u90E8\u91CD\u7F6E"
   domain: meta
   package: ecos
   status: active
   transport: stdio
   uri: bos://ecos/workflow/cb-reset
 - action: list
-  description: 列出所有已注册 MCP backend (代理 KNOWN_BACKENDS)
+  description: "\u5217\u51FA\u6240\u6709\u5DF2\u6CE8\u518C MCP backend (\u4EE3\u7406 KNOWN_BACKENDS)"
   domain: system
   func_name: list_services
   module_path: agora.mcp.resolver.api
@@ -2195,7 +2192,7 @@ services:
   transport: internal
   uri: bos://system/backends/list
 - action: register
-  description: 动态注册新 MCP backend (POST /v1/backends/register)
+  description: "\u52A8\u6001\u6CE8\u518C\u65B0 MCP backend (POST /v1/backends/register)"
   domain: system
   func_name: register_backend
   module_path: agora.mcp.resolver.api
@@ -2204,7 +2201,7 @@ services:
   transport: internal
   uri: bos://system/backends/register
 - action: health
-  description: 后端健康探活 — 每个 backend 的状态/失败计数
+  description: "\u540E\u7AEF\u5065\u5EB7\u63A2\u6D3B \u2014 \u6BCF\u4E2A backend \u7684\u72B6\u6001/\u5931\u8D25\u8BA1\u6570"
   domain: system
   func_name: list_backend_health
   module_path: agora.mcp.resolver.api
@@ -2213,7 +2210,7 @@ services:
   transport: internal
   uri: bos://system/backends/health
 - action: reload
-  description: BOS 路由表热重载 (从 YAML 重新加载)
+  description: "BOS \u8DEF\u7531\u8868\u70ED\u91CD\u8F7D (\u4ECE YAML \u91CD\u65B0\u52A0\u8F7D)"
   domain: system
   func_name: reload_routes
   module_path: agora.mcp.resolver.api
@@ -2222,7 +2219,7 @@ services:
   transport: internal
   uri: bos://system/routes/reload
 - action: status
-  description: 治理管道健康状态 (心跳时间/日志条目/健康等级)
+  description: "\u6CBB\u7406\u7BA1\u9053\u5065\u5EB7\u72B6\u6001 (\u5FC3\u8DF3\u65F6\u95F4/\u65E5\u5FD7\u6761\u76EE/\u5065\u5EB7\u7B49\u7EA7)"
   domain: system
   func_name: governance_status
   module_path: agora.mcp.resolver.api
@@ -2231,7 +2228,7 @@ services:
   transport: internal
   uri: bos://system/governance/status
 - action: heartbeat
-  description: 写入治理管道心跳 (governance.jsonl)
+  description: "\u5199\u5165\u6CBB\u7406\u7BA1\u9053\u5FC3\u8DF3 (governance.jsonl)"
   domain: system
   func_name: governance_heartbeat
   module_path: agora.mcp.resolver.api
@@ -2240,7 +2237,7 @@ services:
   transport: internal
   uri: bos://system/governance/heartbeat
 - action: debt
-  description: OMO 技术债务评分 — 当前总债务/趋势/热点
+  description: "OMO \u6280\u672F\u503A\u52A1\u8BC4\u5206 \u2014 \u5F53\u524D\u603B\u503A\u52A1/\u8D8B\u52BF/\u70ED\u70B9"
   domain: system
   func_name: omo_debt_summary
   module_path: agora.mcp.resolver.api
@@ -2256,8 +2253,7 @@ services:
     domain: capability
     realized_by: agora.register
     upstream: /Users/xiamingxing/ToolBox/mcp/wps-office-mcp/.git
-  description: WPS Office MCP Server (Excel/Word/PPT 243 tools) — 跨 L4-A Documents
-    业务文件读写
+  description: "WPS Office MCP Server (Excel/Word/PPT 243 tools) \u2014 \u8DE8 L4-A Documents \u4E1A\u52A1\u6587\u4EF6\u8BFB\u5199"
   domain: capability
   i0_route: pending
   package: toolbox/wps-office-mcp
@@ -2273,7 +2269,7 @@ services:
     domain: capability
     realized_by: agora.register
     upstream: /Users/xiamingxing/ToolBox/skills/wps-skills/.git
-  description: WPS Skills 包 (wps-claude-addon + wps-claude-assistant) — Claude 内置触发
+  description: "WPS Skills \u5305 (wps-claude-addon + wps-claude-assistant) \u2014 Claude \u5185\u7F6E\u89E6\u53D1"
   domain: capability
   i0_route: pending
   package: toolbox/wps-skills
@@ -2291,7 +2287,7 @@ services:
     domain: capability
     realized_by: agora.register
     upstream: /Users/xiamingxing/ToolBox/cli/bos-skill-cli/.git
-  description: BOS Skill 管理 CLI/TUI — 搜索/暂存/promote/回退 skill 包
+  description: "BOS Skill \u7BA1\u7406 CLI/TUI \u2014 \u641C\u7D22/\u6682\u5B58/promote/\u56DE\u9000 skill \u5305"
   domain: capability
   i0_route: pending
   package: toolbox/bos-skill-cli
@@ -2302,14 +2298,13 @@ services:
   command:
   - bash
   - -lc
-  - cd "${TOOLBOX_ROOT:-$HOME/ToolBox}/mcp/headroom" && if [ -x .venv/bin/python ];
-    then PY=.venv/bin/python; elif command -v uv >/dev/null; then exec uv run python
-    -m headroom; else PY=python3; fi && "$PY" -m headroom --help
+  - cd "${TOOLBOX_ROOT:-$HOME/ToolBox}/mcp/headroom" && if [ -x .venv/bin/python ]; then PY=.venv/bin/python; elif command -v uv >/dev/null; then exec uv run python -m headroom; else PY=python3; fi && "$PY"
+    -m headroom --help
   cross_references:
     domain: capability
     realized_by: agora.register
     upstream: /Users/xiamingxing/ToolBox/mcp/headroom/.git
-  description: Agent 上下文压缩层 — 60-95% token 节省 + 模型压缩 + MCP 代理
+  description: "Agent \u4E0A\u4E0B\u6587\u538B\u7F29\u5C42 \u2014 60-95% token \u8282\u7701 + \u6A21\u578B\u538B\u7F29 + MCP \u4EE3\u7406"
   domain: capability
   i0_route: pending
   package: toolbox/headroom
@@ -2320,14 +2315,13 @@ services:
   command:
   - bash
   - -lc
-  - cd "${TOOLBOX_ROOT:-$HOME/ToolBox}/mcp/code-review-graph" && if [ -x .venv/bin/python
-    ]; then PY=.venv/bin/python; elif command -v uv >/dev/null; then exec uv run python
-    -m code_review_graph; else PY=python3; fi && "$PY" -m code_review_graph --help
+  - cd "${TOOLBOX_ROOT:-$HOME/ToolBox}/mcp/code-review-graph" && if [ -x .venv/bin/python ]; then PY=.venv/bin/python; elif command -v uv >/dev/null; then exec uv run python -m code_review_graph; else PY=python3;
+    fi && "$PY" -m code_review_graph --help
   cross_references:
     domain: capability
     realized_by: agora.register
     upstream: /Users/xiamingxing/ToolBox/mcp/code-review-graph/.git
-  description: Token 优化型代码评审图工具 — PyPI 发布，MCP 兼容
+  description: "Token \u4F18\u5316\u578B\u4EE3\u7801\u8BC4\u5BA1\u56FE\u5DE5\u5177 \u2014 PyPI \u53D1\u5E03\uFF0CMCP \u517C\u5BB9"
   domain: capability
   i0_route: pending
   package: toolbox/code-review-graph
@@ -2338,13 +2332,12 @@ services:
   command:
   - bash
   - -lc
-  - cd "${TOOLBOX_ROOT:-$HOME/ToolBox}/skills/claude-skills" && test -d skills &&
-    echo ok:claude-skills
+  - cd "${TOOLBOX_ROOT:-$HOME/ToolBox}/skills/claude-skills" && test -d skills && echo ok:claude-skills
   cross_references:
     domain: capability
     realized_by: agora.register
     upstream: /Users/xiamingxing/ToolBox/skills/claude-skills/.git
-  description: 354 个 Claude Code Skill 最全库 — 593 CLI 脚本 + 711 模板
+  description: "354 \u4E2A Claude Code Skill \u6700\u5168\u5E93 \u2014 593 CLI \u811A\u672C + 711 \u6A21\u677F"
   domain: capability
   i0_route: skill_host
   package: toolbox/claude-skills
@@ -2355,13 +2348,12 @@ services:
   command:
   - bash
   - -lc
-  - cd "${TOOLBOX_ROOT:-$HOME/ToolBox}/skills/last30days-skill" && test -f skills/last30days/SKILL.md
-    && echo ok:last30days-skill
+  - cd "${TOOLBOX_ROOT:-$HOME/ToolBox}/skills/last30days-skill" && test -f skills/last30days/SKILL.md && echo ok:last30days-skill
   cross_references:
     domain: capability
     realized_by: agora.register
     upstream: /Users/xiamingxing/ToolBox/skills/last30days-skill/.git
-  description: 'AI Agent 驱动的搜索/打分类信息流聚合 — GitHub Trending #1'
+  description: "AI Agent \u9A71\u52A8\u7684\u641C\u7D22/\u6253\u5206\u7C7B\u4FE1\u606F\u6D41\u805A\u5408 \u2014 GitHub Trending #1"
   domain: capability
   i0_route: skill_host
   package: toolbox/last30days-skill
@@ -2372,13 +2364,12 @@ services:
   command:
   - bash
   - -lc
-  - cd "${TOOLBOX_ROOT:-$HOME/ToolBox}/pipelines/media-crawler" && if [ -x .venv/bin/python
-    ]; then PY=.venv/bin/python; else PY=python3; fi && "$PY" main.py --help
+  - cd "${TOOLBOX_ROOT:-$HOME/ToolBox}/pipelines/media-crawler" && if [ -x .venv/bin/python ]; then PY=.venv/bin/python; else PY=python3; fi && "$PY" main.py --help
   cross_references:
     domain: capability
     realized_by: agora.register
     upstream: /Users/xiamingxing/ToolBox/pipelines/media-crawler/.git
-  description: 自媒体平台爬虫 — 抖音/小红书/快手/B站/微博等 12 平台，含反爬能力
+  description: "\u81EA\u5A92\u4F53\u5E73\u53F0\u722C\u866B \u2014 \u6296\u97F3/\u5C0F\u7EA2\u4E66/\u5FEB\u624B/B\u7AD9/\u5FAE\u535A\u7B49 12 \u5E73\u53F0\uFF0C\u542B\u53CD\u722C\u80FD\u529B"
   domain: capability
   i0_route: host_cli
   package: toolbox/media-crawler
@@ -2389,13 +2380,12 @@ services:
   command:
   - bash
   - -lc
-  - cd "${TOOLBOX_ROOT:-$HOME/ToolBox}/pipelines/open-montage" && test -d . && ls
-    README.md >/dev/null && echo ok:open-montage
+  - cd "${TOOLBOX_ROOT:-$HOME/ToolBox}/pipelines/open-montage" && test -d . && ls README.md >/dev/null && echo ok:open-montage
   cross_references:
     domain: capability
     realized_by: agora.register
     upstream: /Users/xiamingxing/ToolBox/pipelines/open-montage/.git
-  description: 开源 Agentic 视频制作系统 — 从剧本到成品的全流程 Pipeline
+  description: "\u5F00\u6E90 Agentic \u89C6\u9891\u5236\u4F5C\u7CFB\u7EDF \u2014 \u4ECE\u5267\u672C\u5230\u6210\u54C1\u7684\u5168\u6D41\u7A0B Pipeline"
   domain: capability
   i0_route: host_cli
   package: toolbox/open-montage
@@ -2406,13 +2396,12 @@ services:
   command:
   - bash
   - -lc
-  - cd "${TOOLBOX_ROOT:-$HOME/ToolBox}/skills/skills-for-fabric" && test -d skills
-    && echo ok:skills-for-fabric
+  - cd "${TOOLBOX_ROOT:-$HOME/ToolBox}/skills/skills-for-fabric" && test -d skills && echo ok:skills-for-fabric
   cross_references:
     domain: capability
     realized_by: agora.register
     upstream: /Users/xiamingxing/ToolBox/skills/skills-for-fabric/.git
-  description: 微软 Fabric AI 技能集 — 作者/消费/运维三类 Skill
+  description: "\u5FAE\u8F6F Fabric AI \u6280\u80FD\u96C6 \u2014 \u4F5C\u8005/\u6D88\u8D39/\u8FD0\u7EF4\u4E09\u7C7B Skill"
   domain: capability
   i0_route: skill_host
   package: toolbox/skills-for-fabric
@@ -2423,14 +2412,13 @@ services:
   command:
   - bash
   - -lc
-  - cd "${TOOLBOX_ROOT:-$HOME/ToolBox}/mcp/deer-flow" && if [ -x .venv/bin/python
-    ]; then PY=.venv/bin/python; elif command -v uv >/dev/null; then exec uv run python
-    -m deer_flow; else PY=python3; fi && "$PY" -m deer_flow --help
+  - cd "${TOOLBOX_ROOT:-$HOME/ToolBox}/mcp/deer-flow" && if [ -x .venv/bin/python ]; then PY=.venv/bin/python; elif command -v uv >/dev/null; then exec uv run python -m deer_flow; else PY=python3; fi &&
+    "$PY" -m deer_flow --help
   cross_references:
     domain: capability
     realized_by: agora.register
     upstream: /Users/xiamingxing/ToolBox/mcp/deer-flow/.git
-  description: 字节开源超 Agent 框架 v2.0 — 子 Agent/记忆/沙箱/技能
+  description: "\u5B57\u8282\u5F00\u6E90\u8D85 Agent \u6846\u67B6 v2.0 \u2014 \u5B50 Agent/\u8BB0\u5FC6/\u6C99\u7BB1/\u6280\u80FD"
   domain: capability
   i0_route: pending
   package: toolbox/deer-flow
@@ -2441,14 +2429,13 @@ services:
   command:
   - bash
   - -lc
-  - cd "${TOOLBOX_ROOT:-$HOME/ToolBox}/mcp/datafoundry" && if [ -x .venv/bin/python
-    ]; then PY=.venv/bin/python; elif command -v uv >/dev/null; then exec uv run python
-    -m datafoundry; else PY=python3; fi && "$PY" -m datafoundry --help
+  - cd "${TOOLBOX_ROOT:-$HOME/ToolBox}/mcp/datafoundry" && if [ -x .venv/bin/python ]; then PY=.venv/bin/python; elif command -v uv >/dev/null; then exec uv run python -m datafoundry; else PY=python3; fi
+    && "$PY" -m datafoundry --help
   cross_references:
     domain: capability
     realized_by: agora.register
     upstream: /Users/xiamingxing/ToolBox/mcp/datafoundry/.git
-  description: 企业级 Data Agent 工作台 — 28 数据源 + 语义层 + 多步分析
+  description: "\u4F01\u4E1A\u7EA7 Data Agent \u5DE5\u4F5C\u53F0 \u2014 28 \u6570\u636E\u6E90 + \u8BED\u4E49\u5C42 + \u591A\u6B65\u5206\u6790"
   domain: capability
   i0_route: pending
   package: toolbox/datafoundry
@@ -2459,13 +2446,12 @@ services:
   command:
   - bash
   - -lc
-  - cd "${TOOLBOX_ROOT:-$HOME/ToolBox}/skills/knowledge-work-plugins" && test -d skills
-    && echo ok:knowledge-work-plugins
+  - cd "${TOOLBOX_ROOT:-$HOME/ToolBox}/skills/knowledge-work-plugins" && test -d skills && echo ok:knowledge-work-plugins
   cross_references:
     domain: capability
     realized_by: agora.register
     upstream: /Users/xiamingxing/ToolBox/skills/knowledge-work-plugins/.git
-  description: Claude Cowork 11 个生产力插件 — Claude Code 兼容
+  description: "Claude Cowork 11 \u4E2A\u751F\u4EA7\u529B\u63D2\u4EF6 \u2014 Claude Code \u517C\u5BB9"
   domain: capability
   i0_route: skill_host
   package: toolbox/knowledge-work-plugins
@@ -2473,7 +2459,7 @@ services:
   transport: stdio
   uri: bos://capability/knowledge-work-plugins/load
 - action: metrics
-  description: agora 内部指标源 self-identifier (metrics collector source_uri)
+  description: "agora \u5185\u90E8\u6307\u6807\u6E90 self-identifier (metrics collector source_uri)"
   domain: agora
   i0_route: pending
   package: agora
@@ -2481,7 +2467,7 @@ services:
   transport: inline
   uri: bos://agora/metrics
 - action: registry
-  description: agora @mcp.resource — 列出所有已注册 tools/resources 的 introspection 入口
+  description: "agora @mcp.resource \u2014 \u5217\u51FA\u6240\u6709\u5DF2\u6CE8\u518C tools/resources \u7684 introspection \u5165\u53E3"
   domain: agora
   i0_route: pending
   package: agora
@@ -2489,7 +2475,7 @@ services:
   transport: inline
   uri: bos://agora/registry
 - action: status
-  description: agora @mcp.resource — BOS 系统内省统一大盘 (router/middleware/调用量)
+  description: "agora @mcp.resource \u2014 BOS \u7CFB\u7EDF\u5185\u7701\u7EDF\u4E00\u5927\u76D8 (router/middleware/\u8C03\u7528\u91CF)"
   domain: agora
   i0_route: pending
   package: agora
@@ -2497,7 +2483,7 @@ services:
   transport: inline
   uri: bos://agora/status
 - action: evaluator
-  description: evaluator 域 (CR-RBAC-01 强制权限, role='evaluator' or 'admin')
+  description: "evaluator \u57DF (CR-RBAC-01 \u5F3A\u5236\u6743\u9650, role='evaluator' or 'admin')"
   domain: capability
   i0_route: pending
   package: governance-evolution
@@ -2505,7 +2491,7 @@ services:
   transport: inline
   uri: bos://capability/evaluator
 - action: tools/cards_status
-  description: cockpit cards_status 工具 — mof_agora_hook 路由表入口
+  description: "cockpit cards_status \u5DE5\u5177 \u2014 mof_agora_hook \u8DEF\u7531\u8868\u5165\u53E3"
   domain: cockpit
   i0_route: pending
   package: cockpit
@@ -2513,7 +2499,7 @@ services:
   transport: inline
   uri: bos://cockpit/tools/cards_status
 - action: tools/test
-  description: cockpit test 工具 — mof_agora_hook 路由表入口
+  description: "cockpit test \u5DE5\u5177 \u2014 mof_agora_hook \u8DEF\u7531\u8868\u5165\u53E3"
   domain: cockpit
   i0_route: pending
   package: cockpit
@@ -2521,7 +2507,7 @@ services:
   transport: inline
   uri: bos://cockpit/tools/test
 - action: discovery/package
-  description: domain package 通用入口 (mcp/bos_discovery discovery 路径)
+  description: "domain package \u901A\u7528\u5165\u53E3 (mcp/bos_discovery discovery \u8DEF\u5F84)"
   domain: system
   i0_route: pending
   package: agora
@@ -2529,7 +2515,7 @@ services:
   transport: inline
   uri: bos://system/discovery/package
 - action: discovery/package/action
-  description: domain package action 子入口 (mcp/bos_discovery dynamic discovery)
+  description: "domain package action \u5B50\u5165\u53E3 (mcp/bos_discovery dynamic discovery)"
   domain: system
   i0_route: pending
   package: agora
@@ -2545,7 +2531,7 @@ services:
   - python
   - -m
   - ecos.services.events_sse
-  description: ecos SSE events 入口 (events_sse.py 服务)
+  description: "ecos SSE events \u5165\u53E3 (events_sse.py \u670D\u52A1)"
   domain: ecos
   i0_route: pending
   package: ecos
@@ -2561,7 +2547,7 @@ services:
   - python
   - -m
   - ecos.cli.workflow
-  description: ecos workflow CLI 入口 (ecos/cli/workflow.py)
+  description: "ecos workflow CLI \u5165\u53E3 (ecos/cli/workflow.py)"
   domain: ecos
   i0_route: pending
   package: ecos
@@ -2569,7 +2555,7 @@ services:
   transport: stdio
   uri: bos://ecos/workflow
 - action: runtime/workers/status
-  description: execution workers status 端点 (mcp_protocol registry 端点)
+  description: "execution workers status \u7AEF\u70B9 (mcp_protocol registry \u7AEF\u70B9)"
   domain: system
   i0_route: pending
   package: agent-runtime
@@ -2577,7 +2563,7 @@ services:
   transport: inline
   uri: bos://system/runtime/workers/status
 - action: market/list
-  description: agora forge market list — plugin market 查询入口
+  description: "agora forge market list \u2014 plugin market \u67E5\u8BE2\u5165\u53E3"
   domain: forge
   i0_route: pending
   package: agora-market
@@ -2585,7 +2571,7 @@ services:
   transport: inline
   uri: bos://forge/market/list
 - action: roles/list
-  description: governance roles list 端点 (mcp_protocol registry 端点)
+  description: "governance roles list \u7AEF\u70B9 (mcp_protocol registry \u7AEF\u70B9)"
   domain: governance
   i0_route: pending
   package: agora
@@ -2593,7 +2579,7 @@ services:
   transport: inline
   uri: bos://governance/roles/list
 - action: minerva
-  description: kairon minerva 集成入口 (agora l0_registry_loader 引用)
+  description: "kairon minerva \u96C6\u6210\u5165\u53E3 (agora l0_registry_loader \u5F15\u7528)"
   domain: analysis
   i0_route: pending
   package: kairon
@@ -2601,7 +2587,7 @@ services:
   transport: inline
   uri: bos://analysis/minerva
 - action: docs/readme
-  description: memory docs readme 端点 (mcp_protocol registry 端点)
+  description: "memory docs readme \u7AEF\u70B9 (mcp_protocol registry \u7AEF\u70B9)"
   domain: memory
   i0_route: pending
   package: kairon
@@ -2609,7 +2595,7 @@ services:
   transport: inline
   uri: bos://memory/docs/readme
 - action: vault/state
-  description: vault _state 端点 (ecos services integration gateway 引用)
+  description: "vault _state \u7AEF\u70B9 (ecos services integration gateway \u5F15\u7528)"
   domain: system
   i0_route: pending
   package: ecos
@@ -2617,7 +2603,7 @@ services:
   transport: inline
   uri: bos://system/vault/state
 - action: governance/tasks
-  description: gov tasks 端点 (cockpit dashboard helpers_compute 引用)
+  description: "gov tasks \u7AEF\u70B9 (cockpit dashboard helpers_compute \u5F15\u7528)"
   domain: governance
   i0_route: pending
   package: cockpit
@@ -2625,7 +2611,7 @@ services:
   transport: inline
   uri: bos://governance/governance/tasks
 - action: governance/circuit_breaker
-  description: governance cockpit circuit_breaker 端点 (cockpit api_omos metrics source)
+  description: "governance cockpit circuit_breaker \u7AEF\u70B9 (cockpit api_omos metrics source)"
   domain: governance
   i0_route: pending
   package: cockpit
@@ -2633,7 +2619,7 @@ services:
   transport: inline
   uri: bos://governance/governance/circuit_breaker
 - action: governance/daily_budget
-  description: governance cockpit daily_budget 端点 (cockpit api_omos metrics source)
+  description: "governance cockpit daily_budget \u7AEF\u70B9 (cockpit api_omos metrics source)"
   domain: governance
   i0_route: pending
   package: cockpit
@@ -2641,7 +2627,7 @@ services:
   transport: inline
   uri: bos://governance/governance/daily_budget
 - action: governance/quests
-  description: governance cockpit quests 端点 (cockpit api_omos metrics source)
+  description: "governance cockpit quests \u7AEF\u70B9 (cockpit api_omos metrics source)"
   domain: governance
   i0_route: pending
   package: cockpit
@@ -2649,8 +2635,7 @@ services:
   transport: inline
   uri: bos://governance/governance/quests
 - action: governance/omo_worker_dispatch
-  description: governance omo worker dispatch 端点 (omo bus_demo_omo_producer metrics
-    source)
+  description: "governance omo worker dispatch \u7AEF\u70B9 (omo bus_demo_omo_producer metrics source)"
   domain: governance
   i0_route: pending
   package: omo
@@ -2658,7 +2643,7 @@ services:
   transport: inline
   uri: bos://governance/governance/omo_worker_dispatch
 - action: fast-track/virtual-doc
-  description: memory fast-track virtual-doc 端点 (omo bridge source_docs)
+  description: "memory fast-track virtual-doc \u7AEF\u70B9 (omo bridge source_docs)"
   domain: memory
   i0_route: pending
   package: omo
@@ -2666,7 +2651,7 @@ services:
   transport: inline
   uri: bos://memory/fast-track/virtual-doc
 - action: audit
-  description: omo audit 端点 (omo BOS schema LEGACY_DOMAIN_MAP 升级示例)
+  description: "omo audit \u7AEF\u70B9 (omo BOS schema LEGACY_DOMAIN_MAP \u5347\u7EA7\u793A\u4F8B)"
   domain: omo
   i0_route: pending
   package: omo
@@ -2674,7 +2659,7 @@ services:
   transport: inline
   uri: bos://omo/audit
 - action: debt
-  description: omo debt 端点 (omo @mcp.resource 引用)
+  description: "omo debt \u7AEF\u70B9 (omo @mcp.resource \u5F15\u7528)"
   domain: omo
   i0_route: pending
   package: omo
@@ -2682,7 +2667,7 @@ services:
   uri: bos://omo/debt
   status: active
 - action: tasks/active
-  description: OMO 任务控制台与活跃任务展示
+  description: "OMO \u4EFB\u52A1\u63A7\u5236\u53F0\u4E0E\u6D3B\u8DC3\u4EFB\u52A1\u5C55\u793A"
   domain: omo
   package: omo
   status: active
@@ -2703,7 +2688,7 @@ services:
   transport: inline
   uri: bos://persona/board/route
 - action: status
-  description: BOS Inbox 多源私有知识神经网运行状态统计
+  description: "BOS Inbox \u591A\u6E90\u79C1\u6709\u77E5\u8BC6\u795E\u7ECF\u7F51\u8FD0\u884C\u72B6\u6001\u7EDF\u8BA1"
   domain: memory
   func_name: bos_inbox_status
   i0_route: pending
@@ -2714,7 +2699,7 @@ services:
   transport: internal
   uri: bos://memory/inbox/status
 - action: search
-  description: BOS Inbox 多源私有知识库全文与高维关键词检索
+  description: "BOS Inbox \u591A\u6E90\u79C1\u6709\u77E5\u8BC6\u5E93\u5168\u6587\u4E0E\u9AD8\u7EF4\u5173\u952E\u8BCD\u68C0\u7D22"
   domain: memory
   func_name: bos_inbox_search
   i0_route: pending
@@ -2725,7 +2710,7 @@ services:
   transport: internal
   uri: bos://memory/inbox/search
 - action: pending
-  description: BOS Inbox 实时待办公文与未读事项读取
+  description: "BOS Inbox \u5B9E\u65F6\u5F85\u529E\u516C\u6587\u4E0E\u672A\u8BFB\u4E8B\u9879\u8BFB\u53D6"
   domain: memory
   func_name: bos_inbox_pending
   i0_route: pending
@@ -2736,7 +2721,7 @@ services:
   transport: internal
   uri: bos://memory/inbox/pending
 - action: watch
-  description: BOS Inbox 实时事件驱动监控与紧急公文/工单待办通知 (Event-Driven Watcher)
+  description: "BOS Inbox \u5B9E\u65F6\u4E8B\u4EF6\u9A71\u52A8\u76D1\u63A7\u4E0E\u7D27\u6025\u516C\u6587/\u5DE5\u5355\u5F85\u529E\u901A\u77E5 (Event-Driven Watcher)"
   domain: memory
   func_name: bos_inbox_watch
   i0_route: pending
@@ -2747,7 +2732,7 @@ services:
   transport: internal
   uri: bos://memory/inbox/watch
 - action: archive
-  description: BOS Inbox 工单处理完结与冷归档闭环接口 (Lifecycle Archive)
+  description: "BOS Inbox \u5DE5\u5355\u5904\u7406\u5B8C\u7ED3\u4E0E\u51B7\u5F52\u6863\u95ED\u73AF\u63A5\u53E3 (Lifecycle Archive)"
   domain: memory
   func_name: bos_inbox_archive
   i0_route: pending
@@ -2758,7 +2743,7 @@ services:
   transport: internal
   uri: bos://memory/inbox/archive
 - action: triage
-  description: BOS Inbox 公文与待办事项智能分类分拣与紧急度测算引擎 (Triage Engine)
+  description: "BOS Inbox \u516C\u6587\u4E0E\u5F85\u529E\u4E8B\u9879\u667A\u80FD\u5206\u7C7B\u5206\u62E3\u4E0E\u7D27\u6025\u5EA6\u6D4B\u7B97\u5F15\u64CE (Triage Engine)"
   domain: memory
   func_name: bos_inbox_triage
   i0_route: pending
@@ -2769,7 +2754,7 @@ services:
   transport: internal
   uri: bos://memory/inbox/triage
 - action: draft
-  description: BOS Inbox 智能拟办意见与风险提示批复草拟引擎 (Draft Assistant)
+  description: "BOS Inbox \u667A\u80FD\u62DF\u529E\u610F\u89C1\u4E0E\u98CE\u9669\u63D0\u793A\u6279\u590D\u8349\u62DF\u5F15\u64CE (Draft Assistant)"
   domain: memory
   func_name: bos_inbox_draft
   i0_route: pending
@@ -2780,8 +2765,8 @@ services:
   transport: internal
   uri: bos://memory/inbox/draft
 - action: evaluate
-  description: B.D.S.K. 虚拟董事会评审网关；唯一推理链为 bos://compute/aetherforge/infer，失败返回 not_proven，禁止自动
-    ADR
+  description: "B.D.S.K. \u865A\u62DF\u8463\u4E8B\u4F1A\u8BC4\u5BA1\u7F51\u5173\uFF1B\u552F\u4E00\u63A8\u7406\u94FE\u4E3A bos://compute/aetherforge/infer\uFF0C\u5931\u8D25\u8FD4\u56DE not_proven\uFF0C\u7981\
+    \u6B62\u81EA\u52A8 ADR"
   domain: persona
   func_name: persona_bdsk_evaluate
   i0_route: active
@@ -2801,7 +2786,7 @@ services:
   - -m
   - aetherforge.cli
   - infer
-  description: AetherForge 算力网关与 omlxc (Apple MLX/Local LLM) 本地量化模型通用推理调度端点
+  description: "AetherForge \u7B97\u529B\u7F51\u5173\u4E0E omlxc (Apple MLX/Local LLM) \u672C\u5730\u91CF\u5316\u6A21\u578B\u901A\u7528\u63A8\u7406\u8C03\u5EA6\u7AEF\u70B9"
   domain: compute
   package: aetherforge
   security_level: internal
@@ -2818,7 +2803,7 @@ services:
   - -m
   - aetherforge.cli
   - mesh
-  description: AetherForge 算力网格拓扑发现与模型负载均衡控制器 (Model Mesh & Load Balancing)
+  description: "AetherForge \u7B97\u529B\u7F51\u683C\u62D3\u6251\u53D1\u73B0\u4E0E\u6A21\u578B\u8D1F\u8F7D\u5747\u8861\u63A7\u5236\u5668 (Model Mesh & Load Balancing)"
   domain: compute
   package: aetherforge
   security_level: internal
@@ -2835,7 +2820,7 @@ services:
   - -m
   - aetherforge.cli
   - swarm
-  description: AetherForge 多智能体群体算力与复杂决策任务并发编排引擎
+  description: "AetherForge \u591A\u667A\u80FD\u4F53\u7FA4\u4F53\u7B97\u529B\u4E0E\u590D\u6742\u51B3\u7B56\u4EFB\u52A1\u5E76\u53D1\u7F16\u6392\u5F15\u64CE"
   domain: compute
   package: aetherforge
   security_level: internal
@@ -2853,7 +2838,7 @@ services:
   - omlxc.cli
   - fabric
   - inspect
-  description: omlxc 异构算力织网、温控、显存预算与分层缓存状态
+  description: "omlxc \u5F02\u6784\u7B97\u529B\u7EC7\u7F51\u3001\u6E29\u63A7\u3001\u663E\u5B58\u9884\u7B97\u4E0E\u5206\u5C42\u7F13\u5B58\u72B6\u6001"
   domain: compute
   package: omlxc
   security_level: internal
@@ -2871,7 +2856,7 @@ services:
   - omlxc.cli
   - fabric
   - triage
-  description: omlxc 意图复杂度分诊 (FAST / STANDARD / REASONING)
+  description: "omlxc \u610F\u56FE\u590D\u6742\u5EA6\u5206\u8BCA (FAST / STANDARD / REASONING)"
   domain: compute
   package: omlxc
   security_level: internal
@@ -2889,7 +2874,7 @@ services:
   - omlxc.cli
   - fabric
   - vram
-  description: omlxc 动态 KV Cache 显存预算评估与 75% 阶梯准入
+  description: "omlxc \u52A8\u6001 KV Cache \u663E\u5B58\u9884\u7B97\u8BC4\u4F30\u4E0E 75% \u9636\u68AF\u51C6\u5165"
   domain: compute
   package: omlxc
   security_level: internal
@@ -2907,7 +2892,7 @@ services:
   - omlxc.cli
   - fabric
   - replay
-  description: omlxc 经验回放池状态、水塘抽样与防遗忘混合 batch 统计
+  description: "omlxc \u7ECF\u9A8C\u56DE\u653E\u6C60\u72B6\u6001\u3001\u6C34\u5858\u62BD\u6837\u4E0E\u9632\u9057\u5FD8\u6DF7\u5408 batch \u7EDF\u8BA1"
   domain: compute
   package: omlxc
   security_level: internal
@@ -2923,7 +2908,7 @@ services:
   - projects/omlxc
   - python
   - examples/live_nextgen_compute_engine_benchmark.py
-  description: omlxc 自适应熵感知树状投机解码与多候选验证服务 (ADR-0434)
+  description: "omlxc \u81EA\u9002\u5E94\u71B5\u611F\u77E5\u6811\u72B6\u6295\u673A\u89E3\u7801\u4E0E\u591A\u5019\u9009\u9A8C\u8BC1\u670D\u52A1 (ADR-0434)"
   domain: compute
   package: omlxc
   security_level: internal
@@ -2939,7 +2924,7 @@ services:
   - projects/omlxc
   - python
   - examples/live_nextgen_compute_engine_benchmark.py
-  description: omlxc 跨节点 Chunk-level 流式协同流水线服务 (ADR-0434)
+  description: "omlxc \u8DE8\u8282\u70B9 Chunk-level \u6D41\u5F0F\u534F\u540C\u6D41\u6C34\u7EBF\u670D\u52A1 (ADR-0434)"
   domain: compute
   package: omlxc
   security_level: internal
@@ -2955,7 +2940,7 @@ services:
   - projects/omlxc
   - python
   - examples/live_nextgen_compute_engine_benchmark.py
-  description: omlxc 分布式跨节点 KV 共享池与超长上下文置换服务 (ADR-0434)
+  description: "omlxc \u5206\u5E03\u5F0F\u8DE8\u8282\u70B9 KV \u5171\u4EAB\u6C60\u4E0E\u8D85\u957F\u4E0A\u4E0B\u6587\u7F6E\u6362\u670D\u52A1 (ADR-0434)"
   domain: compute
   package: omlxc
   security_level: internal
@@ -2974,7 +2959,7 @@ services:
   - cockpit.cli
   - mesh
   - hud
-  description: omlxc 主权算力织网全景 HUD 实时监控控制台 (ADR-0435)
+  description: "omlxc \u4E3B\u6743\u7B97\u529B\u7EC7\u7F51\u5168\u666F HUD \u5B9E\u65F6\u76D1\u63A7\u63A7\u5236\u53F0 (ADR-0435)"
   domain: compute
   package: omlxc
   security_level: internal
@@ -2993,7 +2978,7 @@ services:
   - cockpit.cli
   - mesh
   - heatmap
-  description: omlxc 分布式 KV 内存池热力图与投机蒸馏指标 (ADR-0435)
+  description: "omlxc \u5206\u5E03\u5F0F KV \u5185\u5B58\u6C60\u70ED\u529B\u56FE\u4E0E\u6295\u673A\u84B8\u998F\u6307\u6807 (ADR-0435)"
   domain: compute
   package: omlxc
   security_level: internal
@@ -3009,7 +2994,7 @@ services:
   - projects/omlxc
   - python
   - examples/live_v5_evolution_verification.py
-  description: omlxc 雷雳 5 跨物理机 P2P 零拷贝 DMA 通信总线服务 (ADR-0435)
+  description: "omlxc \u96F7\u96F3 5 \u8DE8\u7269\u7406\u673A P2P \u96F6\u62F7\u8D1D DMA \u901A\u4FE1\u603B\u7EBF\u670D\u52A1 (ADR-0435)"
   domain: compute
   package: omlxc
   security_level: internal
@@ -3025,7 +3010,7 @@ services:
   - projects/omlxc
   - python
   - examples/live_v5_evolution_verification.py
-  description: omlxc 端侧在线 LoRA 持续微调与毫秒级热插拔服务 (ADR-0435)
+  description: "omlxc \u7AEF\u4FA7\u5728\u7EBF LoRA \u6301\u7EED\u5FAE\u8C03\u4E0E\u6BEB\u79D2\u7EA7\u70ED\u63D2\u62D4\u670D\u52A1 (ADR-0435)"
   domain: compute
   package: omlxc
   security_level: internal
@@ -3033,7 +3018,7 @@ services:
   transport: stdio
   uri: bos://compute/omlxc/lora
 - action: status
-  description: KEMS 知识管理引擎与图谱服务运行状态 (ADR-0300)
+  description: "KEMS \u77E5\u8BC6\u7BA1\u7406\u5F15\u64CE\u4E0E\u56FE\u8C31\u670D\u52A1\u8FD0\u884C\u72B6\u6001 (ADR-0300)"
   domain: memory
   http_url: http://localhost:8090/api/kems/status
   package: kems
@@ -3041,7 +3026,7 @@ services:
   transport: http
   uri: bos://memory/kems/status
 - action: graph
-  description: KEMS 实体关系图谱查询与关系拓扑推导 (ADR-0300)
+  description: "KEMS \u5B9E\u4F53\u5173\u7CFB\u56FE\u8C31\u67E5\u8BE2\u4E0E\u5173\u7CFB\u62D3\u6251\u63A8\u5BFC (ADR-0300)"
   domain: memory
   http_url: http://localhost:8090/api/kems/graph/entities
   package: kems
@@ -3049,7 +3034,7 @@ services:
   transport: http
   uri: bos://memory/kems/graph
 - action: ocr-queue
-  description: KEMS 多源知识抽提与 OCR 纠错审阅队列 (ADR-0300)
+  description: "KEMS \u591A\u6E90\u77E5\u8BC6\u62BD\u63D0\u4E0E OCR \u7EA0\u9519\u5BA1\u9605\u961F\u5217 (ADR-0300)"
   domain: memory
   http_url: http://localhost:8090/api/kems/ocr/review-queue
   package: kems
@@ -3057,7 +3042,7 @@ services:
   transport: http
   uri: bos://memory/kems/ocr-queue
 - action: forecast
-  description: KEMS 知识推断与影子评估推演分析 (ADR-0300)
+  description: "KEMS \u77E5\u8BC6\u63A8\u65AD\u4E0E\u5F71\u5B50\u8BC4\u4F30\u63A8\u6F14\u5206\u6790 (ADR-0300)"
   domain: analysis
   http_method: POST
   http_url: http://localhost:8090/api/kems/forecast/shadow
@@ -3068,99 +3053,99 @@ services:
 - action: policy
   command:
   - agent-governance-toolkit
-  description: AGT 策略评估与合规检查引擎 (Agent Governance Toolkit)
+  description: "AGT \u7B56\u7565\u8BC4\u4F30\u4E0E\u5408\u89C4\u68C0\u67E5\u5F15\u64CE (Agent Governance Toolkit)"
   domain: governance
   package: agt
   status: deprecated
   transport: stdio
   uri: bos://governance/agt/policy
-  note: 'BET-Y1Q3-T1-05: 无实现, 标 deprecated (声明诚实, 不堆积 unimplemented)'
+  note: "BET-Y1Q3-T1-05: \u65E0\u5B9E\u73B0, \u6807 deprecated (\u58F0\u660E\u8BDA\u5B9E, \u4E0D\u5806\u79EF unimplemented)"
 - action: trust
   command:
   - agent-governance-toolkit
-  description: AGT 信任评分与身份验证服务 (Agent Governance Toolkit)
+  description: "AGT \u4FE1\u4EFB\u8BC4\u5206\u4E0E\u8EAB\u4EFD\u9A8C\u8BC1\u670D\u52A1 (Agent Governance Toolkit)"
   domain: governance
   package: agt
   status: deprecated
   transport: stdio
   uri: bos://capability/agt/trust
-  note: 'BET-Y1Q3-T1-05: 无实现, 标 deprecated (声明诚实, 不堆积 unimplemented)'
+  note: "BET-Y1Q3-T1-05: \u65E0\u5B9E\u73B0, \u6807 deprecated (\u58F0\u660E\u8BDA\u5B9E, \u4E0D\u5806\u79EF unimplemented)"
 - action: sandbox
   command:
   - agent-governance-toolkit
-  description: AGT 沙箱隔离与权限控制服务 (Agent Governance Toolkit)
+  description: "AGT \u6C99\u7BB1\u9694\u79BB\u4E0E\u6743\u9650\u63A7\u5236\u670D\u52A1 (Agent Governance Toolkit)"
   domain: governance
   package: agt
   status: deprecated
   transport: stdio
   uri: bos://capability/agt/sandbox
-  note: 'BET-Y1Q3-T1-05: 无实现, 标 deprecated (声明诚实, 不堆积 unimplemented)'
+  note: "BET-Y1Q3-T1-05: \u65E0\u5B9E\u73B0, \u6807 deprecated (\u58F0\u660E\u8BDA\u5B9E, \u4E0D\u5806\u79EF unimplemented)"
 - action: sre
   command:
   - agent-governance-toolkit
-  description: AGT SRE 监控与健康检查服务 (Agent Governance Toolkit)
+  description: "AGT SRE \u76D1\u63A7\u4E0E\u5065\u5EB7\u68C0\u67E5\u670D\u52A1 (Agent Governance Toolkit)"
   domain: governance
   package: agt
   status: deprecated
   transport: stdio
   uri: bos://capability/agt/sre
-  note: 'BET-Y1Q3-T1-05: 无实现, 标 deprecated (声明诚实, 不堆积 unimplemented)'
+  note: "BET-Y1Q3-T1-05: \u65E0\u5B9E\u73B0, \u6807 deprecated (\u58F0\u660E\u8BDA\u5B9E, \u4E0D\u5806\u79EF unimplemented)"
 - action: mcp-security
   command:
   - agent-governance-toolkit
-  description: AGT MCP 安全审计与权限检查服务 (Agent Governance Toolkit)
+  description: "AGT MCP \u5B89\u5168\u5BA1\u8BA1\u4E0E\u6743\u9650\u68C0\u67E5\u670D\u52A1 (Agent Governance Toolkit)"
   domain: governance
   package: agt
   status: deprecated
   transport: stdio
   uri: bos://capability/agt/mcp-security
-  note: 'BET-Y1Q3-T1-05: 无实现, 标 deprecated (声明诚实, 不堆积 unimplemented)'
+  note: "BET-Y1Q3-T1-05: \u65E0\u5B9E\u73B0, \u6807 deprecated (\u58F0\u660E\u8BDA\u5B9E, \u4E0D\u5806\u79EF unimplemented)"
 - action: marketplace
   command:
   - agent-governance-toolkit
-  description: AGT 能力市场与发现服务 (Agent Governance Toolkit)
+  description: "AGT \u80FD\u529B\u5E02\u573A\u4E0E\u53D1\u73B0\u670D\u52A1 (Agent Governance Toolkit)"
   domain: governance
   package: agt
   status: deprecated
   transport: stdio
   uri: bos://capability/agt/marketplace
-  note: 'BET-Y1Q3-T1-05: 无实现, 标 deprecated (声明诚实, 不堆积 unimplemented)'
+  note: "BET-Y1Q3-T1-05: \u65E0\u5B9E\u73B0, \u6807 deprecated (\u58F0\u660E\u8BDA\u5B9E, \u4E0D\u5806\u79EF unimplemented)"
 - action: lightning
   command:
   - agent-governance-toolkit
-  description: AGT Lightning 快速通道与缓存服务 (Agent Governance Toolkit)
+  description: "AGT Lightning \u5FEB\u901F\u901A\u9053\u4E0E\u7F13\u5B58\u670D\u52A1 (Agent Governance Toolkit)"
   domain: governance
   package: agt
   status: deprecated
   transport: stdio
   uri: bos://capability/agt/lightning
-  note: 'BET-Y1Q3-T1-05: 无实现, 标 deprecated (声明诚实, 不堆积 unimplemented)'
+  note: "BET-Y1Q3-T1-05: \u65E0\u5B9E\u73B0, \u6807 deprecated (\u58F0\u660E\u8BDA\u5B9E, \u4E0D\u5806\u79EF unimplemented)"
 - action: hypervisor
   command:
   - agent-governance-toolkit
-  description: AGT Hypervisor 审计哈希链与完整性验证服务 (Agent Governance Toolkit)
+  description: "AGT Hypervisor \u5BA1\u8BA1\u54C8\u5E0C\u94FE\u4E0E\u5B8C\u6574\u6027\u9A8C\u8BC1\u670D\u52A1 (Agent Governance Toolkit)"
   domain: governance
   package: agt
   status: deprecated
   transport: stdio
   uri: bos://governance/agt/hypervisor
-  note: 'BET-Y1Q3-T1-05: 无实现, 标 deprecated (声明诚实, 不堆积 unimplemented)'
+  note: "BET-Y1Q3-T1-05: \u65E0\u5B9E\u73B0, \u6807 deprecated (\u58F0\u660E\u8BDA\u5B9E, \u4E0D\u5806\u79EF unimplemented)"
 - action: inbox
-  description: Apple Mail 收件箱信号采集 (BET-Y1Q1-T2-01 感知面)
+  description: "Apple Mail \u6536\u4EF6\u7BB1\u4FE1\u53F7\u91C7\u96C6 (BET-Y1Q1-T2-01 \u611F\u77E5\u9762)"
   domain: perception
   package: apple_mail
   status: deprecated
   transport: stdio
   uri: bos://perception/apple_mail/inbox
-  note: 'BET-Y1Q3-T1-05: 无实现, 标 deprecated (声明诚实, 不堆积 unimplemented)'
+  note: "BET-Y1Q3-T1-05: \u65E0\u5B9E\u73B0, \u6807 deprecated (\u58F0\u660E\u8BDA\u5B9E, \u4E0D\u5806\u79EF unimplemented)"
 - action: signal_health
-  description: 信号源健康探测与降级报告
+  description: "\u4FE1\u53F7\u6E90\u5065\u5EB7\u63A2\u6D4B\u4E0E\u964D\u7EA7\u62A5\u544A"
   domain: perception
   package: signal_monitor
   status: deprecated
   transport: stdio
   uri: bos://perception/signal_monitor/health
-  note: 'BET-Y1Q3-T1-05: 无实现, 标 deprecated (声明诚实, 不堆积 unimplemented)'
+  note: "BET-Y1Q3-T1-05: \u65E0\u5B9E\u73B0, \u6807 deprecated (\u58F0\u660E\u8BDA\u5B9E, \u4E0D\u5806\u79EF unimplemented)"
 - domain: mof
   package: mof
   action: io
@@ -3172,7 +3157,7 @@ services:
   - projects/cockpit/src/cockpit/cli.py
   - mof
   - io
-  description: 模型导入/导出 (JSON)
+  description: "\u6A21\u578B\u5BFC\u5165/\u5BFC\u51FA (JSON)"
 - domain: mof
   package: mof
   action: version
@@ -3184,7 +3169,7 @@ services:
   - projects/cockpit/src/cockpit/cli.py
   - mof
   - version
-  description: 模型版本管理
+  description: "\u6A21\u578B\u7248\u672C\u7BA1\u7406"
 - domain: mof
   package: mof
   action: reason
@@ -3196,7 +3181,7 @@ services:
   - projects/cockpit/src/cockpit/cli.py
   - mof
   - reason
-  description: 三维推理引擎 (impact/state/value)
+  description: "\u4E09\u7EF4\u63A8\u7406\u5F15\u64CE (impact/state/value)"
 - domain: mof
   package: mof
   action: decide
@@ -3208,7 +3193,7 @@ services:
   - projects/cockpit/src/cockpit/cli.py
   - mof
   - decide
-  description: 智能决策支持
+  description: "\u667A\u80FD\u51B3\u7B56\u652F\u6301"
 - domain: mof
   package: mof
   action: graph
@@ -3220,7 +3205,7 @@ services:
   - projects/cockpit/src/cockpit/cli.py
   - mof
   - graph
-  description: 跨项目依赖图生成
+  description: "\u8DE8\u9879\u76EE\u4F9D\u8D56\u56FE\u751F\u6210"
 - domain: mof
   package: mof
   action: autonomous
@@ -3232,7 +3217,7 @@ services:
   - projects/cockpit/src/cockpit/cli.py
   - mof
   - autonomous
-  description: 自主决策引擎 (异常检测→推理→建议)
+  description: "\u81EA\u4E3B\u51B3\u7B56\u5F15\u64CE (\u5F02\u5E38\u68C0\u6D4B\u2192\u63A8\u7406\u2192\u5EFA\u8BAE)"
 - domain: mof
   package: mof
   action: act
@@ -3244,7 +3229,7 @@ services:
   - projects/cockpit/src/cockpit/cli.py
   - mof
   - act
-  description: 自主行动引擎 (规划→验证→执行→验证→记录)
+  description: "\u81EA\u4E3B\u884C\u52A8\u5F15\u64CE (\u89C4\u5212\u2192\u9A8C\u8BC1\u2192\u6267\u884C\u2192\u9A8C\u8BC1\u2192\u8BB0\u5F55)"
 - domain: mof
   package: mof
   action: analyze
@@ -3256,7 +3241,7 @@ services:
   - projects/cockpit/src/cockpit/cli.py
   - mof
   - analyze
-  description: 统一分析工具
+  description: "\u7EDF\u4E00\u5206\u6790\u5DE5\u5177"
 - domain: mof
   package: mof
   action: export
@@ -3268,7 +3253,7 @@ services:
   - projects/cockpit/src/cockpit/cli.py
   - mof
   - export
-  description: 文档生成工具
+  description: "\u6587\u6863\u751F\u6210\u5DE5\u5177"
 - domain: mof
   package: mof
   action: drift
@@ -3280,7 +3265,7 @@ services:
   - projects/cockpit/src/cockpit/cli.py
   - mof
   - drift
-  description: 架构漂移检测
+  description: "\u67B6\u6784\u6F02\u79FB\u68C0\u6D4B"
 - domain: mof
   package: mof
   action: scan
@@ -3292,7 +3277,7 @@ services:
   - projects/cockpit/src/cockpit/cli.py
   - mof
   - scan
-  description: 依赖安全扫描
+  description: "\u4F9D\u8D56\u5B89\u5168\u626B\u63CF"
 - domain: mof
   package: mof
   action: assign
@@ -3304,7 +3289,7 @@ services:
   - projects/cockpit/src/cockpit/cli.py
   - mof
   - assign
-  description: 团队任务分配
+  description: "\u56E2\u961F\u4EFB\u52A1\u5206\u914D"
 - domain: mof
   package: mof
   action: evolution
@@ -3316,7 +3301,7 @@ services:
   - projects/cockpit/src/cockpit/cli.py
   - mof
   - evolution
-  description: 系统演化追踪
+  description: "\u7CFB\u7EDF\u6F14\u5316\u8FFD\u8E2A"
 - domain: mof
   package: mof
   action: enforce
@@ -3328,7 +3313,7 @@ services:
   - projects/cockpit/src/cockpit/cli.py
   - mof
   - enforce
-  description: Agent 约束强制
+  description: "Agent \u7EA6\u675F\u5F3A\u5236"
 - domain: mof
   package: mof
   action: manage
@@ -3340,7 +3325,7 @@ services:
   - projects/cockpit/src/cockpit/cli.py
   - mof
   - manage
-  description: MOF 能力注册表管理 (查看/验证/更新 mof-capabilities.yaml)
+  description: "MOF \u80FD\u529B\u6CE8\u518C\u8868\u7BA1\u7406 (\u67E5\u770B/\u9A8C\u8BC1/\u66F4\u65B0 mof-capabilities.yaml)"
 - domain: governance
   package: ecos-intent
   action: compile
@@ -3351,7 +3336,7 @@ services:
   - python3
   - -m
   - runtime.mcp_server
-  description: 意图解构与工程规格编译器 (ADR-0195)
+  description: "\u610F\u56FE\u89E3\u6784\u4E0E\u5DE5\u7A0B\u89C4\u683C\u7F16\u8BD1\u5668 (ADR-0195)"
 - domain: governance
   package: ecos-shadow
   action: challenge
@@ -3362,7 +3347,7 @@ services:
   - python3
   - -m
   - runtime.mcp_server
-  description: 影子红蓝对抗审查与合规自动补丁 (ADR-0196)
+  description: "\u5F71\u5B50\u7EA2\u84DD\u5BF9\u6297\u5BA1\u67E5\u4E0E\u5408\u89C4\u81EA\u52A8\u8865\u4E01 (ADR-0196)"
 - domain: governance
   package: ecos-cartridge
   action: list
@@ -3373,7 +3358,7 @@ services:
   - python3
   - -m
   - runtime.mcp_server
-  description: 领域治理卡带列表 (ADR-0198)
+  description: "\u9886\u57DF\u6CBB\u7406\u5361\u5E26\u5217\u8868 (ADR-0198)"
 - action: check
   command:
   - python3
@@ -3381,7 +3366,7 @@ services:
   - --workspace
   - .
   - --json
-  description: 治理自进化巡检 M1 心跳 SLA + M2 引用活性 + 调度漂移
+  description: "\u6CBB\u7406\u81EA\u8FDB\u5316\u5DE1\u68C0 M1 \u5FC3\u8DF3 SLA + M2 \u5F15\u7528\u6D3B\u6027 + \u8C03\u5EA6\u6F02\u79FB"
   domain: governance
   package: meta-doctor
   status: active
@@ -3392,7 +3377,7 @@ services:
   - python3
   - bin/scheduler-compile.py
   - --check
-  description: 调度编译器一致性校验 registry↔crontab 漂移检测 (ADR-A)
+  description: "\u8C03\u5EA6\u7F16\u8BD1\u5668\u4E00\u81F4\u6027\u6821\u9A8C registry\u2194crontab \u6F02\u79FB\u68C0\u6D4B (ADR-A)"
   domain: governance
   package: scheduler-compile
   status: active
@@ -3403,7 +3388,7 @@ services:
   - python3
   - bin/gac/session-handoff.py
   - --help
-  description: 会话交接协议 机器可读 handoff.json (需 --session/--agent/--summary)
+  description: "\u4F1A\u8BDD\u4EA4\u63A5\u534F\u8BAE \u673A\u5668\u53EF\u8BFB handoff.json (\u9700 --session/--agent/--summary)"
   domain: governance
   package: session-handoff
   status: active
@@ -3419,7 +3404,7 @@ services:
   - omlxc
   - fabric
   - snapshot
-  description: 主权算力 KV 缓存二进制快照预热 (ADR-0197)
+  description: "\u4E3B\u6743\u7B97\u529B KV \u7F13\u5B58\u4E8C\u8FDB\u5236\u5FEB\u7167\u9884\u70ED (ADR-0197)"
 - domain: resident
   package: omo-resident
   action: status
@@ -3438,7 +3423,7 @@ services:
   - omo.cli
   - resident
   - status
-  description: Resident 常驻 Agent 体系运行状态快照 (WP-A~I / ADR-0396)
+  description: "Resident \u5E38\u9A7B Agent \u4F53\u7CFB\u8FD0\u884C\u72B6\u6001\u5FEB\u7167 (WP-A~I / ADR-0396)"
 - domain: resident
   package: omo-resident
   action: roles
@@ -3458,7 +3443,7 @@ services:
   - resident
   - roles
   - --json
-  description: Resident 五类常驻角色配置 (M4.3)
+  description: "Resident \u4E94\u7C7B\u5E38\u9A7B\u89D2\u8272\u914D\u7F6E (M4.3)"
 - domain: resident
   package: omo-resident
   action: daemon
@@ -3478,7 +3463,7 @@ services:
   - resident
   - daemon
   - --once
-  description: Resident daemon 单次 tick (M1 事件驱动)
+  description: "Resident daemon \u5355\u6B21 tick (M1 \u4E8B\u4EF6\u9A71\u52A8)"
 - domain: resident
   package: omo-resident
   action: decision
@@ -3497,7 +3482,7 @@ services:
   - omo.cli
   - resident
   - decision
-  description: Resident 决策提案处理 (WP-F)
+  description: "Resident \u51B3\u7B56\u63D0\u6848\u5904\u7406 (WP-F)"
 - domain: resident
   package: omo-resident
   action: task_submit
@@ -3518,7 +3503,7 @@ services:
   - task
   - submit
   - --json
-  description: 提交异步任务到 Resident 就绪队列 (T10-125 task_gateway)
+  description: "\u63D0\u4EA4\u5F02\u6B65\u4EFB\u52A1\u5230 Resident \u5C31\u7EEA\u961F\u5217 (T10-125 task_gateway)"
 - domain: resident
   package: omo-resident
   action: task_status
@@ -3539,7 +3524,7 @@ services:
   - task
   - status
   - --json
-  description: 查询异步任务状态 (T10-125 task_gateway)
+  description: "\u67E5\u8BE2\u5F02\u6B65\u4EFB\u52A1\u72B6\u6001 (T10-125 task_gateway)"
 - domain: resident
   package: omo-resident
   action: sediment_trigger
@@ -3559,7 +3544,7 @@ services:
   - resident
   - sediment
   - --async
-  description: 触发知识 sediment 异步写入 (T10-125 dual-write)
+  description: "\u89E6\u53D1\u77E5\u8BC6 sediment \u5F02\u6B65\u5199\u5165 (T10-125 dual-write)"
 - domain: resident
   package: omo-resident
   action: decision_trigger
@@ -3579,7 +3564,7 @@ services:
   - resident
   - decision
   - --async
-  description: 触发决策提案异步处理 (T10-125 dual-write)
+  description: "\u89E6\u53D1\u51B3\u7B56\u63D0\u6848\u5F02\u6B65\u5904\u7406 (T10-125 dual-write)"
 - domain: agent-cell
   package: cell-pool
   action: status
@@ -3591,7 +3576,7 @@ services:
   - projects/omo/src/omo/resident/cell_pool.py
   - --status
   - --json
-  description: Cell Pool 状态 — 多 Cell 并行运行状态
+  description: "Cell Pool \u72B6\u6001 \u2014 \u591A Cell \u5E76\u884C\u8FD0\u884C\u72B6\u6001"
 - domain: agent-cell
   package: cell-pool
   action: submit
@@ -3603,7 +3588,7 @@ services:
   - projects/omo/src/omo/resident/cell_pool.py
   - --submit
   - --json
-  description: Cell Pool 提交 — 提交 Episode 到 Cell Pool
+  description: "Cell Pool \u63D0\u4EA4 \u2014 \u63D0\u4EA4 Episode \u5230 Cell Pool"
 - domain: agent-cell
   package: cell-pool
   action: scale
@@ -3615,7 +3600,7 @@ services:
   - projects/omo/src/omo/resident/cell_pool.py
   - --scale
   - --json
-  description: Cell Pool 扩缩容 — 调整 Cell 数量
+  description: "Cell Pool \u6269\u7F29\u5BB9 \u2014 \u8C03\u6574 Cell \u6570\u91CF"
 - domain: agent-cell
   package: cell-pool
   action: auto-scale
@@ -3627,7 +3612,7 @@ services:
   - projects/omo/src/omo/resident/cell_pool.py
   - --auto-scale
   - --json
-  description: Cell Pool 自动扩缩容 — 基于负载自动调整
+  description: "Cell Pool \u81EA\u52A8\u6269\u7F29\u5BB9 \u2014 \u57FA\u4E8E\u8D1F\u8F7D\u81EA\u52A8\u8C03\u6574"
 - domain: agent-cell
   package: cell-pool
   action: metrics
@@ -3639,7 +3624,7 @@ services:
   - projects/omo/src/omo/resident/cell_pool.py
   - --metrics
   - --json
-  description: Cell Pool 指标 — 详细监控指标
+  description: "Cell Pool \u6307\u6807 \u2014 \u8BE6\u7EC6\u76D1\u63A7\u6307\u6807"
 - domain: agent-cell
   package: cell-dag
   action: execute
@@ -3651,7 +3636,7 @@ services:
   - projects/omo/src/omo/resident/cell_dag.py
   - --demo
   - --json
-  description: Cell DAG 执行 — 跨 Cell 编排
+  description: "Cell DAG \u6267\u884C \u2014 \u8DE8 Cell \u7F16\u6392"
 - domain: agent-cell
   package: cell-memory
   action: publish
@@ -3667,7 +3652,7 @@ services:
   - default
   - --content
   - '{"content":""}'
-  description: Memory Publish — 发布记忆到网络
+  description: "Memory Publish \u2014 \u53D1\u5E03\u8BB0\u5FC6\u5230\u7F51\u7EDC"
 - domain: agent-cell
   package: cell-memory
   action: search
@@ -3681,7 +3666,7 @@ services:
   - search
   - --query
   - '{"query":""}'
-  description: Memory Search — 跨 Cell 搜索
+  description: "Memory Search \u2014 \u8DE8 Cell \u641C\u7D22"
 - domain: agent-cell
   package: cell-governance
   action: audit
@@ -3695,7 +3680,7 @@ services:
   - audit-config
   - --config
   - '{"max_cells":4}'
-  description: Governance Audit — 配置合规审计
+  description: "Governance Audit \u2014 \u914D\u7F6E\u5408\u89C4\u5BA1\u8BA1"
 - domain: agent-cell
   package: cell-governance
   action: report
@@ -3707,7 +3692,7 @@ services:
   - projects/omo/src/omo/resident/cell_governance.py
   - --action
   - report
-  description: Governance Report — 治理报告
+  description: "Governance Report \u2014 \u6CBB\u7406\u62A5\u544A"
 - domain: agent-cell
   package: cell-config
   action: list
@@ -3719,7 +3704,7 @@ services:
   - projects/omo/src/omo/resident/cell_config.py
   - --list
   - --json
-  description: Cell Config 列表 — 列出预设配置
+  description: "Cell Config \u5217\u8868 \u2014 \u5217\u51FA\u9884\u8BBE\u914D\u7F6E"
 - domain: agent-cell
   package: cell-config
   action: create
@@ -3731,7 +3716,7 @@ services:
   - projects/omo/src/omo/resident/cell_config.py
   - --create
   - --json
-  description: Cell Config 创建 — 从预设创建 Cell
+  description: "Cell Config \u521B\u5EFA \u2014 \u4ECE\u9884\u8BBE\u521B\u5EFA Cell"
 - domain: agent-cell
   package: cell-core
   action: plan
@@ -3744,7 +3729,7 @@ services:
   - --intent
   - '{"intent":""}'
   - --json
-  description: Cell Plan — 意图解析 + 任务分解 + 风险评估
+  description: "Cell Plan \u2014 \u610F\u56FE\u89E3\u6790 + \u4EFB\u52A1\u5206\u89E3 + \u98CE\u9669\u8BC4\u4F30"
 - domain: agent-cell
   package: cell-core
   action: execute
@@ -3757,7 +3742,7 @@ services:
   - --plan
   - '{"tasks":[]}'
   - --json
-  description: Cell Execute — 按计划执行 + 工具调用 + 产出收集
+  description: "Cell Execute \u2014 \u6309\u8BA1\u5212\u6267\u884C + \u5DE5\u5177\u8C03\u7528 + \u4EA7\u51FA\u6536\u96C6"
 - domain: agent-cell
   package: cell-core
   action: verify
@@ -3770,7 +3755,7 @@ services:
   - --result
   - '{"results":[]}'
   - --json
-  description: Cell Verify — 完整性 + 正确性 + 质量三维评分
+  description: "Cell Verify \u2014 \u5B8C\u6574\u6027 + \u6B63\u786E\u6027 + \u8D28\u91CF\u4E09\u7EF4\u8BC4\u5206"
 - domain: agent-cell
   package: cell-core
   action: govern
@@ -3783,7 +3768,7 @@ services:
   - --assess
   - '{"action":""}'
   - --json
-  description: Cell Govern — R0-R3 风险分级 + 审批决策
+  description: "Cell Govern \u2014 R0-R3 \u98CE\u9669\u5206\u7EA7 + \u5BA1\u6279\u51B3\u7B56"
 - domain: agent-cell
   package: cell-policy
   action: pdp-evaluate
@@ -3796,7 +3781,7 @@ services:
   - --action
   - '{"action":""}'
   - --json
-  description: PDP Evaluate — 策略决策点上下文感知评估
+  description: "PDP Evaluate \u2014 \u7B56\u7565\u51B3\u7B56\u70B9\u4E0A\u4E0B\u6587\u611F\u77E5\u8BC4\u4F30"
 - domain: agent-cell
   package: cell-policy
   action: pep-enforce
@@ -3810,7 +3795,7 @@ services:
   - --action
   - '{"action":""}'
   - --json
-  description: PEP Enforce — 策略执行点强制执行 + 审计
+  description: "PEP Enforce \u2014 \u7B56\u7565\u6267\u884C\u70B9\u5F3A\u5236\u6267\u884C + \u5BA1\u8BA1"
 - domain: agent-cell
   package: cell-memory
   action: memory-process
@@ -3823,7 +3808,7 @@ services:
   - --process
   - '{"episode_id":""}'
   - --json
-  description: Memory Process — Episode → 记忆候选生成
+  description: "Memory Process \u2014 Episode \u2192 \u8BB0\u5FC6\u5019\u9009\u751F\u6210"
 - domain: agent-cell
   package: cell-memory
   action: memory-consolidate
@@ -3835,7 +3820,7 @@ services:
   - projects/omo/src/omo/resident/memory_pipeline.py
   - --consolidate
   - --json
-  description: Memory Consolidate — 记忆冲突检测 + 整合
+  description: "Memory Consolidate \u2014 \u8BB0\u5FC6\u51B2\u7A81\u68C0\u6D4B + \u6574\u5408"
 - domain: agent-cell
   package: cell-replay
   action: replay
@@ -3848,7 +3833,7 @@ services:
   - --replay
   - '{"episode_id":""}'
   - --json
-  description: Replay — Episode 回放验证
+  description: "Replay \u2014 Episode \u56DE\u653E\u9A8C\u8BC1"
 - domain: agent-cell
   package: cell-replay
   action: shadow
@@ -3862,7 +3847,7 @@ services:
   - --intent
   - '{"intent":""}'
   - --json
-  description: Shadow — 影子运行 (无副作用验证)
+  description: "Shadow \u2014 \u5F71\u5B50\u8FD0\u884C (\u65E0\u526F\u4F5C\u7528\u9A8C\u8BC1)"
 - domain: agent-cell
   package: cell-replay
   action: eval
@@ -3876,7 +3861,7 @@ services:
   - --episodes
   - '5'
   - --json
-  description: Eval — 批量 Episode 性能评估
+  description: "Eval \u2014 \u6279\u91CF Episode \u6027\u80FD\u8BC4\u4F30"
 - domain: bcos
   package: bcos-evolution
   action: evolve
@@ -3887,7 +3872,7 @@ services:
   - python3
   - bin/bc-os/evolution_engine.py
   - --json
-  description: BCOS 进化引擎四阶段 (observe/propose/evaluate/approve, dry-run 默认)
+  description: "BCOS \u8FDB\u5316\u5F15\u64CE\u56DB\u9636\u6BB5 (observe/propose/evaluate/approve, dry-run \u9ED8\u8BA4)"
 - domain: bcos
   package: bcos-signals
   action: route
@@ -3898,7 +3883,7 @@ services:
   - python3
   - bin/bc-os/signal_router.py
   - --json
-  description: BCOS 统一信号路由 (W1-D2, doc/meeting/research/code)
+  description: "BCOS \u7EDF\u4E00\u4FE1\u53F7\u8DEF\u7531 (W1-D2, doc/meeting/research/code)"
 - domain: bcos
   package: bcos-north-star
   action: measure
@@ -3909,7 +3894,7 @@ services:
   - python3
   - bin/bc-os/north_star_meter_v2.py
   - --json
-  description: BCOS 北极星价值度量 v2 (排除 self-data, W3)
+  description: "BCOS \u5317\u6781\u661F\u4EF7\u503C\u5EA6\u91CF v2 (\u6392\u9664 self-data, W3)"
 - domain: governance
   package: anti-corrosion
   action: rules-lifecycle
@@ -3920,7 +3905,7 @@ services:
   - python3
   - bin/gac/rules-lifecycle.py
   - --json
-  description: L4 约束层规则生命周期 (ADR-0431 D2) — expired/due-soon/healthy 三层, 过期进减法候选
+  description: "L4 \u7EA6\u675F\u5C42\u89C4\u5219\u751F\u547D\u5468\u671F (ADR-0431 D2) \u2014 expired/due-soon/healthy \u4E09\u5C42, \u8FC7\u671F\u8FDB\u51CF\u6CD5\u5019\u9009"
 - domain: governance
   package: anti-corrosion
   action: proposal-triage
@@ -3931,12 +3916,12 @@ services:
   - python3
   - bin/bc-os/proposal-triage.py
   - --analyze
-  description: 提案池质量分层 (第0段清淤) — keep/archive/invalid 三层, --dry-run 预演
+  description: "\u63D0\u6848\u6C60\u8D28\u91CF\u5206\u5C42 (\u7B2C0\u6BB5\u6E05\u6DE4) \u2014 keep/archive/invalid \u4E09\u5C42, --dry-run \u9884\u6F14"
 - action: bridge-runtime
   command:
   - python3
   - bin/gac/bridge-runtime.py
-  description: 统一桥接运行时 (MetaOS↔OMO, Model-Driven↔ECOS, L4↔记忆层)
+  description: "\u7EDF\u4E00\u6865\u63A5\u8FD0\u884C\u65F6 (MetaOS\u2194OMO, Model-Driven\u2194ECOS, L4\u2194\u8BB0\u5FC6\u5C42)"
   domain: governance
   package: bridge-runtime
   status: active
@@ -3946,7 +3931,7 @@ services:
   command:
   - python3
   - bin/gac/corrosion-pipeline-connector.py
-  description: 防腐管道接线 (G1/G2)
+  description: "\u9632\u8150\u7BA1\u9053\u63A5\u7EBF (G1/G2)"
   domain: governance
   package: corrosion
   status: active
@@ -3956,7 +3941,7 @@ services:
   command:
   - python3
   - bin/gac/value-tracker.py
-  description: 价值证明跟踪
+  description: "\u4EF7\u503C\u8BC1\u660E\u8DDF\u8E2A"
   domain: governance
   package: value
   status: active
@@ -3966,7 +3951,7 @@ services:
   command:
   - python3
   - bin/gac/self-evolution-loop.py
-  description: 自进化反馈循环
+  description: "\u81EA\u8FDB\u5316\u53CD\u9988\u5FAA\u73AF"
   domain: governance
   package: evolution
   status: active
@@ -3976,7 +3961,7 @@ services:
   command:
   - python3
   - bin/gac/weekly-review.py
-  description: 每周价值回顾
+  description: "\u6BCF\u5468\u4EF7\u503C\u56DE\u987E"
   domain: governance
   package: review
   status: active
@@ -3986,7 +3971,7 @@ services:
   command:
   - python3
   - lib/monthly_healthcheck.py
-  description: 每月架构健康检查
+  description: "\u6BCF\u6708\u67B6\u6784\u5065\u5EB7\u68C0\u67E5"
   domain: governance
   package: healthcheck
   status: active
@@ -3996,7 +3981,7 @@ services:
   command:
   - python3
   - bin/gac/probe-heartbeat-monitor.py
-  description: 探测器心跳矩阵
+  description: "\u63A2\u6D4B\u5668\u5FC3\u8DF3\u77E9\u9635"
   domain: governance
   package: probe
   status: active
@@ -4013,7 +3998,7 @@ services:
   - cockpit.cli
   - spine
   - draft
-  description: Cockpit/Spine 本地主权草稿生成与 AetherForge/omlxc 推理代理
+  description: "Cockpit/Spine \u672C\u5730\u4E3B\u6743\u8349\u7A3F\u751F\u6210\u4E0E AetherForge/omlxc \u63A8\u7406\u4EE3\u7406"
   domain: cockpit
   package: spine
   security_level: internal
@@ -4031,7 +4016,7 @@ services:
   - cockpit.cli
   - spine
   - sign
-  description: Cockpit/Spine 夏明星署名 Diff 经纪人录入与经验回放自适应进化
+  description: "Cockpit/Spine \u590F\u660E\u661F\u7F72\u540D Diff \u7ECF\u7EAA\u4EBA\u5F55\u5165\u4E0E\u7ECF\u9A8C\u56DE\u653E\u81EA\u9002\u5E94\u8FDB\u5316"
   domain: cockpit
   package: spine
   security_level: internal
@@ -4049,7 +4034,7 @@ services:
   - cockpit.cli
   - spine
   - diff
-  description: Cockpit/Spine 署名 Diff 对比分析与经验样本池浏览
+  description: "Cockpit/Spine \u7F72\u540D Diff \u5BF9\u6BD4\u5206\u6790\u4E0E\u7ECF\u9A8C\u6837\u672C\u6C60\u6D4F\u89C8"
   domain: cockpit
   package: spine
   security_level: internal
@@ -4067,7 +4052,7 @@ services:
   - cockpit.cli
   - spine
   - status
-  description: Cockpit/Spine 物理算力织网与主干真值流状态监控
+  description: "Cockpit/Spine \u7269\u7406\u7B97\u529B\u7EC7\u7F51\u4E0E\u4E3B\u5E72\u771F\u503C\u6D41\u72B6\u6001\u76D1\u63A7"
   domain: cockpit
   package: spine
   security_level: internal
@@ -4085,7 +4070,7 @@ services:
   - cockpit.cli
   - spine
   - distill
-  description: Cockpit/Spine 触发 Mac mini M4 闲时在线 LoRA 蒸馏
+  description: "Cockpit/Spine \u89E6\u53D1 Mac mini M4 \u95F2\u65F6\u5728\u7EBF LoRA \u84B8\u998F"
   domain: cockpit
   package: spine
   security_level: internal
@@ -4103,7 +4088,7 @@ services:
   - cockpit.cli
   - spine
   - replay
-  description: Cockpit/Spine 经验回放水塘状态、容量与样本域分布查看
+  description: "Cockpit/Spine \u7ECF\u9A8C\u56DE\u653E\u6C34\u5858\u72B6\u6001\u3001\u5BB9\u91CF\u4E0E\u6837\u672C\u57DF\u5206\u5E03\u67E5\u770B"
   domain: cockpit
   package: spine
   security_level: internal
@@ -4119,7 +4104,7 @@ services:
   - python3
   - bin/gac/harness-compliance-check.py
   - --gate
-  description: Harness 12 章节全生命周期合规检查 (Phase 8)
+  description: "Harness 12 \u7AE0\u8282\u5168\u751F\u547D\u5468\u671F\u5408\u89C4\u68C0\u67E5 (Phase 8)"
   status: active
 - uri: bos://harness/mof/bridge
   domain: harness
@@ -4129,7 +4114,7 @@ services:
   command:
   - python3
   - bin/gac/harness-mof-bridge.py
-  description: Harness MOF 约束联动检查 (8 条 Agent-MOF 规则)
+  description: "Harness MOF \u7EA6\u675F\u8054\u52A8\u68C0\u67E5 (8 \u6761 Agent-MOF \u89C4\u5219)"
   status: active
 - uri: bos://harness/omo/bridge
   domain: harness
@@ -4139,7 +4124,7 @@ services:
   command:
   - python3
   - bin/gac/harness-omo-bridge.py
-  description: Harness OMO 状态同步检查 (Harness/GaC/漂移/已知债)
+  description: "Harness OMO \u72B6\u6001\u540C\u6B65\u68C0\u67E5 (Harness/GaC/\u6F02\u79FB/\u5DF2\u77E5\u503A)"
   status: active
 - uri: bos://harness/constraint/enforce
   domain: harness
@@ -4150,7 +4135,7 @@ services:
   - python3
   - bin/gac/harness-constraint-enforcer.py
   - --ci
-  description: Harness 统一约束与驱动 (整合 4 引擎 CI 模式)
+  description: "Harness \u7EDF\u4E00\u7EA6\u675F\u4E0E\u9A71\u52A8 (\u6574\u5408 4 \u5F15\u64CE CI \u6A21\u5F0F)"
   status: active
 - uri: bos://harness/architecture/perceive
   domain: harness
@@ -4159,7 +4144,7 @@ services:
   transport: stdio
   command:
   - .githooks/pre-edit-architecture.sh
-  description: Harness 架构感知预编辑检查 (场景卡/Journey/标准/Harness)
+  description: "Harness \u67B6\u6784\u611F\u77E5\u9884\u7F16\u8F91\u68C0\u67E5 (\u573A\u666F\u5361/Journey/\u6807\u51C6/Harness)"
   status: active
 - uri: bos://harness/compliance/full
   domain: harness
@@ -4170,7 +4155,7 @@ services:
   - python3
   - bin/gac/harness-constraint-enforcer.py
   - --ci
-  description: 全量合规检查 (arch + compliance + mof + omo)
+  description: "\u5168\u91CF\u5408\u89C4\u68C0\u67E5 (arch + compliance + mof + omo)"
   status: active
 - uri: bos://harness/run
   domain: harness
@@ -4181,8 +4166,7 @@ services:
   - python3
   - bin/harness
   - run
-  description: 'Harness 全生命周期运行 (8 阶段 DAG: admission → spec → execute → verify → audit
-    → accept)'
+  description: "Harness \u5168\u751F\u547D\u5468\u671F\u8FD0\u884C (8 \u9636\u6BB5 DAG: admission \u2192 spec \u2192 execute \u2192 verify \u2192 audit \u2192 accept)"
   status: active
 - uri: bos://harness/verify
   domain: harness
@@ -4195,7 +4179,7 @@ services:
   - verify
   - --parallel
   - --cache
-  description: Harness 并行校验 (DAG + 缓存)
+  description: "Harness \u5E76\u884C\u6821\u9A8C (DAG + \u7F13\u5B58)"
   status: active
 - uri: bos://harness/probe
   domain: harness
@@ -4207,49 +4191,49 @@ services:
   - bin/harness
   - probe
   - --emit
-  description: Harness 7 探针 + Event Bus 发射
+  description: "Harness 7 \u63A2\u9488 + Event Bus \u53D1\u5C04"
   status: active
 - uri: bos://documents/registry
   domain: documents
   package: agora
   action: read
   transport: inline
-  description: Documents L4 域注册表只读查询 (域元数据/客户端契约/能力路由)
+  description: "Documents L4 \u57DF\u6CE8\u518C\u8868\u53EA\u8BFB\u67E5\u8BE2 (\u57DF\u5143\u6570\u636E/\u5BA2\u6237\u7AEF\u5951\u7EA6/\u80FD\u529B\u8DEF\u7531)"
   status: active
 - uri: bos://documents/jobs
   domain: documents
   package: agora
   action: read
   transport: inline
-  description: Documents 运行时任务配置只读查询 (job 定义/调度/证据路径)
+  description: "Documents \u8FD0\u884C\u65F6\u4EFB\u52A1\u914D\u7F6E\u53EA\u8BFB\u67E5\u8BE2 (job \u5B9A\u4E49/\u8C03\u5EA6/\u8BC1\u636E\u8DEF\u5F84)"
   status: active
 - uri: bos://documents/state
   domain: documents
   package: agora
   action: read
   transport: inline
-  description: Documents 运行时状态只读查询
+  description: "Documents \u8FD0\u884C\u65F6\u72B6\u6001\u53EA\u8BFB\u67E5\u8BE2"
   status: active
 - uri: bos://agora/connectors/list
   domain: agora
   package: agora
   action: list
   transport: inline
-  description: 列出所有已注册连接器 (支持 status/type/package 过滤)
+  description: "\u5217\u51FA\u6240\u6709\u5DF2\u6CE8\u518C\u8FDE\u63A5\u5668 (\u652F\u6301 status/type/package \u8FC7\u6EE4)"
   status: active
 - uri: bos://agora/connectors/sync
   domain: agora
   package: agora
   action: sync
   transport: inline
-  description: 触发指定连接器的增量同步 (支持 dry_run 与 watermark)
+  description: "\u89E6\u53D1\u6307\u5B9A\u8FDE\u63A5\u5668\u7684\u589E\u91CF\u540C\u6B65 (\u652F\u6301 dry_run \u4E0E watermark)"
   status: active
 - uri: bos://agora/connectors/manifest
   domain: agora
   package: agora
   action: read
   transport: inline
-  description: 读取连接器注册表 manifest (只读)
+  description: "\u8BFB\u53D6\u8FDE\u63A5\u5668\u6CE8\u518C\u8868 manifest (\u53EA\u8BFB)"
   status: active
 - uri: bos://governance/decision/record
   domain: governance
@@ -4258,7 +4242,7 @@ services:
   transport: internal
   module_path: kairon.decision.causal_tracer
   func_name: record_decision
-  description: 记录决策到因果图
+  description: "\u8BB0\u5F55\u51B3\u7B56\u5230\u56E0\u679C\u56FE"
   status: active
 - uri: bos://governance/decision/trace-causes
   domain: governance
@@ -4267,7 +4251,7 @@ services:
   transport: internal
   module_path: kairon.decision.causal_tracer
   func_name: trace_causes
-  description: 追溯决策的因果祖先链
+  description: "\u8FFD\u6EAF\u51B3\u7B56\u7684\u56E0\u679C\u7956\u5148\u94FE"
   status: active
 - uri: bos://governance/decision/trace-effects
   domain: governance
@@ -4276,7 +4260,7 @@ services:
   transport: internal
   module_path: kairon.decision.causal_tracer
   func_name: trace_effects
-  description: 追溯决策的下游影响面
+  description: "\u8FFD\u6EAF\u51B3\u7B56\u7684\u4E0B\u6E38\u5F71\u54CD\u9762"
   status: active
 - uri: bos://memory/graph/query
   domain: memory
@@ -4285,7 +4269,7 @@ services:
   transport: internal
   module_path: kairon.graph.semantica_kernel
   func_name: query
-  description: SPARQL 查询嵌入式图引擎
+  description: "SPARQL \u67E5\u8BE2\u5D4C\u5165\u5F0F\u56FE\u5F15\u64CE"
   status: active
 - uri: bos://memory/graph/reason
   domain: memory
@@ -4294,7 +4278,7 @@ services:
   transport: internal
   module_path: kairon.graph.semantica_kernel
   func_name: reason_datalog
-  description: Datalog 确定性推理
+  description: "Datalog \u786E\u5B9A\u6027\u63A8\u7406"
   status: active
 - uri: bos://observatory/mcp-server
   domain: observatory
@@ -4309,41 +4293,327 @@ services:
   - python
   - -m
   - cockpit.observatory.mcp_server
-  description: 织星系统官方架构拓扑、并发冲突防撞与状态哨兵 FastMCP Server
+  description: "\u7EC7\u661F\u7CFB\u7EDF\u5B98\u65B9\u67B6\u6784\u62D3\u6251\u3001\u5E76\u53D1\u51B2\u7A81\u9632\u649E\u4E0E\u72B6\u6001\u54E8\u5175 FastMCP Server"
   status: active
 - uri: bos://observatory/project/perception
   domain: observatory
   package: cockpit
   action: project/perception
   transport: mcp_proxy
-  description: 获取单项目的超紧凑架构感知信息与并发写冲突状态 (<800 tokens)
+  description: "\u83B7\u53D6\u5355\u9879\u76EE\u7684\u8D85\u7D27\u51D1\u67B6\u6784\u611F\u77E5\u4FE1\u606F\u4E0E\u5E76\u53D1\u5199\u51B2\u7A81\u72B6\u6001 (<800 tokens)"
   status: unimplemented
 - uri: bos://observatory/agents/collisions
   domain: observatory
   package: cockpit
   action: agents/collisions
   transport: mcp_proxy
-  description: 全局检查 42 个未合并工作树并发写争用风险与防撞守卫建议
+  description: "\u5168\u5C40\u68C0\u67E5 42 \u4E2A\u672A\u5408\u5E76\u5DE5\u4F5C\u6811\u5E76\u53D1\u5199\u4E89\u7528\u98CE\u9669\u4E0E\u9632\u649E\u5B88\u536B\u5EFA\u8BAE"
   status: unimplemented
 - uri: bos://observatory/sentinel/status
   domain: observatory
   package: cockpit
   action: sentinel/status
   transport: mcp_proxy
-  description: 探测 16 个子模块 Gitlink 对齐状态与 7 大主权端口健康度
+  description: "\u63A2\u6D4B 16 \u4E2A\u5B50\u6A21\u5757 Gitlink \u5BF9\u9F50\u72B6\u6001\u4E0E 7 \u5927\u4E3B\u6743\u7AEF\u53E3\u5065\u5EB7\u5EA6"
   status: unimplemented
 - uri: bos://observatory/callchains/get
   domain: observatory
   package: cockpit
   action: callchains/get
   transport: internal
-  description: 获取 4 大跨层调用链时序步骤与契约规约
+  description: "\u83B7\u53D6 4 \u5927\u8DE8\u5C42\u8C03\u7528\u94FE\u65F6\u5E8F\u6B65\u9AA4\u4E0E\u5951\u7EA6\u89C4\u7EA6"
   status: unimplemented
 - uri: bos://observatory/system/overview
   domain: observatory
   package: cockpit
   action: system/overview
   transport: internal
-  description: 获取八层架构项目分布与接口大厅汇总统计
+  description: "\u83B7\u53D6\u516B\u5C42\u67B6\u6784\u9879\u76EE\u5206\u5E03\u4E0E\u63A5\u53E3\u5927\u5385\u6C47\u603B\u7EDF\u8BA1"
   status: unimplemented
-
+- uri: bos://brain/events/card_updated
+  domain: brain
+  package: events
+  action: card_updated
+  transport: internal
+  status: active
+  description: '[auto-registered] From cockpit knowledge_indexer consumer (ADR-0294 dual-accept). See bos-pending-registrations.yaml.'
+- uri: bos://memory/events/card_updated
+  domain: memory
+  package: events
+  action: card_updated
+  transport: stdio
+  status: active
+  description: "[auto-registered] From memory event migration (from brain \u2192 memory). See bos-pending-registrations.yaml."
+- uri: bos://capability/bus/control_plane
+  domain: capability
+  package: bus
+  action: control_plane
+  transport: internal
+  status: active
+  description: '[auto-registered] From bus-foundation/control_plane references. See bos-pending-registrations.yaml.'
+- uri: bos://capability/omo/governance
+  domain: capability
+  package: omo
+  action: governance
+  transport: internal
+  status: active
+  description: '[auto-registered] From omo/omo_daemon.py line 370. See bos-pending-registrations.yaml.'
+- uri: bos://capability/perception-inbox
+  domain: capability
+  package: perception-inbox
+  action: perception-inbox
+  transport: internal
+  status: active
+  description: '[auto-registered] From perception module references. See bos-pending-registrations.yaml.'
+- uri: bos://capability/personal-signals
+  domain: capability
+  package: personal-signals
+  action: personal-signals
+  transport: internal
+  status: active
+  description: '[auto-registered] From personal signals module. See bos-pending-registrations.yaml.'
+- uri: bos://capability/runtime/cron
+  domain: capability
+  package: runtime
+  action: cron
+  transport: internal
+  status: active
+  description: '[auto-registered] From runtime cron scheduling. See bos-pending-registrations.yaml.'
+- uri: bos://capability/workflow-mesh/jsonl
+  domain: capability
+  package: workflow-mesh
+  action: jsonl
+  transport: internal
+  status: active
+  description: '[auto-registered] From workflow mesh jsonl transport. See bos-pending-registrations.yaml.'
+- uri: bos://cockpit/context
+  domain: cockpit
+  package: context
+  action: context
+  transport: internal
+  status: active
+  description: '[auto-registered] From cockpit context module. See bos-pending-registrations.yaml.'
+- uri: bos://compute/aetherforge/embed
+  domain: compute
+  package: aetherforge
+  action: embed
+  transport: stdio
+  status: active
+  description: '[auto-registered] From aetherforge embed endpoint. See bos-pending-registrations.yaml.'
+- uri: bos://compute/aetherforge/fabric
+  domain: compute
+  package: aetherforge
+  action: fabric
+  transport: stdio
+  status: active
+  description: '[auto-registered] From aetherforge fabric endpoint. See bos-pending-registrations.yaml.'
+- uri: bos://compute/aetherforge/profile
+  domain: compute
+  package: aetherforge
+  action: profile
+  transport: stdio
+  status: active
+  description: '[auto-registered] From aetherforge profile endpoint. See bos-pending-registrations.yaml.'
+- uri: bos://compute/aetherforge/rerank
+  domain: compute
+  package: aetherforge
+  action: rerank
+  transport: stdio
+  status: active
+  description: '[auto-registered] From aetherforge rerank endpoint. See bos-pending-registrations.yaml.'
+- uri: bos://compute/aetherforge/triage
+  domain: compute
+  package: aetherforge
+  action: triage
+  transport: stdio
+  status: active
+  description: '[auto-registered] From aetherforge triage endpoint. See bos-pending-registrations.yaml.'
+- uri: bos://compute/aetherforge/vram
+  domain: compute
+  package: aetherforge
+  action: vram
+  transport: stdio
+  status: active
+  description: '[auto-registered] From aetherforge vram monitoring. See bos-pending-registrations.yaml.'
+- uri: bos://compute/aetherforge/warm
+  domain: compute
+  package: aetherforge
+  action: warm
+  transport: stdio
+  status: active
+  description: '[auto-registered] From aetherforge warm-start endpoint. See bos-pending-registrations.yaml.'
+- uri: bos://core/kernel/v1
+  domain: core
+  package: kernel
+  action: v1
+  transport: internal
+  status: active
+  description: '[auto-registered] From core kernel module. See bos-pending-registrations.yaml.'
+- uri: bos://domain/package
+  domain: domain
+  package: package
+  action: package
+  transport: internal
+  status: active
+  description: '[auto-registered] From domain package registry. See bos-pending-registrations.yaml.'
+- uri: bos://domain/package/action
+  domain: domain
+  package: package
+  action: action
+  transport: internal
+  status: active
+  description: '[auto-registered] From domain package action routing. See bos-pending-registrations.yaml.'
+- uri: bos://domain/subdomain/action
+  domain: domain
+  package: subdomain
+  action: action
+  transport: internal
+  status: active
+  description: '[auto-registered] From domain subdomain action routing. See bos-pending-registrations.yaml.'
+- uri: bos://event-ledger/outbox
+  domain: event-ledger
+  package: outbox
+  action: outbox
+  transport: internal
+  status: active
+  description: '[auto-registered] From event-ledger outbox pattern. See bos-pending-registrations.yaml.'
+- uri: bos://execution/workers/status
+  domain: execution
+  package: workers
+  action: status
+  transport: internal
+  status: active
+  description: '[auto-registered] From execution workers status API. See bos-pending-registrations.yaml.'
+- uri: bos://governance/cockpit/circuit_breaker
+  domain: governance
+  package: cockpit
+  action: circuit_breaker
+  transport: internal
+  status: active
+  description: '[auto-registered] From cockpit circuit breaker. See bos-pending-registrations.yaml.'
+- uri: bos://governance/cockpit/daily_budget
+  domain: governance
+  package: cockpit
+  action: daily_budget
+  transport: internal
+  status: active
+  description: '[auto-registered] From cockpit daily budget. See bos-pending-registrations.yaml.'
+- uri: bos://governance/cockpit/quests
+  domain: governance
+  package: cockpit
+  action: quests
+  transport: internal
+  status: active
+  description: '[auto-registered] From cockpit quests. See bos-pending-registrations.yaml.'
+- uri: bos://governance/l4-kernel
+  domain: governance
+  package: l4-kernel
+  action: l4-kernel
+  transport: internal
+  status: active
+  description: '[auto-registered] From l4 kernel governance. See bos-pending-registrations.yaml.'
+- uri: bos://governance/metaos_workflow
+  domain: governance
+  package: metaos_workflow
+  action: metaos_workflow
+  transport: internal
+  status: active
+  description: '[auto-registered] From metaos workflow. See bos-pending-registrations.yaml.'
+- uri: bos://governance/mof/auth
+  domain: governance
+  package: mof
+  action: auth
+  transport: internal
+  status: active
+  description: '[auto-registered] From MOF auth. See bos-pending-registrations.yaml.'
+- uri: bos://governance/protocols-layer/trigger
+  domain: governance
+  package: protocols-layer
+  action: trigger
+  transport: internal
+  status: active
+  description: '[auto-registered] From protocols layer trigger. See bos-pending-registrations.yaml.'
+- uri: bos://im/session/triage
+  domain: im
+  package: session
+  action: triage
+  transport: internal
+  status: active
+  description: '[auto-registered] From IM session triage. See bos-pending-registrations.yaml.'
+- uri: bos://inbox/mail/draft
+  domain: inbox
+  package: mail
+  action: draft
+  transport: internal
+  status: active
+  description: '[auto-registered] From inbox mail draft. See bos-pending-registrations.yaml.'
+- uri: bos://mail/draft
+  domain: mail
+  package: draft
+  action: draft
+  transport: internal
+  status: active
+  description: '[auto-registered] From mail draft service. See bos-pending-registrations.yaml.'
+- uri: bos://kairon/minerva
+  domain: kairon
+  package: minerva
+  action: minerva
+  transport: internal
+  status: active
+  description: '[auto-registered] From kairon minerva search. See bos-pending-registrations.yaml.'
+- uri: bos://memory/unified
+  domain: memory
+  package: unified
+  action: unified
+  transport: stdio
+  status: active
+  description: '[auto-registered] From unified memory API. See bos-pending-registrations.yaml.'
+- uri: bos://perception/agora/ocr
+  domain: perception
+  package: agora
+  action: ocr
+  transport: internal
+  status: active
+  description: '[auto-registered] From perception OCR via agora. See bos-pending-registrations.yaml.'
+- uri: bos://personal/followup/draft
+  domain: personal
+  package: followup
+  action: draft
+  transport: internal
+  status: active
+  description: '[auto-registered] From personal followup. See bos-pending-registrations.yaml.'
+- uri: bos://runtime/client/v1
+  domain: runtime
+  package: client
+  action: v1
+  transport: internal
+  status: active
+  description: '[auto-registered] From runtime client v1. See bos-pending-registrations.yaml.'
+- uri: bos://scene/anchor
+  domain: scene
+  package: anchor
+  action: anchor
+  transport: internal
+  status: active
+  description: '[auto-registered] From scene anchor. See bos-pending-registrations.yaml.'
+- uri: bos://test/health/ping
+  domain: test
+  package: health
+  action: ping
+  transport: internal
+  status: active
+  description: '[auto-registered] From test health ping. See bos-pending-registrations.yaml.'
+- uri: bos://vault/_state
+  domain: vault
+  package: _state
+  action: _state
+  transport: internal
+  status: active
+  description: '[auto-registered] From vault state. See bos-pending-registrations.yaml.'
+- uri: bos://voice/memo/ingest
+  domain: voice
+  package: memo
+  action: ingest
+  transport: stdio
+  status: active
+  description: '[auto-registered] From voice memo ingestion. See bos-pending-registrations.yaml.'
