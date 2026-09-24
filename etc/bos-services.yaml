@@ -4335,7 +4335,7 @@ services:
   package: events
   action: card_updated
   transport: internal
-  status: active
+  status: unimplemented
   description: '[auto-registered] From cockpit knowledge_indexer consumer (ADR-0294 dual-accept). See bos-pending-registrations.yaml.'
 - uri: bos://memory/events/card_updated
   domain: memory
@@ -4357,49 +4357,49 @@ services:
   package: bus
   action: control_plane
   transport: internal
-  status: active
+  status: unimplemented
   description: '[auto-registered] From bus-foundation/control_plane references. See bos-pending-registrations.yaml.'
 - uri: bos://capability/omo/governance
   domain: capability
   package: omo
   action: governance
   transport: internal
-  status: active
+  status: unimplemented
   description: '[auto-registered] From omo/omo_daemon.py line 370. See bos-pending-registrations.yaml.'
 - uri: bos://capability/perception-inbox
   domain: capability
   package: perception-inbox
   action: perception-inbox
   transport: internal
-  status: active
+  status: unimplemented
   description: '[auto-registered] From perception module references. See bos-pending-registrations.yaml.'
 - uri: bos://capability/personal-signals
   domain: capability
   package: personal-signals
   action: personal-signals
   transport: internal
-  status: active
+  status: unimplemented
   description: '[auto-registered] From personal signals module. See bos-pending-registrations.yaml.'
 - uri: bos://capability/runtime/cron
   domain: capability
   package: runtime
   action: cron
   transport: internal
-  status: active
+  status: unimplemented
   description: '[auto-registered] From runtime cron scheduling. See bos-pending-registrations.yaml.'
 - uri: bos://capability/workflow-mesh/jsonl
   domain: capability
   package: workflow-mesh
   action: jsonl
   transport: internal
-  status: active
+  status: unimplemented
   description: '[auto-registered] From workflow mesh jsonl transport. See bos-pending-registrations.yaml.'
 - uri: bos://cockpit/context
   domain: cockpit
   package: context
   action: context
   transport: internal
-  status: active
+  status: unimplemented
   description: '[auto-registered] From cockpit context module. See bos-pending-registrations.yaml.'
 - uri: bos://compute/aetherforge/embed
   domain: compute
@@ -4518,119 +4518,119 @@ services:
   package: kernel
   action: v1
   transport: internal
-  status: active
+  status: unimplemented
   description: '[auto-registered] From core kernel module. See bos-pending-registrations.yaml.'
 - uri: bos://toolbox/domain-package
   domain: toolbox
   package: package
   action: package
   transport: internal
-  status: active
+  status: unimplemented
   description: '[auto-registered] From domain package registry. See bos-pending-registrations.yaml.'
 - uri: bos://toolbox/domain-package-action
   domain: toolbox
   package: package
   action: action
   transport: internal
-  status: active
+  status: unimplemented
   description: '[auto-registered] From domain package action routing. See bos-pending-registrations.yaml.'
 - uri: bos://toolbox/domain-subdomain-action
   domain: toolbox
   package: subdomain
   action: action
   transport: internal
-  status: active
+  status: unimplemented
   description: '[auto-registered] From domain subdomain action routing. See bos-pending-registrations.yaml.'
 - uri: bos://capability/event-ledger/outbox
   domain: capability
   package: outbox
   action: outbox
   transport: internal
-  status: active
+  status: unimplemented
   description: '[auto-registered] From event-ledger outbox pattern. See bos-pending-registrations.yaml.'
 - uri: bos://runtime/execution-workers/status
   domain: runtime
   package: workers
   action: status
   transport: internal
-  status: active
+  status: unimplemented
   description: '[auto-registered] From execution workers status API. See bos-pending-registrations.yaml.'
 - uri: bos://governance/cockpit/circuit_breaker
   domain: governance
   package: cockpit
   action: circuit_breaker
   transport: internal
-  status: active
+  status: unimplemented
   description: '[auto-registered] From cockpit circuit breaker. See bos-pending-registrations.yaml.'
 - uri: bos://governance/cockpit/daily_budget
   domain: governance
   package: cockpit
   action: daily_budget
   transport: internal
-  status: active
+  status: unimplemented
   description: '[auto-registered] From cockpit daily budget. See bos-pending-registrations.yaml.'
 - uri: bos://governance/cockpit/quests
   domain: governance
   package: cockpit
   action: quests
   transport: internal
-  status: active
+  status: unimplemented
   description: '[auto-registered] From cockpit quests. See bos-pending-registrations.yaml.'
 - uri: bos://governance/l4-kernel
   domain: governance
   package: l4-kernel
   action: l4-kernel
   transport: internal
-  status: active
+  status: unimplemented
   description: '[auto-registered] From l4 kernel governance. See bos-pending-registrations.yaml.'
 - uri: bos://governance/metaos_workflow
   domain: governance
   package: metaos_workflow
   action: metaos_workflow
   transport: internal
-  status: active
+  status: unimplemented
   description: '[auto-registered] From metaos workflow. See bos-pending-registrations.yaml.'
 - uri: bos://governance/mof/auth
   domain: governance
   package: mof
   action: auth
   transport: internal
-  status: active
+  status: unimplemented
   description: '[auto-registered] From MOF auth. See bos-pending-registrations.yaml.'
 - uri: bos://governance/protocols-layer/trigger
   domain: governance
   package: protocols-layer
   action: trigger
   transport: internal
-  status: active
+  status: unimplemented
   description: '[auto-registered] From protocols layer trigger. See bos-pending-registrations.yaml.'
 - uri: bos://system/im-session/triage
   domain: system
   package: session
   action: triage
   transport: internal
-  status: active
+  status: unimplemented
   description: '[auto-registered] From IM session triage. See bos-pending-registrations.yaml.'
 - uri: bos://documents/inbox-mail/draft
   domain: documents
   package: mail
   action: draft
   transport: internal
-  status: active
+  status: unimplemented
   description: '[auto-registered] From inbox mail draft. See bos-pending-registrations.yaml.'
 - uri: bos://documents/mail-draft
   domain: documents
   package: draft
   action: draft
   transport: internal
-  status: active
+  status: unimplemented
   description: '[auto-registered] From mail draft service. See bos-pending-registrations.yaml.'
 - uri: bos://memory/kairon/minerva
   domain: memory
   package: minerva
   action: minerva
   transport: internal
-  status: active
+  status: unimplemented
   description: '[auto-registered] From kairon minerva search. See bos-pending-registrations.yaml.'
 - uri: bos://memory/unified
   domain: memory
@@ -4652,42 +4652,42 @@ services:
   package: agora
   action: ocr
   transport: internal
-  status: active
+  status: unimplemented
   description: '[auto-registered] From perception OCR via agora. See bos-pending-registrations.yaml.'
 - uri: bos://system/personal-followup/draft
   domain: system
   package: followup
   action: draft
   transport: internal
-  status: active
+  status: unimplemented
   description: '[auto-registered] From personal followup. See bos-pending-registrations.yaml.'
 - uri: bos://runtime/client/v1
   domain: runtime
   package: client
   action: v1
   transport: internal
-  status: active
+  status: unimplemented
   description: '[auto-registered] From runtime client v1. See bos-pending-registrations.yaml.'
 - uri: bos://perception/scene/anchor
   domain: perception
   package: anchor
   action: anchor
   transport: internal
-  status: active
+  status: unimplemented
   description: '[auto-registered] From scene anchor. See bos-pending-registrations.yaml.'
 - uri: bos://system/test-health/ping
   domain: system
   package: health
   action: ping
   transport: internal
-  status: active
+  status: unimplemented
   description: '[auto-registered] From test health ping. See bos-pending-registrations.yaml.'
 - uri: bos://system/vault/_state
   domain: system
   package: _state
   action: _state
   transport: internal
-  status: active
+  status: unimplemented
   description: '[auto-registered] From vault state. See bos-pending-registrations.yaml.'
 - uri: bos://perception/voice-memo/ingest
   domain: perception

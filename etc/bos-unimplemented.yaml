@@ -1,85 +1,178 @@
 unimplemented:
 - uri: bos://agent-cell/pool/status
-  reason: agent-cell runtime files not yet implemented (planned component); restore
-    only with verified implementation
+  reason: agent-cell runtime files not yet implemented (planned component); restore only with verified
+    implementation
 - uri: bos://agent-cell/pool/submit
-  reason: agent-cell runtime files not yet implemented (planned component); restore
-    only with verified implementation
+  reason: agent-cell runtime files not yet implemented (planned component); restore only with verified
+    implementation
 - uri: bos://agent-cell/pool/scale
-  reason: agent-cell runtime files not yet implemented (planned component); restore
-    only with verified implementation
+  reason: agent-cell runtime files not yet implemented (planned component); restore only with verified
+    implementation
 - uri: bos://agent-cell/pool/auto-scale
-  reason: agent-cell runtime files not yet implemented (planned component); restore
-    only with verified implementation
+  reason: agent-cell runtime files not yet implemented (planned component); restore only with verified
+    implementation
 - uri: bos://agent-cell/pool/metrics
-  reason: agent-cell runtime files not yet implemented (planned component); restore
-    only with verified implementation
+  reason: agent-cell runtime files not yet implemented (planned component); restore only with verified
+    implementation
 - uri: bos://agent-cell/dag/execute
-  reason: agent-cell runtime files not yet implemented (planned component); restore
-    only with verified implementation
+  reason: agent-cell runtime files not yet implemented (planned component); restore only with verified
+    implementation
 - uri: bos://agent-cell/memory/publish
-  reason: agent-cell runtime files not yet implemented (planned component); restore
-    only with verified implementation
+  reason: agent-cell runtime files not yet implemented (planned component); restore only with verified
+    implementation
 - uri: bos://agent-cell/memory/search
-  reason: agent-cell runtime files not yet implemented (planned component); restore
-    only with verified implementation
+  reason: agent-cell runtime files not yet implemented (planned component); restore only with verified
+    implementation
 - uri: bos://agent-cell/governance/audit
-  reason: agent-cell runtime files not yet implemented (planned component); restore
-    only with verified implementation
+  reason: agent-cell runtime files not yet implemented (planned component); restore only with verified
+    implementation
 - uri: bos://agent-cell/governance/report
-  reason: agent-cell runtime files not yet implemented (planned component); restore
-    only with verified implementation
+  reason: agent-cell runtime files not yet implemented (planned component); restore only with verified
+    implementation
 - uri: bos://agent-cell/config/list
-  reason: agent-cell runtime files not yet implemented (planned component); restore
-    only with verified implementation
+  reason: agent-cell runtime files not yet implemented (planned component); restore only with verified
+    implementation
 - uri: bos://agent-cell/config/create
-  reason: agent-cell runtime files not yet implemented (planned component); restore
-    only with verified implementation
+  reason: agent-cell runtime files not yet implemented (planned component); restore only with verified
+    implementation
 - uri: bos://agent-cell/plan
-  reason: agent-cell runtime files not yet implemented (planned component); restore
-    only with verified implementation
+  reason: agent-cell runtime files not yet implemented (planned component); restore only with verified
+    implementation
 - uri: bos://agent-cell/execute
-  reason: agent-cell runtime files not yet implemented (planned component); restore
-    only with verified implementation
+  reason: agent-cell runtime files not yet implemented (planned component); restore only with verified
+    implementation
 - uri: bos://agent-cell/verify
-  reason: agent-cell runtime files not yet implemented (planned component); restore
-    only with verified implementation
+  reason: agent-cell runtime files not yet implemented (planned component); restore only with verified
+    implementation
 - uri: bos://agent-cell/govern
-  reason: agent-cell runtime files not yet implemented (planned component); restore
-    only with verified implementation
+  reason: agent-cell runtime files not yet implemented (planned component); restore only with verified
+    implementation
 - uri: bos://agent-cell/pdp/evaluate
-  reason: agent-cell runtime files not yet implemented (planned component); restore
-    only with verified implementation
+  reason: agent-cell runtime files not yet implemented (planned component); restore only with verified
+    implementation
 - uri: bos://agent-cell/pep/enforce
-  reason: agent-cell runtime files not yet implemented (planned component); restore
-    only with verified implementation
+  reason: agent-cell runtime files not yet implemented (planned component); restore only with verified
+    implementation
 - uri: bos://agent-cell/memory/process
-  reason: agent-cell runtime files not yet implemented (planned component); restore
-    only with verified implementation
+  reason: agent-cell runtime files not yet implemented (planned component); restore only with verified
+    implementation
 - uri: bos://agent-cell/memory/consolidate
-  reason: agent-cell runtime files not yet implemented (planned component); restore
-    only with verified implementation
+  reason: agent-cell runtime files not yet implemented (planned component); restore only with verified
+    implementation
 - uri: bos://agent-cell/replay/run
-  reason: agent-cell runtime files not yet implemented (planned component); restore
-    only with verified implementation
+  reason: agent-cell runtime files not yet implemented (planned component); restore only with verified
+    implementation
 - uri: bos://agent-cell/replay/shadow
-  reason: agent-cell runtime files not yet implemented (planned component); restore
-    only with verified implementation
+  reason: agent-cell runtime files not yet implemented (planned component); restore only with verified
+    implementation
 - uri: bos://agent-cell/replay/eval
-  reason: agent-cell runtime files not yet implemented (planned component); restore
-    only with verified implementation
+  reason: agent-cell runtime files not yet implemented (planned component); restore only with verified
+    implementation
 - uri: bos://observatory/project/perception
-  reason: cockpit.observatory module not yet landed (in-flight BET-Y1Q4-T5-03); restore
-    when topology_engine.py merges
+  reason: cockpit.observatory module not yet landed (in-flight BET-Y1Q4-T5-03); restore when topology_engine.py
+    merges
 - uri: bos://observatory/agents/collisions
-  reason: cockpit.observatory module not yet landed (in-flight BET-Y1Q4-T5-03); restore
-    when topology_engine.py merges
+  reason: cockpit.observatory module not yet landed (in-flight BET-Y1Q4-T5-03); restore when topology_engine.py
+    merges
 - uri: bos://observatory/sentinel/status
-  reason: cockpit.observatory module not yet landed (in-flight BET-Y1Q4-T5-03); restore
-    when topology_engine.py merges
+  reason: cockpit.observatory module not yet landed (in-flight BET-Y1Q4-T5-03); restore when topology_engine.py
+    merges
 - uri: bos://observatory/callchains/get
-  reason: cockpit.observatory module not yet landed (in-flight BET-Y1Q4-T5-03); restore
-    when topology_engine.py merges
+  reason: cockpit.observatory module not yet landed (in-flight BET-Y1Q4-T5-03); restore when topology_engine.py
+    merges
 - uri: bos://observatory/system/overview
-  reason: cockpit.observatory module not yet landed (in-flight BET-Y1Q4-T5-03); restore
-    when topology_engine.py merges
+  reason: cockpit.observatory module not yet landed (in-flight BET-Y1Q4-T5-03); restore when topology_engine.py
+    merges
+- uri: bos://memory/brain-events/card_updated
+  reason: auto-registered stub without module_path/func (no executable contract yet); restore only with
+    verified implementation
+- uri: bos://capability/bus/control_plane
+  reason: auto-registered stub without module_path/func (no executable contract yet); restore only with
+    verified implementation
+- uri: bos://capability/omo/governance
+  reason: auto-registered stub without module_path/func (no executable contract yet); restore only with
+    verified implementation
+- uri: bos://capability/perception-inbox
+  reason: auto-registered stub without module_path/func (no executable contract yet); restore only with
+    verified implementation
+- uri: bos://capability/personal-signals
+  reason: auto-registered stub without module_path/func (no executable contract yet); restore only with
+    verified implementation
+- uri: bos://capability/runtime/cron
+  reason: auto-registered stub without module_path/func (no executable contract yet); restore only with
+    verified implementation
+- uri: bos://capability/workflow-mesh/jsonl
+  reason: auto-registered stub without module_path/func (no executable contract yet); restore only with
+    verified implementation
+- uri: bos://cockpit/context
+  reason: auto-registered stub without module_path/func (no executable contract yet); restore only with
+    verified implementation
+- uri: bos://system/core-kernel/v1
+  reason: auto-registered stub without module_path/func (no executable contract yet); restore only with
+    verified implementation
+- uri: bos://toolbox/domain-package
+  reason: auto-registered stub without module_path/func (no executable contract yet); restore only with
+    verified implementation
+- uri: bos://toolbox/domain-package-action
+  reason: auto-registered stub without module_path/func (no executable contract yet); restore only with
+    verified implementation
+- uri: bos://toolbox/domain-subdomain-action
+  reason: auto-registered stub without module_path/func (no executable contract yet); restore only with
+    verified implementation
+- uri: bos://capability/event-ledger/outbox
+  reason: auto-registered stub without module_path/func (no executable contract yet); restore only with
+    verified implementation
+- uri: bos://runtime/execution-workers/status
+  reason: auto-registered stub without module_path/func (no executable contract yet); restore only with
+    verified implementation
+- uri: bos://governance/cockpit/circuit_breaker
+  reason: auto-registered stub without module_path/func (no executable contract yet); restore only with
+    verified implementation
+- uri: bos://governance/cockpit/daily_budget
+  reason: auto-registered stub without module_path/func (no executable contract yet); restore only with
+    verified implementation
+- uri: bos://governance/cockpit/quests
+  reason: auto-registered stub without module_path/func (no executable contract yet); restore only with
+    verified implementation
+- uri: bos://governance/l4-kernel
+  reason: auto-registered stub without module_path/func (no executable contract yet); restore only with
+    verified implementation
+- uri: bos://governance/metaos_workflow
+  reason: auto-registered stub without module_path/func (no executable contract yet); restore only with
+    verified implementation
+- uri: bos://governance/mof/auth
+  reason: auto-registered stub without module_path/func (no executable contract yet); restore only with
+    verified implementation
+- uri: bos://governance/protocols-layer/trigger
+  reason: auto-registered stub without module_path/func (no executable contract yet); restore only with
+    verified implementation
+- uri: bos://system/im-session/triage
+  reason: auto-registered stub without module_path/func (no executable contract yet); restore only with
+    verified implementation
+- uri: bos://documents/inbox-mail/draft
+  reason: auto-registered stub without module_path/func (no executable contract yet); restore only with
+    verified implementation
+- uri: bos://documents/mail-draft
+  reason: auto-registered stub without module_path/func (no executable contract yet); restore only with
+    verified implementation
+- uri: bos://memory/kairon/minerva
+  reason: auto-registered stub without module_path/func (no executable contract yet); restore only with
+    verified implementation
+- uri: bos://perception/agora/ocr
+  reason: auto-registered stub without module_path/func (no executable contract yet); restore only with
+    verified implementation
+- uri: bos://system/personal-followup/draft
+  reason: auto-registered stub without module_path/func (no executable contract yet); restore only with
+    verified implementation
+- uri: bos://runtime/client/v1
+  reason: auto-registered stub without module_path/func (no executable contract yet); restore only with
+    verified implementation
+- uri: bos://perception/scene/anchor
+  reason: auto-registered stub without module_path/func (no executable contract yet); restore only with
+    verified implementation
+- uri: bos://system/test-health/ping
+  reason: auto-registered stub without module_path/func (no executable contract yet); restore only with
+    verified implementation
+- uri: bos://system/vault/_state
+  reason: auto-registered stub without module_path/func (no executable contract yet); restore only with
+    verified implementation
