@@ -1461,7 +1461,7 @@ services:
   description: "[UNIMPLEMENTED] Iris \u8FDE\u63A5 (POC stdio)"
   domain: analysis
   package: iris
-  status: deprecated
+  status: unimplemented
   transport: mcp_stdio
   uri: bos://analysis/iris/connect
   note: "BET-Y1Q3-T1-05: \u65E0\u5B9E\u73B0, \u6807 deprecated (\u58F0\u660E\u8BDA\u5B9E, \u4E0D\u5806\u79EF unimplemented)"
@@ -1480,7 +1480,7 @@ services:
   description: "[UNIMPLEMENTED] Iris \u6570\u636E\u8F6C\u6362 (POC stdio)"
   domain: analysis
   package: iris
-  status: deprecated
+  status: unimplemented
   transport: mcp_stdio
   uri: bos://analysis/iris/transform
   note: "BET-Y1Q3-T1-05: \u65E0\u5B9E\u73B0, \u6807 deprecated (\u58F0\u660E\u8BDA\u5B9E, \u4E0D\u5806\u79EF unimplemented)"
@@ -1499,7 +1499,7 @@ services:
   description: "[UNIMPLEMENTED] Iris \u6570\u636E\u6821\u9A8C (POC stdio)"
   domain: analysis
   package: iris
-  status: deprecated
+  status: unimplemented
   transport: mcp_stdio
   uri: bos://analysis/iris/validate
   note: "BET-Y1Q3-T1-05: \u65E0\u5B9E\u73B0, \u6807 deprecated (\u58F0\u660E\u8BDA\u5B9E, \u4E0D\u5806\u79EF unimplemented)"
