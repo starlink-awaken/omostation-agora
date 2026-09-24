@@ -462,6 +462,10 @@ class TestKaironMainEntries:
                 "run",
                 "--directory",
                 str(KAIRON_ROOT),
+                # minerva 是 uv workspace member, 根 venv 不自动含它 —
+                # --package 按需解析 member 环境 (裸 -m minerva → No module named)
+                "--package",
+                "minerva",
                 "python",
                 "-m",
                 "minerva",

@@ -3572,9 +3572,15 @@ services:
   transport: stdio
   status: active
   command:
+  - uv
+  - run
+  - --directory
+  - projects/omo
   - python3
-  - projects/omo/src/omo/resident/cell_pool.py
+  - src/omo/resident/cell_pool.py
   - --action
+  - status
+  description: Cell Pool 状态 — 多 Cell 并行运行状态
   description: "Cell Pool \u72B6\u6001 \u2014 \u591A Cell \u5E76\u884C\u8FD0\u884C\u72B6\u6001"
 - domain: agent-cell
   package: cell-pool
@@ -3629,19 +3635,23 @@ services:
   action: execute
   uri: bos://agent-cell/dag/execute
   transport: stdio
-  status: unimplemented
+  status: active
   command:
+  - uv
+  - run
+  - --directory
+  - projects/omo
   - python3
-  - projects/omo/src/omo/resident/cell_dag.py
+  - src/omo/resident/cell_dag.py
   - --demo
   - --json
-  description: "[UNIMPLEMENTED] Cell DAG \u6267\u884C \u2014 \u8DE8 Cell \u7F16\u6392"
+  description: "Cell DAG 执行 — 跨 Cell 编排"
 - domain: agent-cell
   package: cell-memory
   action: publish
   uri: bos://agent-cell/memory/publish
   transport: stdio
-  status: unimplemented
+  status: active
   command:
   - python3
   - projects/omo/src/omo/resident/cell_memory_network.py
@@ -3651,13 +3661,13 @@ services:
   - default
   - --content
   - '{"content":""}'
-  description: "[UNIMPLEMENTED] Memory Publish \u2014 \u53D1\u5E03\u8BB0\u5FC6\u5230\u7F51\u7EDC"
+  description: "Memory Publish — 发布记忆到网络"
 - domain: agent-cell
   package: cell-memory
   action: search
   uri: bos://agent-cell/memory/search
   transport: stdio
-  status: unimplemented
+  status: active
   command:
   - python3
   - projects/omo/src/omo/resident/cell_memory_network.py
@@ -3665,202 +3675,220 @@ services:
   - search
   - --query
   - '{"query":""}'
-  description: "[UNIMPLEMENTED] Memory Search \u2014 \u8DE8 Cell \u641C\u7D22"
+  description: "Memory Search — 跨 Cell 搜索"
 - domain: agent-cell
   package: cell-governance
   action: audit
   uri: bos://agent-cell/governance/audit
   transport: stdio
-  status: unimplemented
+  status: active
   command:
+  - uv
+  - run
+  - --directory
+  - projects/omo
   - python3
-  - projects/omo/src/omo/resident/cell_governance.py
+  - src/omo/resident/cell_governance.py
   - --action
   - audit-config
   - --config
   - '{"max_cells":4}'
-  description: "[UNIMPLEMENTED] Governance Audit \u2014 \u914D\u7F6E\u5408\u89C4\u5BA1\u8BA1"
+  description: "Governance Audit — 配置合规审计"
 - domain: agent-cell
   package: cell-governance
   action: report
   uri: bos://agent-cell/governance/report
   transport: stdio
-  status: unimplemented
+  status: active
   command:
+  - uv
+  - run
+  - --directory
+  - projects/omo
   - python3
-  - projects/omo/src/omo/resident/cell_governance.py
+  - src/omo/resident/cell_governance.py
   - --action
   - report
-  description: "[UNIMPLEMENTED] Governance Report \u2014 \u6CBB\u7406\u62A5\u544A"
+  description: "Governance Report — 治理报告"
 - domain: agent-cell
   package: cell-config
   action: list
   uri: bos://agent-cell/config/list
   transport: stdio
-  status: unimplemented
+  status: active
   command:
   - python3
   - projects/omo/src/omo/resident/cell_config.py
   - --list
   - --json
-  description: "[UNIMPLEMENTED] Cell Config \u5217\u8868 \u2014 \u5217\u51FA\u9884\u8BBE\u914D\u7F6E"
+  description: "Cell Config 列表 — 列出预设配置"
 - domain: agent-cell
   package: cell-config
   action: create
   uri: bos://agent-cell/config/create
   transport: stdio
-  status: unimplemented
+  status: active
   command:
   - python3
   - projects/omo/src/omo/resident/cell_config.py
   - --create
   - --json
-  description: "[UNIMPLEMENTED] Cell Config \u521B\u5EFA \u2014 \u4ECE\u9884\u8BBE\u521B\u5EFA Cell"
+  description: "Cell Config 创建 — 从预设创建 Cell"
 - domain: agent-cell
   package: cell-core
   action: plan
   uri: bos://agent-cell/plan
   transport: stdio
-  status: unimplemented
+  status: active
   command:
   - python3
   - projects/omo/src/omo/resident/planner.py
   - --intent
   - '{"intent":""}'
   - --json
-  description: "[UNIMPLEMENTED] Cell Plan \u2014 \u610F\u56FE\u89E3\u6790 + \u4EFB\u52A1\u5206\u89E3 + \u98CE\u9669\u8BC4\u4F30"
+  description: "Cell Plan — 意图解析 + 任务分解 + 风险评估"
 - domain: agent-cell
   package: cell-core
   action: execute
   uri: bos://agent-cell/execute
   transport: stdio
-  status: unimplemented
+  status: active
   command:
   - python3
   - projects/omo/src/omo/resident/executor.py
   - --plan
   - '{"tasks":[]}'
-  - --json
-  description: "[UNIMPLEMENTED] Cell Execute \u2014 \u6309\u8BA1\u5212\u6267\u884C + \u5DE5\u5177\u8C03\u7528 + \u4EA7\u51FA\u6536\u96C6"
+  description: "Cell Execute — 按计划执行 + 工具调用 + 产出收集"
 - domain: agent-cell
   package: cell-core
   action: verify
   uri: bos://agent-cell/verify
   transport: stdio
-  status: unimplemented
+  status: active
   command:
   - python3
   - projects/omo/src/omo/resident/verifier.py
   - --result
   - '{"results":[]}'
-  - --json
-  description: "[UNIMPLEMENTED] Cell Verify \u2014 \u5B8C\u6574\u6027 + \u6B63\u786E\u6027 + \u8D28\u91CF\u4E09\u7EF4\u8BC4\u5206"
+  description: "Cell Verify — 完整性 + 正确性 + 质量三维评分"
 - domain: agent-cell
   package: cell-core
   action: govern
   uri: bos://agent-cell/govern
   transport: stdio
-  status: unimplemented
+  status: active
   command:
   - python3
   - projects/omo/src/omo/resident/governor.py
   - --assess
   - '{"action":""}'
-  - --json
-  description: "[UNIMPLEMENTED] Cell Govern \u2014 R0-R3 \u98CE\u9669\u5206\u7EA7 + \u5BA1\u6279\u51B3\u7B56"
+  description: "Cell Govern — R0-R3 风险分级 + 审批决策"
 - domain: agent-cell
   package: cell-policy
   action: pdp-evaluate
   uri: bos://agent-cell/pdp/evaluate
   transport: stdio
-  status: unimplemented
+  status: active
   command:
+  - uv
+  - run
+  - --directory
+  - projects/omo
   - python3
-  - projects/omo/src/omo/resident/pdp_pep.py
+  - src/omo/resident/pdp_pep.py
   - --action
   - '{"action":""}'
-  - --json
-  description: "[UNIMPLEMENTED] PDP Evaluate \u2014 \u7B56\u7565\u51B3\u7B56\u70B9\u4E0A\u4E0B\u6587\u611F\u77E5\u8BC4\u4F30"
+  description: "PDP Evaluate — 策略决策点上下文感知评估"
 - domain: agent-cell
   package: cell-policy
   action: pep-enforce
   uri: bos://agent-cell/pep/enforce
   transport: stdio
-  status: unimplemented
+  status: active
   command:
+  - uv
+  - run
+  - --directory
+  - projects/omo
   - python3
-  - projects/omo/src/omo/resident/pdp_pep.py
+  - src/omo/resident/pdp_pep.py
   - --enforce
   - --action
   - '{"action":""}'
-  - --json
-  description: "[UNIMPLEMENTED] PEP Enforce \u2014 \u7B56\u7565\u6267\u884C\u70B9\u5F3A\u5236\u6267\u884C + \u5BA1\u8BA1"
+  description: "PEP Enforce — 策略执行点强制执行 + 审计"
 - domain: agent-cell
   package: cell-memory
   action: memory-process
   uri: bos://agent-cell/memory/process
   transport: stdio
-  status: unimplemented
+  status: active
   command:
   - python3
   - projects/omo/src/omo/resident/memory_pipeline.py
   - --process
   - '{"episode_id":""}'
-  - --json
-  description: "[UNIMPLEMENTED] Memory Process \u2014 Episode \u2192 \u8BB0\u5FC6\u5019\u9009\u751F\u6210"
+  description: "Memory Process — Episode → 记忆候选生成"
 - domain: agent-cell
   package: cell-memory
   action: memory-consolidate
   uri: bos://agent-cell/memory/consolidate
   transport: stdio
-  status: unimplemented
+  status: active
   command:
   - python3
   - projects/omo/src/omo/resident/memory_pipeline.py
   - --consolidate
-  - --json
-  description: "[UNIMPLEMENTED] Memory Consolidate \u2014 \u8BB0\u5FC6\u51B2\u7A81\u68C0\u6D4B + \u6574\u5408"
+  description: "Memory Consolidate — 记忆冲突检测 + 整合"
 - domain: agent-cell
   package: cell-replay
   action: replay
   uri: bos://agent-cell/replay/run
   transport: stdio
-  status: unimplemented
+  status: active
   command:
+  - uv
+  - run
+  - --directory
+  - projects/omo
   - python3
-  - projects/omo/src/omo/resident/replay.py
+  - src/omo/resident/replay.py
   - --replay
   - '{"episode_id":""}'
-  - --json
-  description: "[UNIMPLEMENTED] Replay \u2014 Episode \u56DE\u653E\u9A8C\u8BC1"
+  description: "Replay — Episode 回放验证"
 - domain: agent-cell
   package: cell-replay
   action: shadow
   uri: bos://agent-cell/replay/shadow
   transport: stdio
-  status: unimplemented
+  status: active
   command:
+  - uv
+  - run
+  - --directory
+  - projects/omo
   - python3
-  - projects/omo/src/omo/resident/replay.py
+  - src/omo/resident/replay.py
   - --shadow
   - --intent
   - '{"intent":""}'
-  - --json
-  description: "[UNIMPLEMENTED] Shadow \u2014 \u5F71\u5B50\u8FD0\u884C (\u65E0\u526F\u4F5C\u7528\u9A8C\u8BC1)"
+  description: "Shadow — 影子运行 (无副作用验证)"
 - domain: agent-cell
   package: cell-replay
   action: eval
   uri: bos://agent-cell/replay/eval
   transport: stdio
-  status: unimplemented
+  status: active
   command:
+  - uv
+  - run
+  - --directory
+  - projects/omo
   - python3
-  - projects/omo/src/omo/resident/replay.py
+  - src/omo/resident/replay.py
   - --eval
   - --episodes
-  - '5'
-  - --json
-  description: "[UNIMPLEMENTED] Eval \u2014 \u6279\u91CF Episode \u6027\u80FD\u8BC4\u4F30"
+  - "5"
+  description: "Eval — 批量 Episode 性能评估"
 - domain: bcos
   package: bcos-evolution
   action: evolve
@@ -4279,13 +4307,6 @@ services:
   func_name: reason_datalog
   description: "Datalog \u786E\u5B9A\u6027\u63A8\u7406"
   status: active
-- uri: bos://memory/brain-events/card_updated
-  domain: memory
-  package: events
-  action: card_updated
-  transport: internal
-  status: unimplemented
-  description: '[UNIMPLEMENTED] [auto-registered] From cockpit knowledge_indexer consumer (ADR-0294 dual-accept). See bos-pending-registrations.yaml.'
 - uri: bos://memory/events/card_updated
   domain: memory
   package: events
@@ -4595,9 +4616,11 @@ services:
   domain: perception
   package: agora
   action: ocr
+  status: active
   transport: internal
-  status: unimplemented
-  description: '[UNIMPLEMENTED] [auto-registered] From perception OCR via agora. See bos-pending-registrations.yaml.'
+  module_path: agora.server.tools_bos.ocr
+  func_name: bos_ocr_extract
+  description: "本地 OCR 提取 (Vision framework, 无 Vision 环境诚实降级 stub) — 布局/表格/印章/手写结构化输出"
 - uri: bos://system/personal-followup/draft
   domain: system
   package: followup
