@@ -4330,8 +4330,8 @@ services:
   transport: internal
   description: "\u83B7\u53D6\u516B\u5C42\u67B6\u6784\u9879\u76EE\u5206\u5E03\u4E0E\u63A5\u53E3\u5927\u5385\u6C47\u603B\u7EDF\u8BA1"
   status: unimplemented
-- uri: bos://brain/events/card_updated
-  domain: brain
+- uri: bos://memory/brain-events/card_updated
+  domain: memory
   package: events
   action: card_updated
   transport: internal
@@ -4343,6 +4343,14 @@ services:
   action: card_updated
   transport: stdio
   status: active
+  command:
+  - uv
+  - run
+  - --directory
+  - projects/cockpit
+  - python
+  - -c
+  - from cockpit.web import knowledge_indexer
   description: "[auto-registered] From memory event migration (from brain \u2192 memory). See bos-pending-registrations.yaml."
 - uri: bos://capability/bus/control_plane
   domain: capability
@@ -4399,6 +4407,15 @@ services:
   action: embed
   transport: stdio
   status: active
+  command:
+  - uv
+  - run
+  - --directory
+  - projects/aetherforge
+  - python
+  - -m
+  - aetherforge.cli
+  - embed
   description: '[auto-registered] From aetherforge embed endpoint. See bos-pending-registrations.yaml.'
 - uri: bos://compute/aetherforge/fabric
   domain: compute
@@ -4406,6 +4423,15 @@ services:
   action: fabric
   transport: stdio
   status: active
+  command:
+  - uv
+  - run
+  - --directory
+  - projects/aetherforge
+  - python
+  - -m
+  - aetherforge.cli
+  - fabric
   description: '[auto-registered] From aetherforge fabric endpoint. See bos-pending-registrations.yaml.'
 - uri: bos://compute/aetherforge/profile
   domain: compute
@@ -4413,6 +4439,15 @@ services:
   action: profile
   transport: stdio
   status: active
+  command:
+  - uv
+  - run
+  - --directory
+  - projects/aetherforge
+  - python
+  - -m
+  - aetherforge.cli
+  - profile
   description: '[auto-registered] From aetherforge profile endpoint. See bos-pending-registrations.yaml.'
 - uri: bos://compute/aetherforge/rerank
   domain: compute
@@ -4420,6 +4455,15 @@ services:
   action: rerank
   transport: stdio
   status: active
+  command:
+  - uv
+  - run
+  - --directory
+  - projects/aetherforge
+  - python
+  - -m
+  - aetherforge.cli
+  - rerank
   description: '[auto-registered] From aetherforge rerank endpoint. See bos-pending-registrations.yaml.'
 - uri: bos://compute/aetherforge/triage
   domain: compute
@@ -4427,6 +4471,15 @@ services:
   action: triage
   transport: stdio
   status: active
+  command:
+  - uv
+  - run
+  - --directory
+  - projects/aetherforge
+  - python
+  - -m
+  - aetherforge.cli
+  - triage
   description: '[auto-registered] From aetherforge triage endpoint. See bos-pending-registrations.yaml.'
 - uri: bos://compute/aetherforge/vram
   domain: compute
@@ -4434,6 +4487,15 @@ services:
   action: vram
   transport: stdio
   status: active
+  command:
+  - uv
+  - run
+  - --directory
+  - projects/aetherforge
+  - python
+  - -m
+  - aetherforge.cli
+  - vram
   description: '[auto-registered] From aetherforge vram monitoring. See bos-pending-registrations.yaml.'
 - uri: bos://compute/aetherforge/warm
   domain: compute
@@ -4441,44 +4503,53 @@ services:
   action: warm
   transport: stdio
   status: active
+  command:
+  - uv
+  - run
+  - --directory
+  - projects/aetherforge
+  - python
+  - -m
+  - aetherforge.cli
+  - warm
   description: '[auto-registered] From aetherforge warm-start endpoint. See bos-pending-registrations.yaml.'
-- uri: bos://core/kernel/v1
-  domain: core
+- uri: bos://system/core-kernel/v1
+  domain: system
   package: kernel
   action: v1
   transport: internal
   status: active
   description: '[auto-registered] From core kernel module. See bos-pending-registrations.yaml.'
-- uri: bos://domain/package
-  domain: domain
+- uri: bos://toolbox/domain-package
+  domain: toolbox
   package: package
   action: package
   transport: internal
   status: active
   description: '[auto-registered] From domain package registry. See bos-pending-registrations.yaml.'
-- uri: bos://domain/package/action
-  domain: domain
+- uri: bos://toolbox/domain-package-action
+  domain: toolbox
   package: package
   action: action
   transport: internal
   status: active
   description: '[auto-registered] From domain package action routing. See bos-pending-registrations.yaml.'
-- uri: bos://domain/subdomain/action
-  domain: domain
+- uri: bos://toolbox/domain-subdomain-action
+  domain: toolbox
   package: subdomain
   action: action
   transport: internal
   status: active
   description: '[auto-registered] From domain subdomain action routing. See bos-pending-registrations.yaml.'
-- uri: bos://event-ledger/outbox
-  domain: event-ledger
+- uri: bos://capability/event-ledger/outbox
+  domain: capability
   package: outbox
   action: outbox
   transport: internal
   status: active
   description: '[auto-registered] From event-ledger outbox pattern. See bos-pending-registrations.yaml.'
-- uri: bos://execution/workers/status
-  domain: execution
+- uri: bos://runtime/execution-workers/status
+  domain: runtime
   package: workers
   action: status
   transport: internal
@@ -4533,29 +4604,29 @@ services:
   transport: internal
   status: active
   description: '[auto-registered] From protocols layer trigger. See bos-pending-registrations.yaml.'
-- uri: bos://im/session/triage
-  domain: im
+- uri: bos://system/im-session/triage
+  domain: system
   package: session
   action: triage
   transport: internal
   status: active
   description: '[auto-registered] From IM session triage. See bos-pending-registrations.yaml.'
-- uri: bos://inbox/mail/draft
-  domain: inbox
+- uri: bos://documents/inbox-mail/draft
+  domain: documents
   package: mail
   action: draft
   transport: internal
   status: active
   description: '[auto-registered] From inbox mail draft. See bos-pending-registrations.yaml.'
-- uri: bos://mail/draft
-  domain: mail
+- uri: bos://documents/mail-draft
+  domain: documents
   package: draft
   action: draft
   transport: internal
   status: active
   description: '[auto-registered] From mail draft service. See bos-pending-registrations.yaml.'
-- uri: bos://kairon/minerva
-  domain: kairon
+- uri: bos://memory/kairon/minerva
+  domain: memory
   package: minerva
   action: minerva
   transport: internal
@@ -4567,6 +4638,14 @@ services:
   action: unified
   transport: stdio
   status: active
+  command:
+  - uv
+  - run
+  - --directory
+  - projects/knowledge/kairon/packages/mos
+  - python
+  - -c
+  - from mos.unified import default_unified_memory; default_unified_memory()
   description: '[auto-registered] From unified memory API. See bos-pending-registrations.yaml.'
 - uri: bos://perception/agora/ocr
   domain: perception
@@ -4575,8 +4654,8 @@ services:
   transport: internal
   status: active
   description: '[auto-registered] From perception OCR via agora. See bos-pending-registrations.yaml.'
-- uri: bos://personal/followup/draft
-  domain: personal
+- uri: bos://system/personal-followup/draft
+  domain: system
   package: followup
   action: draft
   transport: internal
@@ -4589,31 +4668,39 @@ services:
   transport: internal
   status: active
   description: '[auto-registered] From runtime client v1. See bos-pending-registrations.yaml.'
-- uri: bos://scene/anchor
-  domain: scene
+- uri: bos://perception/scene/anchor
+  domain: perception
   package: anchor
   action: anchor
   transport: internal
   status: active
   description: '[auto-registered] From scene anchor. See bos-pending-registrations.yaml.'
-- uri: bos://test/health/ping
-  domain: test
+- uri: bos://system/test-health/ping
+  domain: system
   package: health
   action: ping
   transport: internal
   status: active
   description: '[auto-registered] From test health ping. See bos-pending-registrations.yaml.'
-- uri: bos://vault/_state
-  domain: vault
+- uri: bos://system/vault/_state
+  domain: system
   package: _state
   action: _state
   transport: internal
   status: active
   description: '[auto-registered] From vault state. See bos-pending-registrations.yaml.'
-- uri: bos://voice/memo/ingest
-  domain: voice
+- uri: bos://perception/voice-memo/ingest
+  domain: perception
   package: memo
   action: ingest
   transport: stdio
   status: active
+  command:
+  - uv
+  - run
+  - --directory
+  - projects/agora
+  - python
+  - -c
+  - from agora.server.tools_bos.voice import ingest_memo
   description: '[auto-registered] From voice memo ingestion. See bos-pending-registrations.yaml.'
