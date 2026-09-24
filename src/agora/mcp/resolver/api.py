@@ -53,6 +53,8 @@ def normalize_bos_uri(uri: str) -> str:
         f"{_LEGACY_PERSONA_BRIDGE_URI_PREFIX}recall-entity": f"{_CANONICAL_PERSONA_BRIDGE_URI_PREFIX}recall-entity",
         f"{_LEGACY_PERSONA_BRIDGE_URI_PREFIX}recall": f"{_CANONICAL_PERSONA_BRIDGE_URI_PREFIX}recall",
         f"{_LEGACY_PERSONA_BRIDGE_URI_PREFIX}sync": f"{_CANONICAL_PERSONA_BRIDGE_URI_PREFIX}sync",
+        # ADR-0294 dual-accept legacy 名: brain → memory 迁移遗留 (cockpit/AGENTS.md 等文档引用)
+        "bos://memory/brain-events/card_updated": "bos://memory/events/card_updated",
     }
     return _LEGACY_BOS_URI_ALIASES.get(uri, uri)
 
