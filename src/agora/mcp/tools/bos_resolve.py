@@ -25,17 +25,20 @@ mcp = FastMCP("agora-bos-resolver")
 
 
 @mcp.tool()
-def bos_resolve(uri: str) -> dict:
+def bos_resolve(uri: str, arguments: dict | None = None) -> dict:
     """解析 BOS URI 到实际 MCP 调用 (战役 1 入口).
 
     Args:
         uri: bos://<domain>/<package>/<action> 形式 (e.g. bos://memory/kos/search)
+        arguments: 可选调用参数 — internal handler 的 args dict。此前 tool 签名
+            只有 uri，调用类 URI (如 bos://memory/local/all-search) 的 payload
+            无法通过 HTTP 链路传递，所有请求都会 missing_query (2026-09-24 实证)。
     """
     try:
         # 同步包装 async resolve_bos_uri
         import asyncio as _aio
 
-        result = _aio.run(resolve_bos_uri(uri))
+        result = _aio.run(resolve_bos_uri(uri, arguments=arguments or {}))
         return _ok(
             {
                 "format_version": FORMAT_VERSION,
