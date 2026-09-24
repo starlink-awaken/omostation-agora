@@ -396,6 +396,10 @@ async def resolve_bos_uri(
 
             # 构造调用参数: kwargs 里可能的 `arguments` 键 (tools/call 风格) 或直接 kwargs
             call_args_dict = kwargs.get("arguments", kwargs)
+            if not call_args_dict and args and isinstance(args[0], dict):
+                # 兼容位置参数契约: resolve_bos_uri(uri, payload) — cockpit compat 降级路径
+                # 此前位置 payload 被丢弃 → internal handler 收到空 dict → missing_query (2026-09-24 实证)
+                call_args_dict = args[0]
             if isinstance(call_args_dict, str):
                 import json as _json
 
