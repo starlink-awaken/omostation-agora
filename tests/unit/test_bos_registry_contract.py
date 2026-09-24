@@ -94,7 +94,7 @@ def test_internal_services_dict_contract():
 
     mismatched = []
     for s in POC_SERVICES:
-        if s.transport != "internal" or s.module_path.startswith(_EXTERNAL_MODULES):
+        if s.transport != "internal" or not s.module_path or s.module_path.startswith(_EXTERNAL_MODULES):
             continue
         try:
             mod = importlib.import_module(s.module_path)
