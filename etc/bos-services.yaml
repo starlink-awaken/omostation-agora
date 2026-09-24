@@ -3570,12 +3570,11 @@ services:
   action: status
   uri: bos://agent-cell/pool/status
   transport: stdio
-  status: unimplemented
+  status: active
   command:
   - python3
   - projects/omo/src/omo/resident/cell_pool.py
-  - --status
-  - --json
+  - --action
   description: "Cell Pool \u72B6\u6001 \u2014 \u591A Cell \u5E76\u884C\u8FD0\u884C\u72B6\u6001"
 - domain: agent-cell
   package: cell-pool
@@ -3588,7 +3587,7 @@ services:
   - projects/omo/src/omo/resident/cell_pool.py
   - --submit
   - --json
-  description: "Cell Pool \u63D0\u4EA4 \u2014 \u63D0\u4EA4 Episode \u5230 Cell Pool"
+  description: "[UNIMPLEMENTED] Cell Pool \u63D0\u4EA4 \u2014 \u63D0\u4EA4 Episode \u5230 Cell Pool"
 - domain: agent-cell
   package: cell-pool
   action: scale
@@ -3600,7 +3599,7 @@ services:
   - projects/omo/src/omo/resident/cell_pool.py
   - --scale
   - --json
-  description: "Cell Pool \u6269\u7F29\u5BB9 \u2014 \u8C03\u6574 Cell \u6570\u91CF"
+  description: "[UNIMPLEMENTED] Cell Pool \u6269\u7F29\u5BB9 \u2014 \u8C03\u6574 Cell \u6570\u91CF"
 - domain: agent-cell
   package: cell-pool
   action: auto-scale
@@ -3612,7 +3611,7 @@ services:
   - projects/omo/src/omo/resident/cell_pool.py
   - --auto-scale
   - --json
-  description: "Cell Pool \u81EA\u52A8\u6269\u7F29\u5BB9 \u2014 \u57FA\u4E8E\u8D1F\u8F7D\u81EA\u52A8\u8C03\u6574"
+  description: "[UNIMPLEMENTED] Cell Pool \u81EA\u52A8\u6269\u7F29\u5BB9 \u2014 \u57FA\u4E8E\u8D1F\u8F7D\u81EA\u52A8\u8C03\u6574"
 - domain: agent-cell
   package: cell-pool
   action: metrics
@@ -3624,7 +3623,7 @@ services:
   - projects/omo/src/omo/resident/cell_pool.py
   - --metrics
   - --json
-  description: "Cell Pool \u6307\u6807 \u2014 \u8BE6\u7EC6\u76D1\u63A7\u6307\u6807"
+  description: "[UNIMPLEMENTED] Cell Pool \u6307\u6807 \u2014 \u8BE6\u7EC6\u76D1\u63A7\u6307\u6807"
 - domain: agent-cell
   package: cell-dag
   action: execute
@@ -3636,7 +3635,7 @@ services:
   - projects/omo/src/omo/resident/cell_dag.py
   - --demo
   - --json
-  description: "Cell DAG \u6267\u884C \u2014 \u8DE8 Cell \u7F16\u6392"
+  description: "[UNIMPLEMENTED] Cell DAG \u6267\u884C \u2014 \u8DE8 Cell \u7F16\u6392"
 - domain: agent-cell
   package: cell-memory
   action: publish
@@ -3652,7 +3651,7 @@ services:
   - default
   - --content
   - '{"content":""}'
-  description: "Memory Publish \u2014 \u53D1\u5E03\u8BB0\u5FC6\u5230\u7F51\u7EDC"
+  description: "[UNIMPLEMENTED] Memory Publish \u2014 \u53D1\u5E03\u8BB0\u5FC6\u5230\u7F51\u7EDC"
 - domain: agent-cell
   package: cell-memory
   action: search
@@ -3666,7 +3665,7 @@ services:
   - search
   - --query
   - '{"query":""}'
-  description: "Memory Search \u2014 \u8DE8 Cell \u641C\u7D22"
+  description: "[UNIMPLEMENTED] Memory Search \u2014 \u8DE8 Cell \u641C\u7D22"
 - domain: agent-cell
   package: cell-governance
   action: audit
@@ -3680,7 +3679,7 @@ services:
   - audit-config
   - --config
   - '{"max_cells":4}'
-  description: "Governance Audit \u2014 \u914D\u7F6E\u5408\u89C4\u5BA1\u8BA1"
+  description: "[UNIMPLEMENTED] Governance Audit \u2014 \u914D\u7F6E\u5408\u89C4\u5BA1\u8BA1"
 - domain: agent-cell
   package: cell-governance
   action: report
@@ -3692,7 +3691,7 @@ services:
   - projects/omo/src/omo/resident/cell_governance.py
   - --action
   - report
-  description: "Governance Report \u2014 \u6CBB\u7406\u62A5\u544A"
+  description: "[UNIMPLEMENTED] Governance Report \u2014 \u6CBB\u7406\u62A5\u544A"
 - domain: agent-cell
   package: cell-config
   action: list
@@ -3704,7 +3703,7 @@ services:
   - projects/omo/src/omo/resident/cell_config.py
   - --list
   - --json
-  description: "Cell Config \u5217\u8868 \u2014 \u5217\u51FA\u9884\u8BBE\u914D\u7F6E"
+  description: "[UNIMPLEMENTED] Cell Config \u5217\u8868 \u2014 \u5217\u51FA\u9884\u8BBE\u914D\u7F6E"
 - domain: agent-cell
   package: cell-config
   action: create
@@ -3716,7 +3715,7 @@ services:
   - projects/omo/src/omo/resident/cell_config.py
   - --create
   - --json
-  description: "Cell Config \u521B\u5EFA \u2014 \u4ECE\u9884\u8BBE\u521B\u5EFA Cell"
+  description: "[UNIMPLEMENTED] Cell Config \u521B\u5EFA \u2014 \u4ECE\u9884\u8BBE\u521B\u5EFA Cell"
 - domain: agent-cell
   package: cell-core
   action: plan
@@ -3729,7 +3728,7 @@ services:
   - --intent
   - '{"intent":""}'
   - --json
-  description: "Cell Plan \u2014 \u610F\u56FE\u89E3\u6790 + \u4EFB\u52A1\u5206\u89E3 + \u98CE\u9669\u8BC4\u4F30"
+  description: "[UNIMPLEMENTED] Cell Plan \u2014 \u610F\u56FE\u89E3\u6790 + \u4EFB\u52A1\u5206\u89E3 + \u98CE\u9669\u8BC4\u4F30"
 - domain: agent-cell
   package: cell-core
   action: execute
@@ -3742,7 +3741,7 @@ services:
   - --plan
   - '{"tasks":[]}'
   - --json
-  description: "Cell Execute \u2014 \u6309\u8BA1\u5212\u6267\u884C + \u5DE5\u5177\u8C03\u7528 + \u4EA7\u51FA\u6536\u96C6"
+  description: "[UNIMPLEMENTED] Cell Execute \u2014 \u6309\u8BA1\u5212\u6267\u884C + \u5DE5\u5177\u8C03\u7528 + \u4EA7\u51FA\u6536\u96C6"
 - domain: agent-cell
   package: cell-core
   action: verify
@@ -3755,7 +3754,7 @@ services:
   - --result
   - '{"results":[]}'
   - --json
-  description: "Cell Verify \u2014 \u5B8C\u6574\u6027 + \u6B63\u786E\u6027 + \u8D28\u91CF\u4E09\u7EF4\u8BC4\u5206"
+  description: "[UNIMPLEMENTED] Cell Verify \u2014 \u5B8C\u6574\u6027 + \u6B63\u786E\u6027 + \u8D28\u91CF\u4E09\u7EF4\u8BC4\u5206"
 - domain: agent-cell
   package: cell-core
   action: govern
@@ -3768,7 +3767,7 @@ services:
   - --assess
   - '{"action":""}'
   - --json
-  description: "Cell Govern \u2014 R0-R3 \u98CE\u9669\u5206\u7EA7 + \u5BA1\u6279\u51B3\u7B56"
+  description: "[UNIMPLEMENTED] Cell Govern \u2014 R0-R3 \u98CE\u9669\u5206\u7EA7 + \u5BA1\u6279\u51B3\u7B56"
 - domain: agent-cell
   package: cell-policy
   action: pdp-evaluate
@@ -3781,7 +3780,7 @@ services:
   - --action
   - '{"action":""}'
   - --json
-  description: "PDP Evaluate \u2014 \u7B56\u7565\u51B3\u7B56\u70B9\u4E0A\u4E0B\u6587\u611F\u77E5\u8BC4\u4F30"
+  description: "[UNIMPLEMENTED] PDP Evaluate \u2014 \u7B56\u7565\u51B3\u7B56\u70B9\u4E0A\u4E0B\u6587\u611F\u77E5\u8BC4\u4F30"
 - domain: agent-cell
   package: cell-policy
   action: pep-enforce
@@ -3795,7 +3794,7 @@ services:
   - --action
   - '{"action":""}'
   - --json
-  description: "PEP Enforce \u2014 \u7B56\u7565\u6267\u884C\u70B9\u5F3A\u5236\u6267\u884C + \u5BA1\u8BA1"
+  description: "[UNIMPLEMENTED] PEP Enforce \u2014 \u7B56\u7565\u6267\u884C\u70B9\u5F3A\u5236\u6267\u884C + \u5BA1\u8BA1"
 - domain: agent-cell
   package: cell-memory
   action: memory-process
@@ -3808,7 +3807,7 @@ services:
   - --process
   - '{"episode_id":""}'
   - --json
-  description: "Memory Process \u2014 Episode \u2192 \u8BB0\u5FC6\u5019\u9009\u751F\u6210"
+  description: "[UNIMPLEMENTED] Memory Process \u2014 Episode \u2192 \u8BB0\u5FC6\u5019\u9009\u751F\u6210"
 - domain: agent-cell
   package: cell-memory
   action: memory-consolidate
@@ -3820,7 +3819,7 @@ services:
   - projects/omo/src/omo/resident/memory_pipeline.py
   - --consolidate
   - --json
-  description: "Memory Consolidate \u2014 \u8BB0\u5FC6\u51B2\u7A81\u68C0\u6D4B + \u6574\u5408"
+  description: "[UNIMPLEMENTED] Memory Consolidate \u2014 \u8BB0\u5FC6\u51B2\u7A81\u68C0\u6D4B + \u6574\u5408"
 - domain: agent-cell
   package: cell-replay
   action: replay
@@ -3833,7 +3832,7 @@ services:
   - --replay
   - '{"episode_id":""}'
   - --json
-  description: "Replay \u2014 Episode \u56DE\u653E\u9A8C\u8BC1"
+  description: "[UNIMPLEMENTED] Replay \u2014 Episode \u56DE\u653E\u9A8C\u8BC1"
 - domain: agent-cell
   package: cell-replay
   action: shadow
@@ -3847,7 +3846,7 @@ services:
   - --intent
   - '{"intent":""}'
   - --json
-  description: "Shadow \u2014 \u5F71\u5B50\u8FD0\u884C (\u65E0\u526F\u4F5C\u7528\u9A8C\u8BC1)"
+  description: "[UNIMPLEMENTED] Shadow \u2014 \u5F71\u5B50\u8FD0\u884C (\u65E0\u526F\u4F5C\u7528\u9A8C\u8BC1)"
 - domain: agent-cell
   package: cell-replay
   action: eval
@@ -3861,7 +3860,7 @@ services:
   - --episodes
   - '5'
   - --json
-  description: "Eval \u2014 \u6279\u91CF Episode \u6027\u80FD\u8BC4\u4F30"
+  description: "[UNIMPLEMENTED] Eval \u2014 \u6279\u91CF Episode \u6027\u80FD\u8BC4\u4F30"
 - domain: bcos
   package: bcos-evolution
   action: evolve
@@ -4280,63 +4279,13 @@ services:
   func_name: reason_datalog
   description: "Datalog \u786E\u5B9A\u6027\u63A8\u7406"
   status: active
-- uri: bos://observatory/mcp-server
-  domain: observatory
-  package: cockpit
-  action: mcp-server
-  transport: mcp_proxy
-  command:
-  - uv
-  - run
-  - --directory
-  - projects/cockpit
-  - python
-  - -m
-  - cockpit.observatory.mcp_server
-  description: "\u7EC7\u661F\u7CFB\u7EDF\u5B98\u65B9\u67B6\u6784\u62D3\u6251\u3001\u5E76\u53D1\u51B2\u7A81\u9632\u649E\u4E0E\u72B6\u6001\u54E8\u5175 FastMCP Server"
-  status: active
-- uri: bos://observatory/project/perception
-  domain: observatory
-  package: cockpit
-  action: project/perception
-  transport: mcp_proxy
-  description: "\u83B7\u53D6\u5355\u9879\u76EE\u7684\u8D85\u7D27\u51D1\u67B6\u6784\u611F\u77E5\u4FE1\u606F\u4E0E\u5E76\u53D1\u5199\u51B2\u7A81\u72B6\u6001 (<800 tokens)"
-  status: unimplemented
-- uri: bos://observatory/agents/collisions
-  domain: observatory
-  package: cockpit
-  action: agents/collisions
-  transport: mcp_proxy
-  description: "\u5168\u5C40\u68C0\u67E5 42 \u4E2A\u672A\u5408\u5E76\u5DE5\u4F5C\u6811\u5E76\u53D1\u5199\u4E89\u7528\u98CE\u9669\u4E0E\u9632\u649E\u5B88\u536B\u5EFA\u8BAE"
-  status: unimplemented
-- uri: bos://observatory/sentinel/status
-  domain: observatory
-  package: cockpit
-  action: sentinel/status
-  transport: mcp_proxy
-  description: "\u63A2\u6D4B 16 \u4E2A\u5B50\u6A21\u5757 Gitlink \u5BF9\u9F50\u72B6\u6001\u4E0E 7 \u5927\u4E3B\u6743\u7AEF\u53E3\u5065\u5EB7\u5EA6"
-  status: unimplemented
-- uri: bos://observatory/callchains/get
-  domain: observatory
-  package: cockpit
-  action: callchains/get
-  transport: internal
-  description: "\u83B7\u53D6 4 \u5927\u8DE8\u5C42\u8C03\u7528\u94FE\u65F6\u5E8F\u6B65\u9AA4\u4E0E\u5951\u7EA6\u89C4\u7EA6"
-  status: unimplemented
-- uri: bos://observatory/system/overview
-  domain: observatory
-  package: cockpit
-  action: system/overview
-  transport: internal
-  description: "\u83B7\u53D6\u516B\u5C42\u67B6\u6784\u9879\u76EE\u5206\u5E03\u4E0E\u63A5\u53E3\u5927\u5385\u6C47\u603B\u7EDF\u8BA1"
-  status: unimplemented
 - uri: bos://memory/brain-events/card_updated
   domain: memory
   package: events
   action: card_updated
   transport: internal
   status: unimplemented
-  description: '[auto-registered] From cockpit knowledge_indexer consumer (ADR-0294 dual-accept). See bos-pending-registrations.yaml.'
+  description: '[UNIMPLEMENTED] [auto-registered] From cockpit knowledge_indexer consumer (ADR-0294 dual-accept). See bos-pending-registrations.yaml.'
 - uri: bos://memory/events/card_updated
   domain: memory
   package: events
@@ -4358,49 +4307,49 @@ services:
   action: control_plane
   transport: internal
   status: unimplemented
-  description: '[auto-registered] From bus-foundation/control_plane references. See bos-pending-registrations.yaml.'
+  description: '[UNIMPLEMENTED] [auto-registered] From bus-foundation/control_plane references. See bos-pending-registrations.yaml.'
 - uri: bos://capability/omo/governance
   domain: capability
   package: omo
   action: governance
   transport: internal
   status: unimplemented
-  description: '[auto-registered] From omo/omo_daemon.py line 370. See bos-pending-registrations.yaml.'
+  description: '[UNIMPLEMENTED] [auto-registered] From omo/omo_daemon.py line 370. See bos-pending-registrations.yaml.'
 - uri: bos://capability/perception-inbox
   domain: capability
   package: perception-inbox
   action: perception-inbox
   transport: internal
   status: unimplemented
-  description: '[auto-registered] From perception module references. See bos-pending-registrations.yaml.'
+  description: '[UNIMPLEMENTED] [auto-registered] From perception module references. See bos-pending-registrations.yaml.'
 - uri: bos://capability/personal-signals
   domain: capability
   package: personal-signals
   action: personal-signals
   transport: internal
   status: unimplemented
-  description: '[auto-registered] From personal signals module. See bos-pending-registrations.yaml.'
+  description: '[UNIMPLEMENTED] [auto-registered] From personal signals module. See bos-pending-registrations.yaml.'
 - uri: bos://capability/runtime/cron
   domain: capability
   package: runtime
   action: cron
   transport: internal
   status: unimplemented
-  description: '[auto-registered] From runtime cron scheduling. See bos-pending-registrations.yaml.'
+  description: '[UNIMPLEMENTED] [auto-registered] From runtime cron scheduling. See bos-pending-registrations.yaml.'
 - uri: bos://capability/workflow-mesh/jsonl
   domain: capability
   package: workflow-mesh
   action: jsonl
   transport: internal
   status: unimplemented
-  description: '[auto-registered] From workflow mesh jsonl transport. See bos-pending-registrations.yaml.'
+  description: '[UNIMPLEMENTED] [auto-registered] From workflow mesh jsonl transport. See bos-pending-registrations.yaml.'
 - uri: bos://cockpit/context
   domain: cockpit
   package: context
   action: context
   transport: internal
   status: unimplemented
-  description: '[auto-registered] From cockpit context module. See bos-pending-registrations.yaml.'
+  description: '[UNIMPLEMENTED] [auto-registered] From cockpit context module. See bos-pending-registrations.yaml.'
 - uri: bos://compute/aetherforge/embed
   domain: compute
   package: aetherforge
@@ -4519,119 +4468,114 @@ services:
   action: v1
   transport: internal
   status: unimplemented
-  description: '[auto-registered] From core kernel module. See bos-pending-registrations.yaml.'
+  description: '[UNIMPLEMENTED] [auto-registered] From core kernel module. See bos-pending-registrations.yaml.'
 - uri: bos://toolbox/domain-package
   domain: toolbox
   package: package
   action: package
   transport: internal
   status: unimplemented
-  description: '[auto-registered] From domain package registry. See bos-pending-registrations.yaml.'
+  description: '[UNIMPLEMENTED] [auto-registered] From domain package registry. See bos-pending-registrations.yaml.'
 - uri: bos://toolbox/domain-package-action
   domain: toolbox
   package: package
   action: action
   transport: internal
   status: unimplemented
-  description: '[auto-registered] From domain package action routing. See bos-pending-registrations.yaml.'
+  description: '[UNIMPLEMENTED] [auto-registered] From domain package action routing. See bos-pending-registrations.yaml.'
 - uri: bos://toolbox/domain-subdomain-action
   domain: toolbox
   package: subdomain
   action: action
   transport: internal
   status: unimplemented
-  description: '[auto-registered] From domain subdomain action routing. See bos-pending-registrations.yaml.'
+  description: '[UNIMPLEMENTED] [auto-registered] From domain subdomain action routing. See bos-pending-registrations.yaml.'
 - uri: bos://capability/event-ledger/outbox
   domain: capability
   package: outbox
   action: outbox
   transport: internal
   status: unimplemented
-  description: '[auto-registered] From event-ledger outbox pattern. See bos-pending-registrations.yaml.'
+  description: '[UNIMPLEMENTED] [auto-registered] From event-ledger outbox pattern. See bos-pending-registrations.yaml.'
 - uri: bos://runtime/execution-workers/status
   domain: runtime
   package: workers
   action: status
   transport: internal
   status: unimplemented
-  description: '[auto-registered] From execution workers status API. See bos-pending-registrations.yaml.'
+  description: '[UNIMPLEMENTED] [auto-registered] From execution workers status API. See bos-pending-registrations.yaml.'
 - uri: bos://governance/cockpit/circuit_breaker
   domain: governance
   package: cockpit
   action: circuit_breaker
   transport: internal
   status: unimplemented
-  description: '[auto-registered] From cockpit circuit breaker. See bos-pending-registrations.yaml.'
+  description: '[UNIMPLEMENTED] [auto-registered] From cockpit circuit breaker. See bos-pending-registrations.yaml.'
 - uri: bos://governance/cockpit/daily_budget
   domain: governance
   package: cockpit
   action: daily_budget
   transport: internal
   status: unimplemented
-  description: '[auto-registered] From cockpit daily budget. See bos-pending-registrations.yaml.'
+  description: '[UNIMPLEMENTED] [auto-registered] From cockpit daily budget. See bos-pending-registrations.yaml.'
 - uri: bos://governance/cockpit/quests
   domain: governance
   package: cockpit
   action: quests
   transport: internal
   status: unimplemented
-  description: '[auto-registered] From cockpit quests. See bos-pending-registrations.yaml.'
+  description: '[UNIMPLEMENTED] [auto-registered] From cockpit quests. See bos-pending-registrations.yaml.'
 - uri: bos://governance/l4-kernel
   domain: governance
   package: l4-kernel
   action: l4-kernel
   transport: internal
   status: unimplemented
-  description: '[auto-registered] From l4 kernel governance. See bos-pending-registrations.yaml.'
+  description: '[UNIMPLEMENTED] [auto-registered] From l4 kernel governance. See bos-pending-registrations.yaml.'
 - uri: bos://governance/metaos_workflow
   domain: governance
   package: metaos_workflow
   action: metaos_workflow
   transport: internal
   status: unimplemented
-  description: '[auto-registered] From metaos workflow. See bos-pending-registrations.yaml.'
+  description: '[UNIMPLEMENTED] [auto-registered] From metaos workflow. See bos-pending-registrations.yaml.'
 - uri: bos://governance/mof/auth
   domain: governance
   package: mof
   action: auth
   transport: internal
   status: unimplemented
-  description: '[auto-registered] From MOF auth. See bos-pending-registrations.yaml.'
+  description: '[UNIMPLEMENTED] [auto-registered] From MOF auth. See bos-pending-registrations.yaml.'
 - uri: bos://governance/protocols-layer/trigger
   domain: governance
   package: protocols-layer
   action: trigger
   transport: internal
   status: unimplemented
-  description: '[auto-registered] From protocols layer trigger. See bos-pending-registrations.yaml.'
+  description: '[UNIMPLEMENTED] [auto-registered] From protocols layer trigger. See bos-pending-registrations.yaml.'
 - uri: bos://system/im-session/triage
   domain: system
   package: session
   action: triage
+  status: active
   transport: internal
-  status: unimplemented
-  description: '[auto-registered] From IM session triage. See bos-pending-registrations.yaml.'
+  module_path: agora.server.tools_bos.im
+  func_name: bos_im_session_triage
+  description: "IM 会话分诊 (whitelist gate + directive parse + task cards)"
 - uri: bos://documents/inbox-mail/draft
   domain: documents
   package: mail
   action: draft
   transport: internal
   status: unimplemented
-  description: '[auto-registered] From inbox mail draft. See bos-pending-registrations.yaml.'
+  description: '[UNIMPLEMENTED] [auto-registered] From inbox mail draft. See bos-pending-registrations.yaml.'
 - uri: bos://documents/mail-draft
   domain: documents
   package: draft
   action: draft
   transport: internal
   status: unimplemented
-  description: '[auto-registered] From mail draft service. See bos-pending-registrations.yaml.'
-- uri: bos://memory/kairon/minerva
-  domain: memory
-  package: minerva
-  action: minerva
-  transport: internal
-  status: unimplemented
-  description: '[auto-registered] From kairon minerva search. See bos-pending-registrations.yaml.'
+  description: '[UNIMPLEMENTED] [auto-registered] From mail draft service. See bos-pending-registrations.yaml.'
 - uri: bos://memory/unified
   domain: memory
   package: unified
@@ -4653,42 +4597,44 @@ services:
   action: ocr
   transport: internal
   status: unimplemented
-  description: '[auto-registered] From perception OCR via agora. See bos-pending-registrations.yaml.'
+  description: '[UNIMPLEMENTED] [auto-registered] From perception OCR via agora. See bos-pending-registrations.yaml.'
 - uri: bos://system/personal-followup/draft
   domain: system
   package: followup
   action: draft
   transport: internal
   status: unimplemented
-  description: '[auto-registered] From personal followup. See bos-pending-registrations.yaml.'
+  description: '[UNIMPLEMENTED] [auto-registered] From personal followup. See bos-pending-registrations.yaml.'
 - uri: bos://runtime/client/v1
   domain: runtime
   package: client
   action: v1
   transport: internal
   status: unimplemented
-  description: '[auto-registered] From runtime client v1. See bos-pending-registrations.yaml.'
+  description: '[UNIMPLEMENTED] [auto-registered] From runtime client v1. See bos-pending-registrations.yaml.'
 - uri: bos://perception/scene/anchor
   domain: perception
-  package: anchor
+  package: scene
   action: anchor
+  status: active
   transport: internal
-  status: unimplemented
-  description: '[auto-registered] From scene anchor. See bos-pending-registrations.yaml.'
+  module_path: agora.server.tools_scene
+  func_name: scene_anchor
+  description: "场景卡锚点推荐/绑定 facade (omo kernel 可用时真实打分, 否则诚实 kernel_unavailable)"
 - uri: bos://system/test-health/ping
   domain: system
   package: health
   action: ping
   transport: internal
   status: unimplemented
-  description: '[auto-registered] From test health ping. See bos-pending-registrations.yaml.'
+  description: '[UNIMPLEMENTED] [auto-registered] From test health ping. See bos-pending-registrations.yaml.'
 - uri: bos://system/vault/_state
   domain: system
   package: _state
   action: _state
   transport: internal
   status: unimplemented
-  description: '[auto-registered] From vault state. See bos-pending-registrations.yaml.'
+  description: '[UNIMPLEMENTED] [auto-registered] From vault state. See bos-pending-registrations.yaml.'
 - uri: bos://perception/voice-memo/ingest
   domain: perception
   package: memo
