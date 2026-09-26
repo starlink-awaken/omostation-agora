@@ -224,7 +224,7 @@ async def persona_bdsk_evaluate(
         compute_result = await _invoke_compute(
             _COMPUTE_URI,
             prompt=_prompt(topic, mode, context),
-            model="coding-fast",
+            model="coding",  # coding-fast 无后端(旧 :8081 端口已下线), 每次先白失败一轮
             routing_mode="local",
             stream=False,
         )
