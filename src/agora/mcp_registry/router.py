@@ -45,10 +45,10 @@ class SmartRouter:
 
             # 本地 LLM 服务配置 env 化, 不硬编码 (P77 env-var-SSOT)
             base_url = os.environ.get(
-                "AGORA_SMART_ROUTER_LLM_URL", "http://localhost:11434/v1"
+                "AGORA_SMART_ROUTER_LLM_URL", "http://127.0.0.1:4000/v1"
             )
-            api_key = os.environ.get("AGORA_SMART_ROUTER_LLM_KEY", "ollama")
-            model = os.environ.get("AGORA_SMART_ROUTER_LLM_MODEL", "qwen3:30b-a3b")
+            api_key = os.environ.get("AGORA_SMART_ROUTER_LLM_KEY", "")
+            model = os.environ.get("AGORA_SMART_ROUTER_LLM_MODEL", "coder")
             self._llm = OpenAICompatibleClient(
                 base_url=base_url,
                 api_key=api_key,
