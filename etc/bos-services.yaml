@@ -4490,7 +4490,7 @@ services:
   action: draft
   transport: internal
   status: active
-  description: '[UNIMPLEMENTED] [auto-registered] From inbox mail draft. See bos-pending-registrations.yaml.'
+  description: "邮件三档拟复 + 附件表格提取 (tools_bos.mail.bos_mail_draft, BET-Y1Q3-T10-113)"
   module_path: agora.server.tools_bos.mail
   func_name: bos_mail_draft
 - uri: bos://documents/mail-draft
