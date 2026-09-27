@@ -70,3 +70,82 @@ def test_transcribe_gateway_failure_stays_honest(tmp_path, monkeypatch):
     monkeypatch.setattr(voice, "_transcribe_gateway", boom)
     result = transcribe(audio)
     assert result["ok"] is False and result["error_code"] == "needs_asr_backend"
+
+
+def test_polish_splits_sentences_on_one_line():
+    """门面 ASR 输出单行: 按句读切分, 不能整段当一条任务。"""
+    result = polish(
+        "第一，下周三开评审会，小王负责准备材料。第二，周五前完成文档更新。第三，月底前采购服务器。"
+    )
+    assert len(result["task_items"]) == 3
+
+
+class _FakeResp:
+    def __init__(self, content):
+        self._content = content
+
+    def raise_for_status(self):
+        pass
+
+    def json(self):
+        return {"choices": [{"message": {"content": self._content}}]}
+
+
+class _FakeClient:
+    content = ""
+
+    def __init__(self, *a, **kw):
+        pass
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *a):
+        return False
+
+    def post(self, *a, **kw):
+        return _FakeResp(self.content)
+
+
+def _patch_llm(monkeypatch, content):
+    import httpx
+
+    _FakeClient.content = content
+    monkeypatch.setattr(httpx, "Client", _FakeClient)
+
+
+def test_restore_punctuation_accepts_pure_punct_insertion(monkeypatch):
+    from agora.server.tools_bos.voice import restore_punctuation
+
+    raw = "今天的周会决定三件事第一下周三开评审会第二周五前完成文档"
+    _patch_llm(
+        monkeypatch,
+        "今天的周会决定三件事。第一，下周三开评审会。第二，周五前完成文档。",
+    )
+    text, ok = restore_punctuation(raw)
+    assert ok and text.count("。") == 3
+
+
+def test_restore_punctuation_rejects_rewrite(monkeypatch):
+    from agora.server.tools_bos.voice import restore_punctuation
+
+    raw = "今天的周会决定三件事第一下周三开评审会第二周五前完成文档"
+    _patch_llm(monkeypatch, "周会决定了三件事：评审会与文档。")
+    assert restore_punctuation(raw) == (raw, False)
+
+
+def test_restore_punctuation_skips_already_punctuated(monkeypatch):
+    from agora.server.tools_bos.voice import restore_punctuation
+
+    _patch_llm(monkeypatch, "不应被调用")
+    raw = "已经有标点了，这句话不需要再处理的内容。"
+    assert restore_punctuation(raw) == (raw, False)
+
+
+def test_owner_nickname_and_weekday_deadline():
+    result = polish(
+        "第一，下周三上午开评审会，小王负责准备材料；第二，周五前更新文档，由小李牵头。"
+    )
+    items = result["task_items"]
+    assert [i["owner"] for i in items] == ["小王", "小李"]
+    assert items[0]["deadline"] == "下周三"

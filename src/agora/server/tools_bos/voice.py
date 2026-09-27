@@ -46,10 +46,8 @@ _FILLERS = [
 _FILLER_RE = re.compile("|".join(_FILLERS))
 
 _TASK_VERB = r"(?:落实|跟进|牵头|负责|完成|提交|梳理|输出|反馈|组织|协调|编制|推动|采购|复审|预约|安排)"
-_TIME_HINT = r"(?:(本周|下周|本月|月底|今天|明天|后天|周五|下周一)[之]?前|\d{1,2}月\d{1,2}日前|(\d+)\s*个?工作日[之]?内|下午|上午|晚上)"
-_RESPONSIBLE = (
-    r"([\u4e00-\u9fff]{2,4}(?:处|科|室|中心|组|团队|部门)|夏明星|[A-Z][a-z]+)"
-)
+_TIME_HINT = r"(?:(本周|下周|本月|月底|今天|明天|后天|周五|下周一)[之]?前|\d{1,2}月\d{1,2}日前|(\d+)\s*个?工作日[之]?内|[本下]?周[一二三四五六日天]|下午|上午|晚上)"
+_RESPONSIBLE = r"([\u4e00-\u9fff]{2,4}(?:处|科|室|中心|组|团队|部门)|夏明星|[小老][\u4e00-\u9fff](?=负责|牵头|跟进)|[A-Z][a-z]+)"
 
 
 def _detect_engines() -> list[str]:
@@ -181,6 +179,57 @@ def transcribe(audio_path: str | Path, engine: str | None = None) -> dict[str, A
     }
 
 
+_SENT_PUNCT = "。！？；!?;"
+_PUNCT_RE = re.compile(r"[，。！？；、,.!?;:：\s]")
+_PUNCT_MODEL = os.environ.get("AGORA_PUNCT_MODEL", "fast")
+
+
+def restore_punctuation(text: str) -> tuple[str, bool]:
+    """whisper 经门面常输出无标点长串 → polish 按行切句全失效(整场会议成一条任务)。
+    交门面 LLM 只加标点; 去标点后与原文逐字不一致(改写/幻觉)则弃用, 保持原文。"""
+    if len(text) < 20 or any(c in text for c in "。！？，"):
+        return text, False
+    import httpx
+
+    base = (
+        (os.environ.get("LLM_GATEWAY_URL") or "http://127.0.0.1:4000")
+        .rstrip("/")
+        .removesuffix("/v1")
+    )
+    key = _gateway_key()
+    try:
+        with httpx.Client(timeout=60, trust_env=False) as client:
+            resp = client.post(
+                f"{base}/v1/chat/completions",
+                headers={"Authorization": f"Bearer {key}"} if key else {},
+                json={
+                    "model": _PUNCT_MODEL,
+                    "temperature": 0,
+                    "max_tokens": len(text) * 2 + 64,
+                    "messages": [
+                        {
+                            "role": "system",
+                            "content": "给语音转写文本加中文标点。只加标点，不增删改任何字，"
+                            "只输出结果。",
+                        },
+                        {"role": "user", "content": text},
+                    ],
+                },
+            )
+            resp.raise_for_status()
+            out = (resp.json()["choices"][0]["message"]["content"] or "").strip()
+    except Exception:
+        return text, False
+    if _PUNCT_RE.sub("", out) != _PUNCT_RE.sub("", text):
+        return text, False
+    return out, True
+
+
+def _sentences(text: str) -> list[str]:
+    parts = re.split(f"(?<=[{_SENT_PUNCT}])|\n", text)
+    return [p.strip() for p in parts if p and p.strip()]
+
+
 def polish(text: str) -> dict[str, Any]:
     """口语冗余清洗 + 结构化分拣（任务项/时间节点/责任人/随笔正文）。"""
     cleaned = _FILLER_RE.sub("", text)
@@ -189,7 +238,7 @@ def polish(text: str) -> dict[str, Any]:
 
     tasks, times, owners = [], [], []
     essay: list[str] = []
-    for line in cleaned.splitlines():
+    for line in _sentences(cleaned):
         s = line.strip()
         if not s:
             continue
@@ -225,7 +274,8 @@ def ingest_memo(audio_path: str | Path, engine: str | None = None) -> dict[str, 
     tr = transcribe(audio_path, engine=engine)
     if not tr.get("ok"):
         return {"schema": SCHEMA, "service": SERVICE_URI, **tr}
-    polished = polish(tr["text"])
+    text, punctuated = restore_punctuation(tr["text"])
+    polished = polish(text)
     return {
         "schema": SCHEMA,
         "service": SERVICE_URI,
@@ -234,5 +284,6 @@ def ingest_memo(audio_path: str | Path, engine: str | None = None) -> dict[str, 
         "elapsed_s": tr.get("elapsed_s"),
         "budget_s": TTFT_BUDGET_S,
         "within_budget": (tr.get("elapsed_s") or 99) <= TTFT_BUDGET_S,
+        "punctuated": punctuated,
         **polished,
     }
