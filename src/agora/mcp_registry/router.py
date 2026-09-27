@@ -47,7 +47,13 @@ class SmartRouter:
             base_url = os.environ.get(
                 "AGORA_SMART_ROUTER_LLM_URL", "http://127.0.0.1:4000/v1"
             )
+            # 门面对 /v1/* 一律要求 Bearer; 空 key 即 401, LLM 路由从未真正生效。
+            # 回落到与 KOS 同一解析(AETHERFORGE_API_KEY → Keychain aetherforge-gateway)
             api_key = os.environ.get("AGORA_SMART_ROUTER_LLM_KEY", "")
+            if not api_key:
+                from kos.llm_gateway import gateway_key  # type: ignore[reportMissingImports]
+
+                api_key = gateway_key()
             model = os.environ.get("AGORA_SMART_ROUTER_LLM_MODEL", "coder")
             self._llm = OpenAICompatibleClient(
                 base_url=base_url,
