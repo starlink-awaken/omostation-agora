@@ -43,3 +43,30 @@ def test_ingest_memo_needs_asr_backend_honest(tmp_path):
     assert "安装" in result.get("install_hint", "") or "权重" in result.get(
         "detail", ""
     )
+
+
+def test_transcribe_falls_back_to_gateway_without_local_engine(tmp_path, monkeypatch):
+    import agora.server.tools_bos.voice as voice
+
+    audio = tmp_path / "a.wav"
+    audio.write_bytes(b"RIFF")
+    monkeypatch.setattr(voice, "_detect_engines", list)
+    monkeypatch.setattr(voice, "_transcribe_gateway", lambda p: "下周三开评审会")
+    result = transcribe(audio)
+    assert result["ok"] is True and result["engine"] == "gateway"
+    assert result["text"] == "下周三开评审会"
+
+
+def test_transcribe_gateway_failure_stays_honest(tmp_path, monkeypatch):
+    import agora.server.tools_bos.voice as voice
+
+    audio = tmp_path / "a.wav"
+    audio.write_bytes(b"RIFF")
+    monkeypatch.setattr(voice, "_detect_engines", list)
+
+    def boom(_p):
+        raise OSError("gateway down")
+
+    monkeypatch.setattr(voice, "_transcribe_gateway", boom)
+    result = transcribe(audio)
+    assert result["ok"] is False and result["error_code"] == "needs_asr_backend"
