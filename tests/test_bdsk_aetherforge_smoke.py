@@ -36,7 +36,7 @@ def test_aetherforge_compute_domain_and_fallback_services():
     assert "bos://persona/bdsk/evaluate" in fallback_uris
     assert "bos://compute/aetherforge/infer" in fallback_uris
     assert "bos://compute/aetherforge/mesh" in fallback_uris
-    assert "bos://compute/aetherforge/profile" in fallback_uris
+    # aetherforge/profile 已从 fallback 删除: aetherforge.cli 没有 profile 子命令 (死声明)
 
     for service in _fallback_services():
         if service.uri == "bos://compute/aetherforge/infer":

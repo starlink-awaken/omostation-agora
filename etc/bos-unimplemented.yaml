@@ -35,15 +35,6 @@ unimplemented:
 - uri: bos://system/core-kernel/v1
   reason: auto-registered stub without module_path/func (no executable contract yet); restore only with
     verified implementation
-- uri: bos://toolbox/domain-package
-  reason: auto-registered stub without module_path/func (no executable contract yet); restore only with
-    verified implementation
-- uri: bos://toolbox/domain-package-action
-  reason: auto-registered stub without module_path/func (no executable contract yet); restore only with
-    verified implementation
-- uri: bos://toolbox/domain-subdomain-action
-  reason: auto-registered stub without module_path/func (no executable contract yet); restore only with
-    verified implementation
 - uri: bos://capability/event-ledger/outbox
   reason: auto-registered stub without module_path/func (no executable contract yet); restore only with
     verified implementation
@@ -69,9 +60,6 @@ unimplemented:
   reason: auto-registered stub without module_path/func (no executable contract yet); restore only with
     verified implementation
 - uri: bos://governance/protocols-layer/trigger
-  reason: auto-registered stub without module_path/func (no executable contract yet); restore only with
-    verified implementation
-- uri: bos://documents/inbox-mail/draft
   reason: auto-registered stub without module_path/func (no executable contract yet); restore only with
     verified implementation
 - uri: bos://documents/mail-draft
