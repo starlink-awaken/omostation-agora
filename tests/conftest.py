@@ -93,3 +93,10 @@ def downgrade_mcp_stdio_to_stdio(monkeypatch: pytest.MonkeyPatch):
 def allow_local_route_registration(monkeypatch: pytest.MonkeyPatch):
     """测试显式使用本地降级舱，生产默认仍由 admission fail-closed。"""
     monkeypatch.setenv("AGORA_ADMISSION_MODE", "degraded")
+
+
+@pytest.fixture(autouse=True)
+def _no_live_router_llm(monkeypatch):
+    """SmartRouter 的 LLM 选路默认直连本机门面; 测试不应依赖真实推理(结果不稳定且慢)。
+    需要 LLM 的用例直接给 router._llm 注入 mock, 不受此开关影响。"""
+    monkeypatch.setenv("AGORA_SMART_ROUTER_LLM", "off")

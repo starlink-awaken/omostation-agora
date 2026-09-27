@@ -35,36 +35,25 @@ class SmartRouter:
     # ── LLM client (lazy) ────────────────────────────────────────────────
 
     def _init_llm(self):
-        """Initialize LLM client from minerva package (optional dependency)."""
+        """Initialize the gateway LLM client (aetherforge 门面, OpenAI 兼容)。
+
+        旧实现依赖 minerva 的客户端 —— 但 agora 刻意不依赖 kairon(pyproject: kairon = []),
+        agora 自身环境里 minerva 恒 ImportError, LLM 路由从未生效。改用自带的轻量客户端。
+        """
         if self._llm is not None:
             return self._llm if self._llm is not False else None
+        import os
+
+        if os.environ.get("AGORA_SMART_ROUTER_LLM", "on").lower() in {
+            "0",
+            "off",
+            "false",
+        }:
+            self._llm = False  # 显式关闭(测试/离线环境), 走关键词/质量分排序
+            return None
         try:
-            import os
-
-            from minerva.llm.client import OpenAICompatibleClient  # type: ignore[reportMissingImports]
-
-            # 本地 LLM 服务配置 env 化, 不硬编码 (P77 env-var-SSOT)
-            base_url = os.environ.get(
-                "AGORA_SMART_ROUTER_LLM_URL", "http://127.0.0.1:4000/v1"
-            )
-            # 门面对 /v1/* 一律要求 Bearer; 空 key 即 401, LLM 路由从未真正生效。
-            # 回落到与 KOS 同一解析(AETHERFORGE_API_KEY → Keychain aetherforge-gateway)
-            api_key = os.environ.get("AGORA_SMART_ROUTER_LLM_KEY", "")
-            if not api_key:
-                from kos.llm_gateway import gateway_key  # type: ignore[reportMissingImports]
-
-                api_key = gateway_key()
-            model = os.environ.get("AGORA_SMART_ROUTER_LLM_MODEL", "coder")
-            self._llm = OpenAICompatibleClient(
-                base_url=base_url,
-                api_key=api_key,
-                model=model,
-                timeout=30,
-            )
-            logger.info("smart_router_llm_initialized", model=model)
-        except ImportError:
-            logger.info("smart_router_llm_unavailable", reason="minerva not available")
-            self._llm = False
+            self._llm = _GatewayLLM.from_env()
+            logger.info("smart_router_llm_initialized", model=self._llm.model)
         except Exception as e:  # defensive fallback
             logger.warning("smart_router_llm_init_failed", error=str(e))
             self._llm = False
@@ -246,7 +235,7 @@ class SmartRouter:
         if self._llm is None:
             return {}
         try:
-            response = await self._llm.generate("", prompt, max_tokens=100)  # type: ignore[reportAttributeAccessIssue]
+            response = await self._llm.generate(prompt, max_tokens=100)  # type: ignore[reportAttributeAccessIssue]
             selected_name = response.strip().lower()
         except Exception as e:  # defensive fallback
             logger.warning("llm_select_failed", error=str(e))
@@ -311,3 +300,69 @@ Available tools:
             "lifecycle_available": self._lifecycle is not None,
             "orchestrator_available": self._orchestrator is not None,
         }
+
+
+class _GatewayLLM:
+    """最小门面客户端: POST /v1/chat/completions。地址/模型/密钥均可 env 覆盖 (P77 env-var-SSOT)。"""
+
+    def __init__(
+        self, base_url: str, api_key: str, model: str, timeout: float = 30.0
+    ) -> None:
+        base = base_url.rstrip("/")
+        self.url = base + (
+            "/chat/completions" if base.endswith("/v1") else "/v1/chat/completions"
+        )
+        self.api_key = api_key
+        self.model = model
+        self.timeout = timeout
+
+    @classmethod
+    def from_env(cls) -> "_GatewayLLM":
+        import os
+
+        key = (
+            os.environ.get("AGORA_SMART_ROUTER_LLM_KEY")
+            or os.environ.get("AETHERFORGE_API_KEY")
+            or _keychain_key()
+        )
+        return cls(
+            base_url=os.environ.get(
+                "AGORA_SMART_ROUTER_LLM_URL", "http://127.0.0.1:4000/v1"
+            ),
+            api_key=key,
+            model=os.environ.get("AGORA_SMART_ROUTER_LLM_MODEL", "coder"),
+        )
+
+    async def generate(self, prompt: str, max_tokens: int = 100) -> str:
+        import httpx
+
+        headers = {"Authorization": f"Bearer {self.api_key}"} if self.api_key else {}
+        body = {
+            "model": self.model,
+            "messages": [{"role": "user", "content": prompt}],
+            "max_tokens": max_tokens,
+        }
+        # trust_env=False: 本机门面不能被系统代理(Clash)接走
+        async with httpx.AsyncClient(timeout=self.timeout, trust_env=False) as client:
+            resp = await client.post(self.url, json=body, headers=headers)
+            resp.raise_for_status()
+            data = resp.json()
+        return ((data.get("choices") or [{}])[0].get("message") or {}).get(
+            "content"
+        ) or ""
+
+
+def _keychain_key() -> str:
+    """macOS Keychain(aetherforge-gateway); 门面对 /v1/* 一律要求 Bearer, 空 key 即 401。"""
+    import subprocess
+
+    try:
+        out = subprocess.run(
+            ["security", "find-generic-password", "-s", "aetherforge-gateway", "-w"],
+            capture_output=True,
+            text=True,
+            timeout=5,
+        )
+    except (OSError, subprocess.TimeoutExpired):
+        return ""
+    return out.stdout.strip() if out.returncode == 0 else ""
