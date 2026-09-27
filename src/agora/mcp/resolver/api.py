@@ -55,6 +55,21 @@ def normalize_bos_uri(uri: str) -> str:
         f"{_LEGACY_PERSONA_BRIDGE_URI_PREFIX}sync": f"{_CANONICAL_PERSONA_BRIDGE_URI_PREFIX}sync",
         # ADR-0294 dual-accept legacy 名: brain → memory 迁移遗留 (cockpit/AGENTS.md 等文档引用)
         "bos://memory/brain-events/card_updated": "bos://memory/events/card_updated",
+        "bos://brain/events/card_updated": "bos://memory/events/card_updated",
+        # 代码侧旧名 → 注册表规范名 (2026-09-28: 规范名早已登记, 调用方仍用旧名, 解析不到)
+        "bos://voice/memo/ingest": "bos://perception/voice-memo/ingest",
+        "bos://scene/anchor": "bos://perception/scene/anchor",
+        "bos://im/session/triage": "bos://system/im-session/triage",
+        "bos://inbox/mail/draft": "bos://documents/inbox-mail/draft",
+        "bos://execution/workers/status": "bos://system/runtime/workers/status",
+        "bos://vault/_state": "bos://system/vault/state",
+        "bos://event-ledger/outbox": "bos://capability/event-ledger/outbox",
+        "bos://personal/followup/draft": "bos://system/personal-followup/draft",
+        "bos://test/health/ping": "bos://system/test-health/ping",
+        # aetherforge 旧动词 (#100 已删死注册) → omlxc 同功能服务
+        "bos://compute/aetherforge/fabric": "bos://compute/omlxc/fabric",
+        "bos://compute/aetherforge/vram": "bos://compute/omlxc/vram",
+        "bos://compute/aetherforge/warm": "bos://compute/omlxc/warm",
     }
     return _LEGACY_BOS_URI_ALIASES.get(uri, uri)
 

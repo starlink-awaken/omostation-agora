@@ -2845,6 +2845,24 @@ services:
   status: active
   transport: stdio
   uri: bos://compute/omlxc/fabric
+- action: warm
+  command:
+  - uv
+  - run
+  - --directory
+  - projects/omlxc
+  - python
+  - -m
+  - omlxc.cli
+  - fabric
+  - warm
+  description: "omlxc 高频系统提示词前缀预热 (降低首 token 延迟)"
+  domain: compute
+  package: omlxc
+  security_level: internal
+  status: active
+  transport: stdio
+  uri: bos://compute/omlxc/warm
 - action: triage
   command:
   - uv
@@ -4394,27 +4412,6 @@ services:
   transport: internal
   status: unimplemented
   description: '[UNIMPLEMENTED] [auto-registered] From core kernel module. See bos-pending-registrations.yaml.'
-- uri: bos://toolbox/domain-package
-  domain: toolbox
-  package: package
-  action: package
-  transport: internal
-  status: unimplemented
-  description: '[UNIMPLEMENTED] [auto-registered] From domain package registry. See bos-pending-registrations.yaml.'
-- uri: bos://toolbox/domain-package-action
-  domain: toolbox
-  package: package
-  action: action
-  transport: internal
-  status: unimplemented
-  description: '[UNIMPLEMENTED] [auto-registered] From domain package action routing. See bos-pending-registrations.yaml.'
-- uri: bos://toolbox/domain-subdomain-action
-  domain: toolbox
-  package: subdomain
-  action: action
-  transport: internal
-  status: unimplemented
-  description: '[UNIMPLEMENTED] [auto-registered] From domain subdomain action routing. See bos-pending-registrations.yaml.'
 - uri: bos://capability/event-ledger/outbox
   domain: capability
   package: outbox
@@ -4492,8 +4489,10 @@ services:
   package: mail
   action: draft
   transport: internal
-  status: unimplemented
+  status: active
   description: '[UNIMPLEMENTED] [auto-registered] From inbox mail draft. See bos-pending-registrations.yaml.'
+  module_path: agora.server.tools_bos.mail
+  func_name: bos_mail_draft
 - uri: bos://documents/mail-draft
   domain: documents
   package: draft
