@@ -128,11 +128,15 @@ def transcribe(audio_path: str | Path, engine: str | None = None) -> dict[str, A
             "install_hint": "brew install whisper-cpp  |  pip install funasr",
         }
     t0 = time.perf_counter()
+    errors: list[
+        str
+    ] = []  # 各引擎失败原因 —— 此前全吞掉, 门面 413 被报成"模型权重或参数问题"
     for name in engines:
         if name == "gateway":
             try:
                 txt = _transcribe_gateway(audio)
-            except Exception:
+            except Exception as exc:
+                errors.append(f"gateway: {exc}"[:200])
                 continue
             if txt:
                 return {
@@ -171,7 +175,8 @@ def transcribe(audio_path: str | Path, engine: str | None = None) -> dict[str, A
     return {
         "ok": False,
         "error_code": "needs_asr_backend",
-        "detail": f"引擎 {engines} 存在但转录失败（模型权重或参数问题）",
+        "detail": f"引擎 {engines} 存在但转录失败"
+        + (f": {'; '.join(errors)}" if errors else "（模型权重或参数问题）"),
         "install_hint": "检查模型权重路径，或改用 brew install whisper-cpp / pip install funasr",
     }
 
