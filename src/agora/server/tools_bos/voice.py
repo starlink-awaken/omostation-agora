@@ -4,7 +4,7 @@ BOS 工具契约: ``bos://voice/memo/ingest``
     入参: audio_path(音频文件), engine(可选, 强制指定 ASR 引擎)
     出参: 转录文本 + 润色稿 + 分拣结果(任务项/时间节点/责任人/随笔)
 
-ASR 引擎可插拔（按序探测）: whisper-cli → whisper-cpp → funasr。
+ASR 引擎可插拔（按序探测）: whisper-cli → whisper-cpp → funasr → gateway(aetherforge 门面 asr 档)。
 全部缺失时返回 ``needs_asr_backend`` 诚实失败——绝不伪造转录文本。
 润色与分拣为确定性规则（口水词表 + 句式匹配），零模型调用。
 """
@@ -14,6 +14,7 @@ from __future__ import annotations
 import json
 import re
 import shutil
+import os
 import subprocess
 import time
 from pathlib import Path
@@ -68,12 +69,56 @@ def _detect_engines() -> list[str]:
     return available
 
 
+_GATEWAY_ASR_MODEL = os.environ.get("AGORA_ASR_MODEL", "asr")
+
+
+def _gateway_key() -> str:
+    key = (
+        os.environ.get("AETHERFORGE_API_KEY") or os.environ.get("LLM_GATEWAY_KEY") or ""
+    )
+    if key:
+        return key
+    try:
+        out = subprocess.run(
+            ["security", "find-generic-password", "-s", "aetherforge-gateway", "-w"],
+            capture_output=True,
+            text=True,
+            timeout=5,
+            check=False,
+        )
+        return out.stdout.strip() if out.returncode == 0 else ""
+    except (OSError, subprocess.TimeoutExpired):
+        return ""
+
+
+def _transcribe_gateway(audio: Path) -> str:
+    """经 aetherforge 门面 /v1/audio/transcriptions(oMLX whisper)。本机无端侧引擎时的默认路径 ——
+    此前本机没装 whisper-cli/funasr, voice-memo 恒返回 needs_asr_backend。"""
+    import httpx
+
+    base = (
+        (os.environ.get("LLM_GATEWAY_URL") or "http://127.0.0.1:4000")
+        .rstrip("/")
+        .removesuffix("/v1")
+    )
+    key = _gateway_key()
+    with httpx.Client(timeout=600, trust_env=False) as client:
+        resp = client.post(
+            f"{base}/v1/audio/transcriptions",
+            headers={"Authorization": f"Bearer {key}"} if key else {},
+            data={"model": _GATEWAY_ASR_MODEL},
+            files={"file": (audio.name, audio.read_bytes(), "audio/wav")},
+        )
+        resp.raise_for_status()
+        return (resp.json().get("text") or "").strip()
+
+
 def transcribe(audio_path: str | Path, engine: str | None = None) -> dict[str, Any]:
     """Transcribe audio via the first available engine (or the forced one)."""
     audio = Path(audio_path)
     if not audio.is_file():
         return {"ok": False, "error_code": "audio_not_found", "audio": str(audio)}
-    engines = [engine] if engine else _detect_engines()
+    engines = [engine] if engine else _detect_engines() + ["gateway"]
     if not engines or engines == [None]:
         return {
             "ok": False,
@@ -84,6 +129,19 @@ def transcribe(audio_path: str | Path, engine: str | None = None) -> dict[str, A
         }
     t0 = time.perf_counter()
     for name in engines:
+        if name == "gateway":
+            try:
+                txt = _transcribe_gateway(audio)
+            except Exception:
+                continue
+            if txt:
+                return {
+                    "ok": True,
+                    "engine": "gateway",
+                    "text": txt,
+                    "elapsed_s": round(time.perf_counter() - t0, 3),
+                }
+            continue
         if name == "funasr":
             continue  # funasr 走 python API，下方统一处理
         exe = shutil.which(name)
