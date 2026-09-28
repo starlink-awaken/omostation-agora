@@ -1,16 +1,4 @@
 unimplemented:
-- uri: bos://agent-cell/pool/submit
-  reason: agent-cell runtime files not yet implemented (planned component); restore only with verified
-    implementation
-- uri: bos://agent-cell/pool/scale
-  reason: agent-cell runtime files not yet implemented (planned component); restore only with verified
-    implementation
-- uri: bos://agent-cell/pool/auto-scale
-  reason: agent-cell runtime files not yet implemented (planned component); restore only with verified
-    implementation
-- uri: bos://agent-cell/pool/metrics
-  reason: agent-cell runtime files not yet implemented (planned component); restore only with verified
-    implementation
 - uri: bos://capability/bus/control_plane
   reason: auto-registered stub without module_path/func (no executable contract yet); restore only with
     verified implementation
