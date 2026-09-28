@@ -3485,7 +3485,6 @@ services:
   - src/omo/resident/cell_pool.py
   - --action
   - status
-  description: Cell Pool 状态 — 多 Cell 并行运行状态
   description: "Cell Pool \u72B6\u6001 \u2014 \u591A Cell \u5E76\u884C\u8FD0\u884C\u72B6\u6001"
 - domain: agent-cell
   package: cell-pool
