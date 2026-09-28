@@ -3156,14 +3156,6 @@ services:
   transport: stdio
   uri: bos://perception/apple_mail/inbox
   note: "BET-Y1Q3-T1-05: \u65E0\u5B9E\u73B0, \u6807 deprecated (\u58F0\u660E\u8BDA\u5B9E, \u4E0D\u5806\u79EF unimplemented)"
-- action: signal_health
-  description: "\u4FE1\u53F7\u6E90\u5065\u5EB7\u63A2\u6D4B\u4E0E\u964D\u7EA7\u62A5\u544A"
-  domain: perception
-  package: signal_monitor
-  status: deprecated
-  transport: stdio
-  uri: bos://perception/signal_monitor/health
-  note: "BET-Y1Q3-T1-05: \u65E0\u5B9E\u73B0, \u6807 deprecated (\u58F0\u660E\u8BDA\u5B9E, \u4E0D\u5806\u79EF unimplemented)"
 - domain: mof
   package: mof
   action: io
@@ -4405,13 +4397,6 @@ services:
   - aetherforge.cli
   - triage
   description: '[auto-registered] From aetherforge triage endpoint. See bos-pending-registrations.yaml.'
-- uri: bos://system/core-kernel/v1
-  domain: system
-  package: kernel
-  action: v1
-  transport: internal
-  status: unimplemented
-  description: '[UNIMPLEMENTED] [auto-registered] From core kernel module. See bos-pending-registrations.yaml.'
 - uri: bos://capability/event-ledger/outbox
   domain: capability
   package: outbox
@@ -4419,13 +4404,6 @@ services:
   transport: internal
   status: unimplemented
   description: '[UNIMPLEMENTED] [auto-registered] From event-ledger outbox pattern. See bos-pending-registrations.yaml.'
-- uri: bos://runtime/execution-workers/status
-  domain: runtime
-  package: workers
-  action: status
-  transport: internal
-  status: unimplemented
-  description: '[UNIMPLEMENTED] [auto-registered] From execution workers status API. See bos-pending-registrations.yaml.'
 - uri: bos://governance/cockpit/circuit_breaker
   domain: governance
   package: cockpit
@@ -4493,13 +4471,6 @@ services:
   description: "邮件三档拟复 + 附件表格提取 (tools_bos.mail.bos_mail_draft, BET-Y1Q3-T10-113)"
   module_path: agora.server.tools_bos.mail
   func_name: bos_mail_draft
-- uri: bos://documents/mail-draft
-  domain: documents
-  package: draft
-  action: draft
-  transport: internal
-  status: unimplemented
-  description: '[UNIMPLEMENTED] [auto-registered] From mail draft service. See bos-pending-registrations.yaml.'
 - uri: bos://memory/unified
   domain: memory
   package: unified
@@ -4554,13 +4525,6 @@ services:
   transport: internal
   status: unimplemented
   description: '[UNIMPLEMENTED] [auto-registered] From test health ping. See bos-pending-registrations.yaml.'
-- uri: bos://system/vault/_state
-  domain: system
-  package: _state
-  action: _state
-  transport: internal
-  status: unimplemented
-  description: '[UNIMPLEMENTED] [auto-registered] From vault state. See bos-pending-registrations.yaml.'
 - uri: bos://perception/voice-memo/ingest
   domain: perception
   package: memo
