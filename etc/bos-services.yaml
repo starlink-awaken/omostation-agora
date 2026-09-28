@@ -156,23 +156,6 @@ services:
   transport: mcp_proxy
   uri: bos://memory/forge/mcp-server
 - _original_args: []
-  _original_command: &id009
-  - uv
-  - run
-  - --directory
-  - projects/metaos
-  - python
-  - -m
-  - metaos.mcp_server
-  action: mcp-server
-  command: *id009
-  description: MetaOS MCP Server (HTTP proxy mode)
-  domain: memory
-  package: metaos-mcp
-  status: deprecated
-  transport: mcp_proxy
-  uri: bos://memory/metaos/mcp-server
-- _original_args: []
   _original_command: &id010
   - uv
   - run
@@ -3068,94 +3051,6 @@ services:
   status: active
   transport: http
   uri: bos://analysis/kems/forecast
-- action: policy
-  command:
-  - agent-governance-toolkit
-  description: "AGT \u7B56\u7565\u8BC4\u4F30\u4E0E\u5408\u89C4\u68C0\u67E5\u5F15\u64CE (Agent Governance Toolkit)"
-  domain: governance
-  package: agt
-  status: deprecated
-  transport: stdio
-  uri: bos://governance/agt/policy
-  note: "BET-Y1Q3-T1-05: \u65E0\u5B9E\u73B0, \u6807 deprecated (\u58F0\u660E\u8BDA\u5B9E, \u4E0D\u5806\u79EF unimplemented)"
-- action: trust
-  command:
-  - agent-governance-toolkit
-  description: "AGT \u4FE1\u4EFB\u8BC4\u5206\u4E0E\u8EAB\u4EFD\u9A8C\u8BC1\u670D\u52A1 (Agent Governance Toolkit)"
-  domain: governance
-  package: agt
-  status: deprecated
-  transport: stdio
-  uri: bos://capability/agt/trust
-  note: "BET-Y1Q3-T1-05: \u65E0\u5B9E\u73B0, \u6807 deprecated (\u58F0\u660E\u8BDA\u5B9E, \u4E0D\u5806\u79EF unimplemented)"
-- action: sandbox
-  command:
-  - agent-governance-toolkit
-  description: "AGT \u6C99\u7BB1\u9694\u79BB\u4E0E\u6743\u9650\u63A7\u5236\u670D\u52A1 (Agent Governance Toolkit)"
-  domain: governance
-  package: agt
-  status: deprecated
-  transport: stdio
-  uri: bos://capability/agt/sandbox
-  note: "BET-Y1Q3-T1-05: \u65E0\u5B9E\u73B0, \u6807 deprecated (\u58F0\u660E\u8BDA\u5B9E, \u4E0D\u5806\u79EF unimplemented)"
-- action: sre
-  command:
-  - agent-governance-toolkit
-  description: "AGT SRE \u76D1\u63A7\u4E0E\u5065\u5EB7\u68C0\u67E5\u670D\u52A1 (Agent Governance Toolkit)"
-  domain: governance
-  package: agt
-  status: deprecated
-  transport: stdio
-  uri: bos://capability/agt/sre
-  note: "BET-Y1Q3-T1-05: \u65E0\u5B9E\u73B0, \u6807 deprecated (\u58F0\u660E\u8BDA\u5B9E, \u4E0D\u5806\u79EF unimplemented)"
-- action: mcp-security
-  command:
-  - agent-governance-toolkit
-  description: "AGT MCP \u5B89\u5168\u5BA1\u8BA1\u4E0E\u6743\u9650\u68C0\u67E5\u670D\u52A1 (Agent Governance Toolkit)"
-  domain: governance
-  package: agt
-  status: deprecated
-  transport: stdio
-  uri: bos://capability/agt/mcp-security
-  note: "BET-Y1Q3-T1-05: \u65E0\u5B9E\u73B0, \u6807 deprecated (\u58F0\u660E\u8BDA\u5B9E, \u4E0D\u5806\u79EF unimplemented)"
-- action: marketplace
-  command:
-  - agent-governance-toolkit
-  description: "AGT \u80FD\u529B\u5E02\u573A\u4E0E\u53D1\u73B0\u670D\u52A1 (Agent Governance Toolkit)"
-  domain: governance
-  package: agt
-  status: deprecated
-  transport: stdio
-  uri: bos://capability/agt/marketplace
-  note: "BET-Y1Q3-T1-05: \u65E0\u5B9E\u73B0, \u6807 deprecated (\u58F0\u660E\u8BDA\u5B9E, \u4E0D\u5806\u79EF unimplemented)"
-- action: lightning
-  command:
-  - agent-governance-toolkit
-  description: "AGT Lightning \u5FEB\u901F\u901A\u9053\u4E0E\u7F13\u5B58\u670D\u52A1 (Agent Governance Toolkit)"
-  domain: governance
-  package: agt
-  status: deprecated
-  transport: stdio
-  uri: bos://capability/agt/lightning
-  note: "BET-Y1Q3-T1-05: \u65E0\u5B9E\u73B0, \u6807 deprecated (\u58F0\u660E\u8BDA\u5B9E, \u4E0D\u5806\u79EF unimplemented)"
-- action: hypervisor
-  command:
-  - agent-governance-toolkit
-  description: "AGT Hypervisor \u5BA1\u8BA1\u54C8\u5E0C\u94FE\u4E0E\u5B8C\u6574\u6027\u9A8C\u8BC1\u670D\u52A1 (Agent Governance Toolkit)"
-  domain: governance
-  package: agt
-  status: deprecated
-  transport: stdio
-  uri: bos://governance/agt/hypervisor
-  note: "BET-Y1Q3-T1-05: \u65E0\u5B9E\u73B0, \u6807 deprecated (\u58F0\u660E\u8BDA\u5B9E, \u4E0D\u5806\u79EF unimplemented)"
-- action: inbox
-  description: "Apple Mail \u6536\u4EF6\u7BB1\u4FE1\u53F7\u91C7\u96C6 (BET-Y1Q1-T2-01 \u611F\u77E5\u9762)"
-  domain: perception
-  package: apple_mail
-  status: deprecated
-  transport: stdio
-  uri: bos://perception/apple_mail/inbox
-  note: "BET-Y1Q3-T1-05: \u65E0\u5B9E\u73B0, \u6807 deprecated (\u58F0\u660E\u8BDA\u5B9E, \u4E0D\u5806\u79EF unimplemented)"
 - domain: mof
   package: mof
   action: io
@@ -3597,49 +3492,17 @@ services:
   action: submit
   uri: bos://agent-cell/pool/submit
   transport: stdio
-  status: unimplemented
+  status: active
   command:
+  - uv
+  - run
+  - --directory
+  - projects/omo
   - python3
-  - projects/omo/src/omo/resident/cell_pool.py
-  - --submit
-  - --json
-  description: "[UNIMPLEMENTED] Cell Pool \u63D0\u4EA4 \u2014 \u63D0\u4EA4 Episode \u5230 Cell Pool"
-- domain: agent-cell
-  package: cell-pool
-  action: scale
-  uri: bos://agent-cell/pool/scale
-  transport: stdio
-  status: unimplemented
-  command:
-  - python3
-  - projects/omo/src/omo/resident/cell_pool.py
-  - --scale
-  - --json
-  description: "[UNIMPLEMENTED] Cell Pool \u6269\u7F29\u5BB9 \u2014 \u8C03\u6574 Cell \u6570\u91CF"
-- domain: agent-cell
-  package: cell-pool
-  action: auto-scale
-  uri: bos://agent-cell/pool/auto-scale
-  transport: stdio
-  status: unimplemented
-  command:
-  - python3
-  - projects/omo/src/omo/resident/cell_pool.py
-  - --auto-scale
-  - --json
-  description: "[UNIMPLEMENTED] Cell Pool \u81EA\u52A8\u6269\u7F29\u5BB9 \u2014 \u57FA\u4E8E\u8D1F\u8F7D\u81EA\u52A8\u8C03\u6574"
-- domain: agent-cell
-  package: cell-pool
-  action: metrics
-  uri: bos://agent-cell/pool/metrics
-  transport: stdio
-  status: unimplemented
-  command:
-  - python3
-  - projects/omo/src/omo/resident/cell_pool.py
-  - --metrics
-  - --json
-  description: "[UNIMPLEMENTED] Cell Pool \u6307\u6807 \u2014 \u8BE6\u7EC6\u76D1\u63A7\u6307\u6807"
+  - src/omo/resident/cell_pool.py
+  - --action
+  - dispatch
+  description: "Cell Pool 提交 — 向 Cell Pool 派发 Episode (cell_pool.py --action dispatch)"
 - domain: agent-cell
   package: cell-dag
   action: execute
@@ -4381,6 +4244,7 @@ services:
   transport: internal
   status: unimplemented
   description: '[UNIMPLEMENTED] [auto-registered] From cockpit context module. See bos-pending-registrations.yaml.'
+  note: "保留 unimplemented: DEBT-2026-08-08-001 计划把 workspace_context() 迁到本 URI (有明确计划消费方) (TASK-2E059177, 2026-09-28)"
 - uri: bos://compute/aetherforge/triage
   domain: compute
   package: aetherforge
@@ -4446,6 +4310,7 @@ services:
   transport: internal
   status: unimplemented
   description: '[UNIMPLEMENTED] [auto-registered] From MOF auth. See bos-pending-registrations.yaml.'
+  note: "保留 unimplemented: ecos ssot/compiler/ast_inspector 的整改建议模板推荐此服务契约, 删除会让建议指向虚空 (TASK-2E059177, 2026-09-28)"
 - uri: bos://governance/protocols-layer/trigger
   domain: governance
   package: protocols-layer
@@ -4509,6 +4374,7 @@ services:
   transport: internal
   status: unimplemented
   description: '[UNIMPLEMENTED] [auto-registered] From runtime client v1. See bos-pending-registrations.yaml.'
+  note: "保留 unimplemented: ecos ssot/compiler/ast_inspector 的整改建议模板推荐此服务契约, 删除会让建议指向虚空 (TASK-2E059177, 2026-09-28)"
 - uri: bos://perception/scene/anchor
   domain: perception
   package: scene

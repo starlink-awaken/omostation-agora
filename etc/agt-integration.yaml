@@ -1,4 +1,8 @@
-status: proposal_only
+# 2026-09-28: ADR-0415「拒绝 AGT 整体接入, 确立能力对齐路线」→ 本集成提案作废。
+# 对应 8 条 bos://*/agt/* 登记已从 bos-services.yaml 删除 (从未有实现); 能力对齐规则保留在
+# ecos L0-constraints.yaml 的 agt_constraints (OWASP ASI 对照)。本文件仅留作历史, 不再被加载。
+status: rejected
+rejected_by: .omo/_knowledge/decisions/0415-reject-agt-integration-adopt-capability-parity.md
 title: AGT × eCOS Integration Configuration
 description: >
   AGT (Agent Governance Toolkit) 与 eCOS v6 的集成配置。
