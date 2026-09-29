@@ -106,3 +106,33 @@ def _publish_bos_event(
         bus.publish(event_type, payload)
     except Exception as exc:  # noqa: BLE001 — 事件发布失败不影响主流程
         logger.warning("bos_event_publish_failed", uri=uri, error=str(exc))
+
+
+def gateway_chat(
+    prompt: str,
+    model: str = "fast",
+    timeout: float = 60.0,
+    system: str | None = None,
+) -> str | None:
+    """经 aetherforge 门面调一次本机模型; 任何失败返回 None(调用方自备兜底)。
+
+    与 tools_bos/voice.py 的补标点同一路径: LLM_GATEWAY_URL + Keychain 密钥。
+    """
+    import httpx
+
+    from .voice import _gateway_key  # 复用同一密钥解析
+
+    base = (os.environ.get("LLM_GATEWAY_URL") or "http://127.0.0.1:4000").rstrip("/").removesuffix("/v1")
+    messages = ([{"role": "system", "content": system}] if system else []) + [{"role": "user", "content": prompt}]
+    try:
+        with httpx.Client(timeout=timeout, trust_env=False) as client:
+            resp = client.post(
+                f"{base}/v1/chat/completions",
+                headers={"Authorization": f"Bearer {_gateway_key()}"},
+                json={"model": model, "messages": messages, "max_tokens": 800, "temperature": 0.3},
+            )
+            resp.raise_for_status()
+            return (resp.json()["choices"][0]["message"]["content"] or "").strip()
+    except Exception:
+        logger.warning("gateway_chat model=%s failed", model)
+        return None

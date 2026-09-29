@@ -5,14 +5,17 @@ BOS 服务契约: ``bos://inbox/mail/draft``
     出参: 3 档拟复草稿 (brief_confirm / verbose_reply / polite_decline)
           + 附件表格的 Markdown 还原
 
-文风基线来自夏明星署名样本 (replay buffer 域 document-review); 本模块为
-确定性模板 + 结构化提取 (零模型调用), 文风精调由 LoRA 适配层 (T10-105/118)
-在推理侧叠加。
+三档草稿由本机模型生成(门面 AGORA_MAIL_MODEL, 默认 fast 档), 必须回应来件的具体
+诉求(材料/期限); 模型不可用时回退确定性模板并标 degraded=True —— 模板复述标题、
+不回应诉求, 不具备署名条件(全链路实测 2026-09-29: 此前恒为模板且标
+ready_for_signature=True)。表格附件仍为确定性提取。
 """
 
 from __future__ import annotations
 
 import csv
+import os
+import json
 import io
 import re
 import time
@@ -48,6 +51,31 @@ def _key_points(body: str, limit: int = 3) -> list[str]:
     return points or ["（来件要点待人工补充）"]
 
 
+def _llm_tiers(subj: str, points: list[str], sender: str, due: str, body: str) -> dict[str, str] | None:
+    """本机模型生成三档; 解析失败返回 None(走模板兜底)。"""
+    from ._helpers import gateway_chat
+
+    prompt = (
+        "你是卫健系统办公室的邮件拟复助手。根据来件为收件人拟三档回复, 每档都要直接回应来件的具体诉求"
+        "(要什么材料/什么意见/什么期限), 不得只复述标题。语体: 简短确认 2-3 句; 详细回复分条、每条一个要点; "
+        "婉拒不生硬、给出下一步。均为草稿, 不写落款日期。\n"
+        f"来件单位: {sender}\n主题: {subj}\n期限: {due or '未写明'}\n要点: {'；'.join(points)}\n正文: {body[:600]}\n"
+        '只输出 JSON: {"brief_confirm": "...", "verbose_reply": "...", "polite_decline": "..."}'
+    )
+    out = gateway_chat(prompt, model=os.environ.get("AGORA_MAIL_MODEL", "fast"), timeout=45.0)
+    if not out:
+        return None
+    m = re.search(r"\{.*\}", out, re.DOTALL)
+    if not m:
+        return None
+    try:
+        tiers = json.loads(m.group())
+    except ValueError:
+        return None
+    tiers = {k: str(v).strip() for k, v in tiers.items() if k in _TIERS and str(v).strip()}
+    return tiers if len(tiers) == 3 else None
+
+
 def draft_three_tiers(
     body: str,
     subject: str | None = None,
@@ -62,7 +90,7 @@ def draft_three_tiers(
     due = ctx.get("due", "")
 
     due_line = f"，并请于{due}前反馈" if due else ""
-    tiers = {
+    template = {
         "brief_confirm": (
             f"收悉。{subj}已阅，所提事项我处原则同意按方案推进{due_line}。\n"
             "执行中如遇跨部门协同问题，请径与我办联系。"
@@ -70,7 +98,6 @@ def draft_three_tiers(
         "verbose_reply": (
             f"{sender}：\n\n"
             f"《{subj}》收悉。经研究，现函复如下：\n"
-            + "".join(f"一{i + 1}．{p}。\n" for i, p in enumerate(points[:1]))
             + "".join(f"{'一二三四'[i]}．{p}。\n" for i, p in enumerate(points))
             + f"\n以上意见供参考。请按总体安排抓好落实{due_line}，"
             "执行过程中的重要进展请及时通报。\n\n专此函复。"
@@ -82,6 +109,9 @@ def draft_three_tiers(
             "敬请谅解。建议下一步保持沟通，待条件成熟时再行商议。\n\n专此回复。"
         ),
     }
+    llm_tiers = _llm_tiers(subj, points, sender, due, body)
+    degraded = llm_tiers is None
+    tiers = llm_tiers or template
     elapsed_ms = (time.perf_counter() - t0) * 1000
     return {
         "schema": SCHEMA,
@@ -90,10 +120,12 @@ def draft_three_tiers(
         "key_points": points,
         "tiers": {k: v.strip() for k, v in tiers.items()},
         "tier_names": list(_TIERS),
+        "degraded": degraded,
         "latency_ms": round(elapsed_ms, 2),
         "ttft_budget_ms": TTFT_BUDGET_MS,
         "within_budget": elapsed_ms <= TTFT_BUDGET_MS,
-        "ready_for_signature": True,
+        # 模板不回应来件诉求, 不具备署名条件; 只有真模型产出才可进署名流程
+        "ready_for_signature": not degraded,
     }
 
 
