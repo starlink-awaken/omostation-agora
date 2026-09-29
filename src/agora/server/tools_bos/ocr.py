@@ -16,6 +16,7 @@ CLI (verify contract):
 from __future__ import annotations
 
 import argparse
+import re
 import json
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
@@ -31,6 +32,9 @@ TABLE_X_TOLERANCE = 12  # px tolerance for cross-row column alignment
 LOW_CONFIDENCE = 0.55  # below this a box is handwriting / seal candidate
 SEAL_CLUSTER_RADIUS = 180  # px radius for low-confidence clustering → seal
 SEAL_LEXICON = ("专用章", "之印", "公章", "印章", "盖章", "戳记")  # stamp wording
+# 发文字号(机关代字〔YYYY〕N号): 印刷体版头要素, 低置信+短长度时会被误判成
+# 手写签批(全链路实测 2026-09-29: 京卫医〔2026〕45号 被归入手写签批)
+_DOCNO_RE = re.compile(r"[\u4e00-\u9fff]{2,10}[〔\[]\d{3,4}[〕\]]\d{1,4}号")
 HANDWRITING_MAX_LEN = 12  # handwritten annotations are short strokes
 
 
@@ -369,6 +373,8 @@ def classify_handwriting(
             continue
         if any(w in b.text for w in SEAL_LEXICON):
             continue  # stamp wording belongs to seals, not handwriting
+        if _DOCNO_RE.search(b.text):
+            continue  # 发文字号是版头印刷体, 不是手写
         members.add(b)
         out.append(
             {
