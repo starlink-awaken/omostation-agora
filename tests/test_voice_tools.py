@@ -149,3 +149,12 @@ def test_owner_nickname_and_weekday_deadline():
     items = result["task_items"]
     assert [i["owner"] for i in items] == ["小王", "小李"]
     assert items[0]["deadline"] == "下周三"
+
+
+def test_polish_spoken_todo_is_task_but_feelings_are_not():
+    """口述待办(要把…发给…审核)要进任务项; 纯情绪/想法不能误判为任务。"""
+    todo = polish("提醒一下，明天上午十点前要把数据安全自查报告的初稿发给张磊审核，别忘了附上等保复测结论。")
+    assert todo["kind"] == "task_list" and todo["task_items"]
+    assert any("明天" in t for t in todo["time_mentions"])
+    feeling = polish("今天会开得有点累，连着三个会。晚上想早点休息，陪孩子读会儿书。")
+    assert feeling["kind"] == "essay" and not feeling["task_items"]
