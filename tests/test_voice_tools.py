@@ -158,3 +158,15 @@ def test_polish_spoken_todo_is_task_but_feelings_are_not():
     assert any("明天" in t for t in todo["time_mentions"])
     feeling = polish("今天会开得有点累，连着三个会。晚上想早点休息，陪孩子读会儿书。")
     assert feeling["kind"] == "essay" and not feeling["task_items"]
+
+
+def test_asr_glossary_correction_and_prompt():
+    """领域词表: 确定性纠错 + initial_prompt 带领域词(实测 灯保附册→等保复测 等)。"""
+    from agora.server.tools_bos.voice import _asr_prompt, apply_glossary
+
+    fixed, n = apply_glossary("别忘了附上灯保附册结论，明天的陈报要看。")
+    assert n == 2 and "等保复测" in fixed and "晨报" in fixed
+    assert "等保复测" in _asr_prompt() and "晨报" in _asr_prompt()
+    # 不在词表里的文本不动
+    same, zero = apply_glossary("今天天气不错")
+    assert same == "今天天气不错" and zero == 0

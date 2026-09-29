@@ -74,6 +74,37 @@ def _detect_engines() -> list[str]:
 
 _GATEWAY_ASR_MODEL = os.environ.get("AGORA_ASR_MODEL", "asr")
 
+# 领域热词表: 作为 whisper initial_prompt 传入(oMLX stt 转解码器前缀), 并在加标点前
+# 做确定性纠错(全链路实测 2026-09-29: 等保复测→灯保附册、晨报→陈报、处务会→初五会)。
+# 环境变量 AGORA_ASR_GLOSSARY 可整体覆盖, 格式「错词→正词」每行一条。
+ASR_GLOSSARY: dict[str, str] = dict(
+    line.split("→", 1) for line in (os.environ.get("AGORA_ASR_GLOSSARY") or "").splitlines() if "→" in line
+) or {
+    "灯保附册": "等保复测",
+    "等保附册": "等保复测",
+    "陈报": "晨报",
+    "初五会": "处务会",
+    "夜物与": "业务域",
+    "资查": "自查",
+    "卫健会": "卫健委",
+    "信创办": "信创办",
+}
+
+
+def _asr_prompt() -> str:
+    """whisper initial_prompt: 领域词表原文, 让解码器偏向这些词。"""
+    return os.environ.get("AGORA_ASR_PROMPT") or "、".join(sorted(set(ASR_GLOSSARY.values())))[:200]
+
+
+def apply_glossary(text: str) -> tuple[str, int]:
+    """按词表确定性纠错, 返回 (纠错后文本, 纠错次数)。只替换词表命中的错词。"""
+    n = 0
+    for wrong, right in ASR_GLOSSARY.items():
+        if wrong in text:
+            n += text.count(wrong)
+            text = text.replace(wrong, right)
+    return text, n
+
 
 def _gateway_key() -> str:
     key = (
@@ -109,7 +140,8 @@ def _transcribe_gateway(audio: Path) -> str:
         resp = client.post(
             f"{base}/v1/audio/transcriptions",
             headers={"Authorization": f"Bearer {key}"} if key else {},
-            data={"model": _GATEWAY_ASR_MODEL},
+            # language+prompt: oMLX whisper 支持(initial_prompt 弱偏置), 此前没传
+            data={"model": _GATEWAY_ASR_MODEL, "language": os.environ.get("AGORA_ASR_LANGUAGE", "zh"), "prompt": _asr_prompt()},
             files={"file": (audio.name, audio.read_bytes(), "audio/wav")},
         )
         resp.raise_for_status()
@@ -279,13 +311,15 @@ def ingest_memo(audio_path: str | Path, engine: str | None = None) -> dict[str, 
     tr = transcribe(audio_path, engine=engine)
     if not tr.get("ok"):
         return {"schema": SCHEMA, "service": SERVICE_URI, **tr}
-    text, punctuated = restore_punctuation(tr["text"])
+    corrected, n_fixed = apply_glossary(tr["text"])
+    text, punctuated = restore_punctuation(corrected)
     polished = polish(text)
     return {
         "schema": SCHEMA,
         "service": SERVICE_URI,
         "ok": True,
         "engine": tr["engine"],
+        "glossary_fixes": n_fixed,
         "elapsed_s": tr.get("elapsed_s"),
         "budget_s": TTFT_BUDGET_S,
         "within_budget": (tr.get("elapsed_s") or 99) <= TTFT_BUDGET_S,
