@@ -242,7 +242,8 @@ services:
 - action: rest-api
   description: KOS REST API v1 (9 endpoints)
   domain: memory
-  http_url: http://localhost:8766/api/v1
+  http_method: get
+  http_url: http://localhost:8766/api/v1/health
   package: kos
   status: active
   transport: http
@@ -1705,6 +1706,7 @@ services:
   - serve
   description: "gbrain \u77E5\u8BC6\u5E93\u5168\u6587\u641C\u7D22 (\u9AD8\u6027\u80FD Postgres)"
   domain: memory
+  mcp_tool: search
   package: gbrain
   status: active
   transport: mcp_stdio
@@ -1717,6 +1719,7 @@ services:
   - serve
   description: "gbrain \u77E5\u8BC6\u5E93\u7ED3\u6784\u5316\u67E5\u8BE2"
   domain: memory
+  mcp_tool: query
   package: gbrain
   status: active
   transport: mcp_stdio
@@ -1729,6 +1732,7 @@ services:
   - serve
   description: "gbrain \u77E5\u8BC6\u5E93\u589E\u91CF\u540C\u6B65"
   domain: memory
+  mcp_tool: sync_brain
   package: gbrain
   status: active
   transport: mcp_stdio

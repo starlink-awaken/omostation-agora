@@ -71,6 +71,10 @@ class BosService:
     module_path: str = ""
     func_name: str = ""
     http_url: str = ""
+    # HTTP 方法声明 ("" = 启发式: 有 dict 参数 POST, 否则 GET)。
+    # ``get`` 会把 dict 参数拼成 query string — KOS /api/v1/search 等
+    # 只收 GET 的端点用。
+    http_method: str = ""
     description: str = ""
     mcp_tool: str = ""
     tools: list[str] = field(default_factory=list)

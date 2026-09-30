@@ -1374,7 +1374,11 @@ _FALLBACK_SERVICES: list[BosService] = [
         package="kos",
         action="rest-api",
         transport="http",
-        http_url="http://localhost:8766/api/v1",
+        # 真实端点 (旧值 /api/v1 是裸前缀, 任何方法都 404)。health 是
+        # discovery.py 的 canonical KOS 探针, GET 无必填参数 → 有/无 payload
+        # 都能 200; 搜索类调用走 bos://memory/kos/search。
+        http_url="http://localhost:8766/api/v1/health",
+        http_method="get",
         description="KOS REST API v1 (9 endpoints)",
     ),
     BosService(
