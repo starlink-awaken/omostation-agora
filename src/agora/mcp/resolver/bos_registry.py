@@ -91,6 +91,7 @@ def _dict_to_bos_service(data: dict[str, Any]) -> object:
         module_path=data.get("module_path", ""),
         func_name=data.get("func_name", ""),
         http_url=data.get("http_url", ""),
+        http_method=data.get("http_method", "") or "",
         description=data.get("description", ""),
         mcp_tool=data.get("mcp_tool", "") or "",
         tools=list(data.get("tools") or []),
@@ -244,6 +245,10 @@ def validate_registry(path: str | pathlib.Path | None = None) -> list[str]:
         # http 必须有 http_url
         if s.transport == "http" and not s.http_url:
             errors.append(f"[{i}] http 传输缺少 http_url: {s.uri}")
+
+        # http_method 若声明必须是 get/post (拼写错误会静默退回启发式)
+        if s.http_method and s.http_method.strip().lower() not in ("get", "post"):
+            errors.append(f"[{i}] 无效 http_method: {s.http_method} ({s.uri})")
 
         # inline transport 是 self-identifier / i0_route:pending 占位,
         # 不需要 command / http_url; 它们只是 I0 文档锚点。

@@ -34,6 +34,22 @@ def _get_proxy_manager() -> Any | None:
         return None
 
 
+def _registry_has_domain(domain: str) -> bool:
+    """注册表本体 (etc/bos-services.yaml → POC_SERVICES) 是否声明了该域.
+
+    BOSRouter 只是这份声明表的**运行时缓存** (由 MCP proxy lifespan 的
+    seed_from_poc 播种)。调用方不经过 lifespan (CLI / 内部直调 / 独立测试
+    进程) 或 admission fail-closed 拒绝播种时缓存为空 — 不能据此判域不存在。
+    注册表自身加载失败时返回 False (fail-closed, 与旧行为一致)。
+    """
+    try:
+        from agora.mcp.resolver.services import POC_SERVICES
+
+        return any(getattr(s, "domain", "") == domain for s in POC_SERVICES)
+    except Exception:  # noqa: BLE001 — 域鉴权只允许两条路: 缓存有 or 注册表有
+        return False
+
+
 def _bos_domain_authorized(uri: str, operation: str = "read") -> tuple[bool, str]:
     """检查 BOS URI 的域级别权限，并执行 CR-RBAC-01 鉴权。"""
     from agora.server.tools_auth import agora_role_ctx, auth_permissive
@@ -61,7 +77,8 @@ def _bos_domain_authorized(uri: str, operation: str = "read") -> tuple[bool, str
     # 如果 bos_router 中存在该 domain 的任何路由，即视为合法域
     # (更精细的 read/write 权限由 L0 审计与 IAM 中间件后续接管)
     routes = _bos_router.list_all(prefix_filter=f"bos://{domain}/")
-    if not routes:
+    if not routes and not _registry_has_domain(domain):
+        # 缓存为空 ≠ 域不存在 (见 _registry_has_domain); 注册表也查不到才拒。
         return False, f"Domain '{domain}' is not registered in BOSRouter"
 
     return True, ""

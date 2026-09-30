@@ -355,3 +355,53 @@ class TestBOSRouterSingleton:
         assert route is not None
         assert route["adapter"] == "poc"
         bos_router.unregister("bos://test/route")
+
+
+class _EmptyRouter:
+    """router 缓存为空的替身 (未播种 / admission fail-closed 拒绝播种)。"""
+
+    def list_all(self, prefix_filter=None):
+        return []
+
+
+class TestDomainAuthRegistryFallback:
+    """CR-DOMAIN-AUTH-01: 缓存为空时回落注册表本体判定域存在性。
+
+    BOSRouter 是 etc/bos-services.yaml 的运行时缓存 — 进程未走 MCP proxy
+    lifespan 或 admission fail-closed 拒绝播种时 count()==0。旧实现据此
+    直接判 "Domain 'memory' is not registered", 让 inbox search/pending
+    全部 Permission denied (而 registry 里明明声明了 memory 域)。
+    """
+
+    def _patch(self, monkeypatch):
+        import agora.server.tools_bos._helpers as helpers
+
+        monkeypatch.setattr(helpers, "_bos_router", _EmptyRouter())
+        monkeypatch.setattr(helpers, "_AGORA_API_KEY", "test-key")
+        return helpers
+
+    def test_authorizes_declared_domain_when_router_cache_empty(self, monkeypatch):
+        helpers = self._patch(monkeypatch)
+        for uri in (
+            "bos://memory/inbox/search",
+            "bos://memory/inbox/pending",
+            "bos://memory/inbox/status",
+        ):
+            ok, reason = helpers._bos_domain_authorized(uri, "read")
+            assert ok, f"{uri} should authorize from registry of record: {reason}"
+
+    def test_rejects_domain_absent_from_registry(self, monkeypatch):
+        helpers = self._patch(monkeypatch)
+        ok, reason = helpers._bos_domain_authorized("bos://nonesuch/foo", "read")
+        assert not ok
+        assert "not registered" in reason
+
+    def test_fail_closed_when_registry_unavailable(self, monkeypatch):
+        """注册表本体读不到 → 仍 fail-closed (不是放行)。"""
+        import agora.mcp.resolver.services as services
+
+        helpers = self._patch(monkeypatch)
+        monkeypatch.setattr(services, "POC_SERVICES", object())  # 不可迭代
+        ok, reason = helpers._bos_domain_authorized("bos://memory/inbox/search")
+        assert not ok
+        assert "not registered" in reason

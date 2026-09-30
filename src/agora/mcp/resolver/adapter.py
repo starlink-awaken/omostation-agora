@@ -11,6 +11,7 @@ import threading
 from dataclasses import dataclass, field
 from typing import Any
 
+from .memory_os_env import child_env as _memory_os_child_env
 from .services import BosService, _with_uv_package
 
 _log = logging.getLogger(__name__)
@@ -285,6 +286,44 @@ class StdioAdapter:
     ) -> dict[str, Any]:
         return {"args": args, "kwargs": kwargs}
 
+    @staticmethod
+    def _child_env(service: BosService) -> dict[str, str] | None:
+        """子进程 env — 仅 bos://memory/mos/* 注入 Memory OS 开关 (MOS_LIVE_KOS 等)。
+
+        其余 URI 返回 None → Popen 继承进程 env, 行为与改造前逐字节一致。
+        """
+        return _memory_os_child_env(service.uri)
+
+    @staticmethod
+    def _mcp_tool_name(service: BosService) -> str:
+        """MCP tools/call 的工具名.
+
+        默认 house 约定 ``{package}/{action}``; 服务在 YAML 显式声明
+        ``mcp_tool`` 时以声明为准 (下游 MCP server 暴露的原生工具名,
+        如 gbrain 的 ``search`` / ``sync_brain`` — 它们没有 ``pkg/`` 前缀,
+        否则对端回 ``unknown_tool``)。
+        """
+        return service.mcp_tool or f"{service.package}/{service.action}"
+
+    @staticmethod
+    def _mcp_tool_arguments(
+        service: BosService, args: tuple[Any, ...], kwargs: dict[str, Any]
+    ) -> dict[str, Any]:
+        """tools/call 的 arguments.
+
+        未声明 ``mcp_tool`` → house envelope ``{"args": ..., "kwargs": ...}``;
+        声明了 → 服务走原生 MCP 契约, 展平为具名参数 (下游按自身 schema
+        校验 required 字段, envelope 会被判 missing parameter)。
+        """
+        if not service.mcp_tool:
+            return {"args": args, "kwargs": kwargs}
+        flat: dict[str, Any] = {}
+        for item in args:
+            if isinstance(item, dict):
+                flat.update(item)
+        flat.update(kwargs)
+        return flat
+
     def _call_stdio(
         self,
         service: BosService,
@@ -301,6 +340,7 @@ class StdioAdapter:
                 stderr=subprocess.PIPE,
                 text=True,
                 cwd=_workspace_root(),
+                env=self._child_env(service),
             )
             pid = proc.pid
             request = json.dumps(self._build_stdio_request(args, kwargs))
@@ -402,6 +442,7 @@ class StdioAdapter:
                 stderr=subprocess.PIPE,
                 text=True,
                 cwd=_workspace_root(),
+                env=self._child_env(service),
             )
             pid = proc.pid
             session = _McpStdioSession(proc, self.timeout)
@@ -419,8 +460,8 @@ class StdioAdapter:
                 session.initialized()
 
                 tool_resp = session.call_tool(
-                    f"{service.package}/{service.action}",
-                    {"args": args, "kwargs": kwargs},
+                    self._mcp_tool_name(service),
+                    self._mcp_tool_arguments(service, args, kwargs),
                 )
 
                 if "error" in tool_resp:
@@ -488,8 +529,8 @@ class StdioAdapter:
                         self._sessions[uri] = session
 
                 tool_resp = session.call_tool(
-                    f"{service.package}/{service.action}",
-                    {"args": args, "kwargs": kwargs},
+                    self._mcp_tool_name(service),
+                    self._mcp_tool_arguments(service, args, kwargs),
                 )
                 if "error" in tool_resp:
                     return {
@@ -574,15 +615,32 @@ class StdioAdapter:
         args: tuple[Any, ...],
         kwargs: dict[str, Any],
     ) -> dict[str, Any]:
-        """HTTP transport: 对 http_url 发起 GET (或带参数的 POST)。"""
+        """HTTP transport: 对 http_url 发起 GET (或带参数的 POST)。
+
+        YAML 可用 ``http_method: get|post`` 显式声明方法:
+        - ``get``  → 非空 dict 参数拼成 query string (KOS ``/api/v1/search``
+          这类只收 GET+q 的端点, 否则 POST 会 405);
+        - ``post`` → 恒为 JSON body POST;
+        - 未声明   → 启发式 (有 dict 参数 POST, 否则 GET), 保持旧行为。
+        """
+        import urllib.parse
         import urllib.request
 
         url = service.http_url or service.uri.replace("bos://", "http://", 1)
+        declared = (service.http_method or "").strip().lower()
         try:
+            data = args[0] if args else kwargs
             method = "GET"
             payload: bytes | None = None
-            data = args[0] if args else kwargs
-            if isinstance(data, dict) and data:
+            if declared == "get":
+                if isinstance(data, dict) and data:
+                    sep = "&" if "?" in url else "?"
+                    url = f"{url}{sep}{urllib.parse.urlencode(data, doseq=True)}"
+            elif declared == "post":
+                method = "POST"
+                if data:
+                    payload = json.dumps(data).encode()
+            elif isinstance(data, dict) and data:
                 method = "POST"
                 payload = json.dumps(data).encode()
             req = urllib.request.Request(
