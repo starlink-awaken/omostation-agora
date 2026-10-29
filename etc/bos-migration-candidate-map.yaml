@@ -1,6 +1,18 @@
-# BOS 迁移候选地图 — BET-c87a 收尾证据
-# Generated: 2026-07-31
+# BOS 迁移候选地图 —— ⚠️ 历史快照，不是当前状态
+#
+# Generated: 2026-07-31  (BET-c87a 收尾证据)
 # Source: etc/bos-services.yaml (172 services)
+#
+# 2026-10-29 对账：本文件是**生成时点的快照**，之后注册表持续增长而未重生成，
+# 且仓内**找不到生成器**（全仓 grep `bos-migration-candidate-map` 零引用，仅一份 2026-07 的
+# 决策文档提到过它）。下文所有数字（172/167/4/1 与各 transport 计数）**均已过期**：
+#
+#   指标          本快照    注册表实测 (2026-10-29)
+#   services      172       325
+#   domains       14        23
+#   unimplemented 4         21（见 etc/bos-unimplemented.yaml，由 bin/ssot/bos-tracking-gate.py 消费）
+#
+# 引用本文件前请先跑一次真实统计；`bos-unimplemented.yaml` 才是活的那份。
 
 summary:
   total: 172
