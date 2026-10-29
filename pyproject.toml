@@ -131,7 +131,7 @@ build-backend = "hatchling.build"
 
 [dependency-groups]
 dev = [
-    "deepeval>=4.0.6",
+    "deepeval>=4.3.1",
     "pytest>=8.4,<9",
     "pytest-asyncio>=0.26.0",
 ]
