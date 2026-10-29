@@ -19,7 +19,7 @@ classifiers = [
     "Topic :: System :: Networking",
 ]
 dependencies = [
-    "cryptography>=41.0",
+    "cryptography>=50.0.2",
     "httpx[socks]>=0.28.1",
     "structlog>=24.0",
     "fastmcp>=3.4.2",
