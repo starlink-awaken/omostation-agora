@@ -24,7 +24,14 @@ def test_extract_factors_hits():
 def test_simulation_deterministic():
     a = simulate_proposal(PROPOSAL, rounds=100, seed=42)
     b = simulate_proposal(PROPOSAL, rounds=100, seed=42)
-    assert a == b, "同 seed 同文本必须输出完全一致"
+    # elapsed_s 是 perf_counter 墙钟耗时（round 到 3 位小数），定义上非确定 ——
+    # 两次运行会跨过取整边界（CI 实测 0.003 vs 0.004，断言报
+    # "Differing items: {'elapsed_s': 0.003} != {'elapsed_s': 0.004}"，其余 12 项全同）。
+    # 把它纳入相等断言，这条「确定性」用例就变成掷硬币（本机连跑 5 次全过、CI 偶发红）。
+    # 排除该字段后再比；elapsed_s 仍由下方 `a["elapsed_s"] < 30` 单独守。
+    assert {k: v for k, v in a.items() if k != "elapsed_s"} == {
+        k: v for k, v in b.items() if k != "elapsed_s"
+    }, "同 seed 同文本，除 elapsed_s（墙钟耗时）外必须输出完全一致"
     assert set(a["role_means"]) == set(ROLES)
     for key in ("mean", "stdev", "p5", "p50", "p95", "stop_loss"):
         assert isinstance(a[key], float), key
