@@ -1,0 +1,27 @@
+version: 2
+updates:
+  # These are uv `path` sources pointing at sibling submodules
+  # (`[tool.uv.sources]` in pyproject.toml). Dependabot's isolated updater
+  # container does not check out submodules, so it cannot fetch them and
+  # aborts the whole run with:
+  #   path_dependencies_not_reachable
+  #     "kos" at /pyproject.toml, "bus-foundation" at /pyproject.toml, ...
+  # Listing them here keeps Dependabot working for everything else.
+  #
+  # NOTE (2026-10-29): this is best-effort. The error fires during *file
+  # fetching*, which happens before `ignore` conditions are applied, so this
+  # may not actually silence the run — confirm on the next Dependabot cycle.
+  # The durable fix is publishing these to PyPI or restructuring the deps.
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    ignore:
+      - dependency-name: "kos"
+      - dependency-name: "bus-foundation"
+      - dependency-name: "eidos"
+      - dependency-name: "minerva"
+      - dependency-name: "core-models"
+      - dependency-name: "ecos"
+      - dependency-name: "family-hub"
+      - dependency-name: "metaos"
