@@ -55,7 +55,7 @@ agora-watchdog = "agora.agora_watchdog:main"
 agora-bos-capabilities = "agora.external_resources.capability_provider:CapabilityProvider"
 
 [project.optional-dependencies]
-dev = ["pytest>=8.4,<9", "pytest-asyncio>=0.24,<1.0", "ruff>=0.8", "mypy>=1.0"]
+dev = ["pytest>=8.4,<9", "pytest-asyncio>=0.24,<1.0", "ruff>=0.17.2", "mypy>=1.0"]
 grpc = ["grpcio>=1.60", "grpcio-tools>=1.85.0", "protobuf>=4.0"]
 kairon = []  # Decoupled via MCP in Phase 1
 admission = [
