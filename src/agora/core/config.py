@@ -10,7 +10,7 @@ import os
 from pathlib import Path
 from typing import Any
 
-from agora.types import (  # type: ignore[import-not-found]
+from agora.agent_types import (  # type: ignore[import-not-found]
     AgentConfig,
     GatewayConfig,
     RoutingConfig,
