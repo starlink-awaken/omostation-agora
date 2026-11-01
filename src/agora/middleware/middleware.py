@@ -9,7 +9,7 @@ import logging
 import os
 from typing import Any
 
-from agora.types import AgentMessage  # type: ignore[import-not-found]
+from agora.agent_types import AgentMessage  # type: ignore[import-not-found]
 
 
 class APIKeyAuthMiddleware:

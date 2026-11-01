@@ -12,7 +12,7 @@ import uuid
 from collections.abc import Callable
 from typing import Any
 
-from agora.types import (  # type: ignore[import-not-found]
+from agora.agent_types import (  # type: ignore[import-not-found]
     AgentInvoker,
     AgentMessage,
     Error,

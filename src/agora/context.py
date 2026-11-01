@@ -10,7 +10,7 @@ import uuid
 from pathlib import Path
 from typing import Any
 
-from agora.types import AgentMessage, ContextRef  # type: ignore[import-not-found]
+from agora.agent_types import AgentMessage, ContextRef  # type: ignore[import-not-found]
 
 
 class ContextData:
