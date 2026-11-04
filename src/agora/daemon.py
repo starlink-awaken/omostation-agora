@@ -3,7 +3,9 @@
 import asyncio
 import json
 import logging
+import os
 import sys
+import time
 from typing import TYPE_CHECKING
 
 # Optional fastapi, fallback to basic if not present
@@ -20,6 +22,16 @@ logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
 logger = logging.getLogger("agora.daemon")
+
+# Process start time for /health uptime reporting (monotonic wall clock).
+_STARTED_AT = time.time()
+
+# HTTP listen port. 7432 is registered to ecos-event-listener in
+# protocols/port-registry.yaml, so the daemon defaults to 7433.
+DEFAULT_HTTP_PORT = int(os.environ.get("AGORA_DAEMON_HTTP_PORT", "7433"))
+# Reported (not bound) swarm discovery UDP port — registry: AGORA_SWARM_UDP_PORT=7455.
+# /health only reports this config value; the daemon itself opens no UDP socket.
+SWARM_UDP_PORT = int(os.environ.get("AGORA_SWARM_UDP_PORT", "7455"))
 
 
 class ConnectionManager:
@@ -75,6 +87,20 @@ if HAS_FASTAPI:
             "subscribers_notified": len(manager.subscribers.get(msg.topic, set())),
         }
 
+    @app.get("/health")
+    async def health() -> dict:
+        """Liveness probe consumed by the cron-service health scan (SIRI-51).
+
+        udp_port reports the configured swarm discovery port
+        (AGORA_SWARM_UDP_PORT, registry default 7455) — this daemon opens no
+        UDP socket itself; the value surfaces config for the health scanner.
+        """
+        return {
+            "status": "ok",
+            "uptime_s": int(time.time() - _STARTED_AT),
+            "udp_port": SWARM_UDP_PORT,
+        }
+
     @app.websocket("/ws/{client_id}")
     async def websocket_endpoint(websocket: WebSocket, client_id: str):
         await manager.connect(client_id, websocket)
@@ -94,10 +120,12 @@ if HAS_FASTAPI:
             manager.disconnect(client_id)
 
 
-def run_daemon(port: int = 7432):
+def run_daemon(port: int | None = None):
     if not HAS_FASTAPI:
         logger.error("FastAPI not installed. Cannot run Agora 2.0 Daemon.")
         sys.exit(1)
+    if port is None:
+        port = DEFAULT_HTTP_PORT
     logger.info(f"Starting Agora 2.0 Daemon on port {port}")
     uvicorn.run(app, host="127.0.0.1", port=port)
 
