@@ -27,7 +27,7 @@ dependencies = [
     "rich>=13.0",
     "fastapi>=0.128.8",
     "uvicorn>=0.49.0",
-    "prometheus-client>=0.20",
+    "prometheus-client>=0.26.0",
     "aiohttp>=3.14.0",
     "bus-foundation",
     "ecos",
