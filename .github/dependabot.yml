@@ -16,6 +16,14 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    # One merged PR per week instead of one per dependency. Measured 2026-11-23:
+    # 5 independent PRs edit adjacent lines of pyproject.toml, so they conflict
+    # with each other and each needs its own rebase + CI round. Grouping collapses
+    # both the merge surface and the CI cost from N to 1.
+    groups:
+      python-deps:
+        patterns:
+          - "*"
     ignore:
       - dependency-name: "kos"
       - dependency-name: "bus-foundation"
