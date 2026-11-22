@@ -33,3 +33,10 @@ updates:
       - dependency-name: "ecos"
       - dependency-name: "family-hub"
       - dependency-name: "metaos"
+      # rich 15 is unsatisfiable here: deepeval>=4.3.4 pins rich>=13.6.0,<15.0.0.
+      # Measured 2026-11-23 — `uv sync` reports "we can conclude that your
+      # project's requirements are unsatisfiable". Block only the major bump so
+      # minor/patch updates still land (otherwise rich stays on 13 forever).
+      - dependency-name: "rich"
+        update-types:
+          - "version-update:semver-major"

@@ -21,14 +21,14 @@ classifiers = [
 dependencies = [
     "cryptography>=50.0.2",
     "httpx[socks]>=0.28.1",
-    "structlog>=24.0",
-    "fastmcp>=3.4.2",
-    "pydantic>=2.14.1",
+    "structlog>=26.1.0",
+    "fastmcp>=4.2.2",
+    "pydantic>=2.14.4",
     "rich>=13.0",
-    "fastapi>=0.128.8",
-    "uvicorn>=0.49.0",
+    "fastapi>=0.165.0",
+    "uvicorn>=0.54.0",
     "prometheus-client>=0.26.0",
-    "aiohttp>=3.14.0",
+    "aiohttp>=3.14.5",
     "bus-foundation",
     "ecos",
     "family-hub",
@@ -55,8 +55,8 @@ agora-watchdog = "agora.agora_watchdog:main"
 agora-bos-capabilities = "agora.external_resources.capability_provider:CapabilityProvider"
 
 [project.optional-dependencies]
-dev = ["pytest>=8.4,<9", "pytest-asyncio>=0.24,<1.0", "ruff>=0.17.3", "mypy>=2.4.1"]
-grpc = ["grpcio>=1.60", "grpcio-tools>=1.85.0", "protobuf>=7.36.2"]
+dev = ["pytest>=9.2.0,<10", "pytest-asyncio>=1.5.0,<2.0", "ruff>=0.17.6", "mypy>=2.4.1"]
+grpc = ["grpcio>=1.85.3", "grpcio-tools>=1.85.3", "protobuf>=7.36.2"]
 kairon = []  # Decoupled via MCP in Phase 1
 admission = [
     "metaos",
@@ -131,9 +131,9 @@ build-backend = "hatchling.build"
 
 [dependency-groups]
 dev = [
-    "deepeval>=4.3.2",
-    "pytest>=8.4,<9",
-    "pytest-asyncio>=0.26.0",
+    "deepeval>=4.3.4",
+    "pytest>=9.2.0,<10",
+    "pytest-asyncio>=1.5.0",
 ]
 
 [tool.hatch.build.targets.wheel]
