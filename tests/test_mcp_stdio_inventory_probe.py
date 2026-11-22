@@ -24,9 +24,10 @@ import pytest
 
 EXPECTED_PROTOCOL_VERSION = "2024-11-05"
 EXPECTED_SERVER_IDENTITY_DIGEST = (
-    # fastmcp 4.0.3 (uv.lock ecc6396 起): serverInfo.version 取 fastmcp 自身版本,
-    # name 不变。fastmcp 每次大版本升级需重 pin (旧值 2b6a… 对应 3.4.5)。
-    "sha256:1a99c71f16e69442ffda9a4ad699a902273b9c8882ec7e1a3e4ad6c47c1fa5e2"
+    # fastmcp 4.2.4 (uv.lock 自 #132/#133 起): serverInfo.version 取 fastmcp 自身版本,
+    # name 不变。fastmcp 每次大版本升级需重 pin
+    # (旧值 1a99c… 对应 4.0.3, 更早的 2b6a… 对应 3.4.5)。
+    "sha256:8bfbe8c3a22e6f428ebce7b43b4cf6f3b7c9dd3b3418305798d5746ec4563f4f"
 )
 EXPECTED_TOOL_INVENTORY_DIGEST = (
     "sha256:95da9468ffd474b0806fea523b4bffec03b80207fed2eaae1887f84d4092330c"
