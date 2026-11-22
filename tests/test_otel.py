@@ -10,11 +10,22 @@ from agora.otel import _NoOpTracer, get_tracer, init_otel
 
 
 class TestInitOtel:
-    def test_init_missing_otlp_exporter(self):
+    def test_init_missing_otlp_exporter(self, monkeypatch):
         """OTLP exporter not installed — init falls back via ImportError."""
-        # In the current test env, opentelemetry is installed but
-        # opentelemetry-exporter-otlp-proto-http is NOT. So init_otel
-        # hits an ImportError at the OTLP exporter import and returns False.
+        # 实测 (2026-11-23): fastapi[standard] 的 extra 会装上
+        # opentelemetry-exporter-otlp-proto-http (uv.lock 自 fastapi 0.165 起
+        # 含该包), 「exporter 缺席」不再是测试环境的默认状态。改为**显式模拟**
+        # 该模块缺失, 以保留本用例原意: init_otel 在缺 exporter 时必须降级。
+        import builtins
+
+        real_import = builtins.__import__
+
+        def _raise_for_otlp_exporter(name, *args, **kwargs):
+            if name.startswith("opentelemetry.exporter.otlp"):
+                raise ImportError(f"no module: {name}")
+            return real_import(name, *args, **kwargs)
+
+        monkeypatch.setattr(builtins, "__import__", _raise_for_otlp_exporter)
         result = init_otel()
         assert result is False
 
