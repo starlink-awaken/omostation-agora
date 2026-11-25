@@ -2232,37 +2232,6 @@ services:
   status: active
   transport: internal
   uri: bos://system/omo/debt
-- action: invoke
-  command:
-  - node
-  - /Users/xiamingxing/ToolBox/mcp/wps-office-mcp/dist/index.js
-  cross_references:
-    domain: capability
-    realized_by: agora.register
-    upstream: /Users/xiamingxing/ToolBox/mcp/wps-office-mcp/.git
-  description: "WPS Office MCP Server (Excel/Word/PPT 243 tools) \u2014 \u8DE8 L4-A Documents \u4E1A\u52A1\u6587\u4EF6\u8BFB\u5199"
-  domain: capability
-  i0_route: pending
-  package: toolbox/wps-office-mcp
-  status: active
-  tools_count: 243
-  transport: stdio
-  uri: bos://capability/wps-office-mcp/invoke
-- action: load
-  command:
-  - node
-  - /Users/xiamingxing/ToolBox/skills/wps-skills/wps-office-mcp/dist/index.js
-  cross_references:
-    domain: capability
-    realized_by: agora.register
-    upstream: /Users/xiamingxing/ToolBox/skills/wps-skills/.git
-  description: "WPS Skills \u5305 (wps-claude-addon + wps-claude-assistant) \u2014 Claude \u5185\u7F6E\u89E6\u53D1"
-  domain: capability
-  i0_route: pending
-  package: toolbox/wps-skills
-  status: active
-  transport: stdio
-  uri: bos://capability/wps-skills/load
 - action: exec
   command:
   - uv

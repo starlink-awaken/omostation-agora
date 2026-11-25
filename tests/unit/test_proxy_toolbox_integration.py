@@ -3,15 +3,11 @@
 from __future__ import annotations
 
 
-def test_known_services_includes_wps_office_mcp():
-    """KNOWN_SERVICES 包含 wps-office-mcp (F-09 proxy 迁移)。"""
+def test_known_services_excludes_decommissioned_wps_office_mcp():
+    """KNOWN_SERVICES 不再包含已下线的 wps-office-mcp。"""
     from agora.mcp.mcp_bootstrap import KNOWN_SERVICES
 
-    assert "wps-office-mcp" in KNOWN_SERVICES
-    svc = KNOWN_SERVICES["wps-office-mcp"]
-    assert svc["command"] == "node"
-    assert svc["source"] == "toolbox"
-    assert any("dist/index.js" in a for a in svc["args"])
+    assert "wps-office-mcp" not in KNOWN_SERVICES
 
 
 def test_known_services_keeps_core_services():

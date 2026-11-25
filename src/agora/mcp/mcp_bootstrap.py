@@ -333,17 +333,6 @@ _KNOWN_FALLBACK: dict[str, dict[str, Any]] = {
         "source": "npm",
         "init_timeout": 10,
     },
-    # ── ToolBox — WPS Office MCP (F-09: 纳入 proxy 管理的真实 MCP server) ──
-    # TOOLBOX_ROOT env 化 (默认 ~/ToolBox), 不硬编码绝对路径
-    "wps-office-mcp": {
-        "command": "node",
-        "args": [
-            f"{os.path.expanduser(os.environ.get('TOOLBOX_ROOT', '~/ToolBox'))}/mcp/wps-office-mcp/dist/index.js"
-        ],
-        "description": "WPS Office MCP Server (Excel/Word/PPT 243 tools)",
-        "source": "toolbox",
-        "init_timeout": 15,
-    },
     # 注: Hermes 已双向连通 agora，跳过注册防止循环
     # 注: Gemini/Copilot 仅支持 ACP 协议（非标准 MCP），跳过
     # 注: deer-flow/headroom/code-review-graph/datafoundry 为 CLI 形态,
