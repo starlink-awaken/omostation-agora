@@ -117,16 +117,6 @@ services:
       - excretion_cleanup: {description: "D-Excretion 代谢清理", args: {target: string, older_than_h: int}}
 
   # ── ToolBox L2 分区服务 (v5 I0 接入) ──
-  - name: toolbox-wps-office-mcp
-    description: WPS Office MCP Server — Excel/Word/PPT 243 工具
-    mcp_url: "stdio://node ~/ToolBox/mcp/wps-office-mcp/dist/index.js"
-    health_url: "cli://node ~/ToolBox/mcp/wps-office-mcp/dist/index.js --health"
-    tags: [toolbox, mcp, wps, office]
-    tools:
-      - wps_excel: {description: "Excel 操控", args: {action: string, params: dict}}
-      - wps_word: {description: "Word 操控", args: {action: string, params: dict}}
-      - wps_ppt: {description: "PPT 操控", args: {action: string, params: dict}}
-
   - name: toolbox-headroom
     description: Agent 上下文压缩层 — 60-95% token 节省
     mcp_url: "stdio://headroom"

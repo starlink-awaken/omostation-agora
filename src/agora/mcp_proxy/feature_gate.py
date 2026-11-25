@@ -33,7 +33,7 @@ DEFAULT_BOS_DOMAINS: dict[str, dict[str, Any]] = {
     "governance": {"enabled": True, "description": "治理域 — omo/metaos/sot-bridge"},
     "capability": {
         "enabled": True,
-        "description": "能力域 — forge + toolbox (wps-office-mcp 等 MCP server)",
+        "description": "能力域 — forge + toolbox (外部 MCP server)",
     },
     "persona": {"enabled": False, "description": "人格域 — sot-bridge-persona"},
     "meta": {"enabled": True, "description": "元域 — 系统元数据"},
