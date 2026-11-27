@@ -9,7 +9,7 @@ status: active
 
 # Agora Architecture
 
-> Architecture overview for **Agora**. For the full workspace architecture, see [`../../ARCHITECTURE.md`](../../ARCHITECTURE.md).
+> Architecture overview for **Agora**. For the full workspace architecture, see [`../../../ARCHITECTURE.md`](../../../ARCHITECTURE.md).
 
 ## Responsibilities
 
