@@ -66,7 +66,7 @@ uv run ruff check "src/"
     - Workspace architecture: [`../../ARCHITECTURE.md`](../../ARCHITECTURE.md)
     - Layer index: [`../../LAYER-INDEX.md`](../../LAYER-INDEX.md)
     - Project metadata: [`../../docs/project-registry.yaml`](../../docs/project-registry.yaml)
-    - Runtime state: [`../../.omo/state/system.yaml`](../../.omo/state/system.yaml)
+    - Runtime state: [`../../.omo/state/system.yaml`](../../.omo/state/system.yaml)（运行态文件，未入库；按需用 `bin/gac/materialize-system-state.py` 物化）
     - System index: [`../../docs/SYSTEM-INDEX.md`](../../docs/SYSTEM-INDEX.md) — 统一导航入口
     - Projects index: [`../../docs/INDEX-PROJECTS.md`](../../docs/INDEX-PROJECTS.md) — 项目索引
     - Tools index: [`../../docs/INDEX-TOOLS.md`](../../docs/INDEX-TOOLS.md) — 工具索引
